@@ -4,7 +4,7 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
-//note to self - you have used nix sidebar for your hacks fix this eventually 
+//note to self - you have used nix sidebar for your hacks fix this eventually
 
 (function($) {
 
@@ -250,7 +250,7 @@
 						})
 						.on('resize.sidebar-lock', function() {
 
-							 //$sidebar.addClass('inactive'); // nix sidebar on resizing
+							 $sidebar.addClass('inactive'); // nix sidebar on resizing
 								wh = $window.height();
 								sh = $sidebar_inner.outerHeight() + 30;
 
