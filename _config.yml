@@ -4,7 +4,7 @@ subtitle: Cultural Engineer, Game Designer, Insigator, Feminist Killjoy.
 email: contact@phoenixperry.com
 description: Game Designer, Code Liberation Founder, educator
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://phoenixperry.github.io/site/" # the base hostname & protocol for your site
+url: "http:www.phoenixperry.com" # the base hostname & protocol for your site
 # author:
 # street_address: 1234 Somewhere Road
 # city: Nashville
