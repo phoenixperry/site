@@ -1,10 +1,9 @@
 /*
 	Editorial by HTML5 UP
 	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license) 178, 253
+	$sidebar.addClass('inactive')
 */
-
-//note to self - you have used nix sidebar for your hacks fix this eventually
 
 (function($) {
 
@@ -97,8 +96,6 @@
 						$sidebar.removeClass('inactive');
 					});
 
-
-
 			// Hack: Workaround for Chrome/Android scrollbar position bug.
 				if (skel.vars.os == 'android'
 				&&	skel.vars.browser == 'chrome')
@@ -131,8 +128,6 @@
 						// >large? Bail.
 							if (!skel.breakpoint('large').active)
 								return;
-
-
 
 						// Vars.
 							var $a = $(this),
@@ -175,7 +170,6 @@
 					});
 
 				// Hide panel on body click/tap.
-					 $sidebar.addClass('inactive'); // nix sidebar on medium
 					$body.on('click touchend', function(event) {
 
 						// >large? Bail.
@@ -250,7 +244,7 @@
 						})
 						.on('resize.sidebar-lock', function() {
 
-							 $sidebar.addClass('inactive'); // nix sidebar on resizing
+							// Calculate heights.
 								wh = $window.height();
 								sh = $sidebar_inner.outerHeight() + 30;
 
@@ -278,7 +272,7 @@
 
 						// Toggle.
 							$menu_openers.not($this).removeClass('active');
-							s$this.toggleClass('active');
+							$this.toggleClass('active');
 
 						// Trigger resize (sidebar lock).
 							$window.triggerHandler('resize.sidebar-lock');
