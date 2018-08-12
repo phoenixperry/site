@@ -65,10 +65,12 @@ layout: default
   <span class="image fit"><img src="assets/images/homepage/speaking.png" alt="" /></span>
 
 
-<p>I speak as an advocate for inclusion in STEAM and Video Games. Also, I do talks about my own work and tech breakdowns on interesting topics. My speaking appearances include Resonate, A Maze, Indiecade, GDC and more.<a href ="talks.html"> Watch a few here.</a></p>
+<p>I speak as an advocate for inclusion in STEAM and Video Games. Also, I do talks about my own work and tech breakdowns on interesting topics. My speaking appearances include Resonate, A Maze, Indiecade, GDC and more.<a href ="https://www.youtube.com/watch?v=ZoX3AQqlj0I" target="_blank"> Watch one here.</a></p>
+<!--
     <ul class="actions">
-      <li><a href="#" class="button">Learn More</a></li>
+      <li><a href="" class="button">Learn More</a></li>
     </ul>
+-->
 </section>
 
 <!-- Section -->
@@ -80,21 +82,21 @@ layout: default
 		<article>
 			<a href="#" class="image"><img src="assets/images/homepage/botparty.png" alt="" /></a>
 			<h3>Bot Party</h3>
-			<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+			<p>Bot Party is a game which explores intimacy through physical play using sound.</p>
 			<ul class="actions">
-				<li><a href="botparty.html" class="button">More</a></li>
+				<li><a href="http://playbotparty.com" class="button" target="-_blank">Vist Site</a></li>
 			</ul>
 		</article>
 		<article>
 			<a href="#" class="image"><img src="assets/images//homepage/thrum.jpg" alt="" /></a>
 			<h3>Thrum</h3>
-			<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
+			<p>Thrum is a hapic game about vibration. It's under development.</p>
 			<ul class="actions">
-				<li><a href="#" class="button">More</a></li>
+			<!--	 <li><a href="#" class="button">More</a></li> -->
 			</ul>
 		</article>
 
-
+<!--
 		<article>
 			<a href="#" class="image"><img src="assets/images/homepage/nightgames.png" alt="" /></a>
 			<h3>Nightgames</h3>
@@ -111,7 +113,7 @@ layout: default
           <li><a href="#" class="button">More</a></li>
         </ul>
       </article>
-
+-->
     <!--
 		# <article>
 		# 	<a href="#" class="image"><img src="assets/images/pic04.jpg" alt="" /></a>

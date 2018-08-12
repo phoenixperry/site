@@ -2,6 +2,9 @@
   <header id="header">
     <!-- <a href="{{ '' | absolute_url }}" class="logo"><strong>{{ site.title }}</strong> {{ site.subtitle }}</a> -->
     <ul class="icons">
+      {% if site.medium_url %}
+      <li><a href="{{ site.medium_url }}" class="icon fa-medium" target="_blank"><span class="label">Medium</span></a></li>
+      {% endif %}
       {% if site.twitter_url %}
       <li><a href="{{ site.twitter_url }}" class="icon fa-twitter" target="_blank"><span class="label">Twitter</span></a></li>
       {% endif %}
