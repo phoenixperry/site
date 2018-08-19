@@ -5,7 +5,7 @@ layout: default
 <!-- Section -->
 <section>
 	<header class="major">
-		<h2>Organisations I have founded & Insitutional work</h2>
+		<h2>Organisations I have founded & Institutional work</h2>
 	</header>
 	<div class="features">
 		<article>
@@ -20,8 +20,7 @@ layout: default
 			<span class="icon fa-university"></span>
 			<div class="content">
 				<h3>Goldsmiths MA in Independent Games and Playable Experience Design</h3>
-				<p>Most recently, I wrote an MA in Independent Games and Playable Experience Design at Goldsmiths.
-        Focusing on developing aesthetic awareness, students create compelling mechanics and the ability to craft innovative narratives in games and immersive experiences. <a href="https://www.gold.ac.uk/pg/ma-independent-games-design/" target="_blank">Come hang out</a></p>
+				<p>Most recently, I wrote an MA in Independent Games and Playable Experience Design at Goldsmiths. Focusing on developing aesthetic awareness, students create compelling mechanics and the ability to craft innovative narratives in games and immersive experiences.<a href="https://www.gold.ac.uk/pg/ma-independent-games-design/" target="_blank">Come hang out</a></p>
 			</div>
 		</article>
 		<article>
@@ -35,7 +34,7 @@ layout: default
 			<span class="icon fa-bolt"></span>
 			<div class="content">
 				<h3>Facets</h3>
-				<p> In 2015, along with Caroline Sinder, current director, and other women from Code Liberation, we founded Facets, an interdisciplinary creative coding, interactive art, and videogames un-conference.FACETS is a conversational based creative un-conference with a focus on underrepresented voices and demographics in STEM and art. <a href="https://livestream.com/internetsociety/facets17">Watch last year's converence</a> Pro tip. Chelsea Manning, Kate Crawford and Jer Thorp's panel was exceptional.</p>
+				<p> In 2015, along with Caroline Sinder, current director, and other women from Code Liberation, we founded Facets, an interdisciplinary creative coding, interactive art, and videogames un-conference. FACETS is a conversational based creative un-conference with a focus on underrepresented voices and demographics in STEM and art.<a href="https://livestream.com/internetsociety/facets17">Watch last year's conference.</a> Pro tip. Chelsea Manning, Kate Crawford and Jer Thorp's panel was exceptional</p>
 			</div>
 		</article>
     		<article>
@@ -53,7 +52,7 @@ layout: default
         			</div>
         		</article>
 	</div>
-    <blockquote> People often ask me, "Do you ever sleep?" Not like you do. I wake up at 3.30 AM and read Sci-fi until 5am. Maybe that's my problem. Really though, the answer is I never do things alone. I build communities of people and together, we do far more than I could ever do alone. I get by, with a little help from my friends. </blockquote>
+    <blockquote>People often ask me, "Do you ever sleep?" Not like you do. I wake up at 3.30 AM and read Sci-fi until 5am. Maybe that's my problem. Really though, the answer is I never do things alone. I build communities of people and together, we do far more than I could ever do alone. I get by, with a little help from my friends. </blockquote>
 </section>
 
 <!-- Section -->
@@ -90,7 +89,7 @@ layout: default
 		<article>
 			<a href="#" class="image"><img src="assets/images//homepage/thrum.jpg" alt="" /></a>
 			<h3>Thrum</h3>
-			<p>Thrum is a hapic game about vibration. It's under development.</p>
+			<p>Thrum is a haptic game about vibration. It's under development.</p>
 			<ul class="actions">
 			<!--	 <li><a href="#" class="button">More</a></li> -->
 			</ul>
