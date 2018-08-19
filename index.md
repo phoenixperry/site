@@ -84,7 +84,7 @@ layout: default
 			<h3>Bot Party</h3>
 			<p>Bot Party is a game which explores intimacy through physical play using sound.</p>
 			<ul class="actions">
-				<li><a href="http://playbotparty.com" class="button" target="-_blank">Vist Site</a></li>
+				<li><a href="http://playbotparty.com" class="button" target="-_blank">Visit Site</a></li>
 			</ul>
 		</article>
 		<article>
