@@ -1,5 +1,5 @@
 @import url(font-awesome.min.css);
-@import url("https://fonts.googleapis.com/css?family=Playfair+Display|Source+Sans+Pro");
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,700|Playfair+Display:400,700,900|Source+Sans+Pro:400,400i,600,600i");
 /*
 	Editorial by HTML5 UP
 	html5up.net | @ajlkn
@@ -1637,7 +1637,7 @@ a {
 
 strong, b {
   color: #203464;
-  font-weight: 600; }
+  font-weight: 700; }
 
 em, i {
   font-style: italic; }
@@ -1708,14 +1708,14 @@ code {
   background: rgba(32, 52, 100, 0);
   border-radius: 0.375em;
   border: solid 1px rgba(245, 106, 106, 0.4);
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", monospace;
   font-size: 0.9em;
   margin: 0 0.25em;
   padding: 0.25em 0.65em; }
 
 pre {
   -webkit-overflow-scrolling: touch;
-  font-family: "Courier New", monospace;
+  font-family: "Inconsolata", monospace;
   font-size: 0.9em;
   margin: 0 0 2em 0; }
   pre code {
@@ -1767,7 +1767,7 @@ label {
   color: #203464;
   display: block;
   font-size: 0.9em;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 1em 0; }
 
 input[type="text"],
@@ -2136,7 +2136,7 @@ ul {
         border-radius: 0.375em;
         display: inline-block;
         font-size: 0.8em;
-        font-weight: 600;
+        font-weight: 700;
         height: 2em;
         line-height: 2em;
         margin: 0 0.125em;
@@ -2164,7 +2164,7 @@ dl {
   margin: 0 0 2em 0; }
   dl dt {
     display: block;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0 0 1em 0; }
   dl dd {
     margin-left: 2em; }
@@ -2188,7 +2188,7 @@ table {
   table th {
     color: #203464;
     font-size: 0.9em;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0 0.75em 0.75em 0.75em;
     text-align: left; }
   table thead {
