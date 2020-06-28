@@ -16,18 +16,18 @@ layout: default
         </p>
 			</div>
 		</article>
+				<article>
+			<span class="icon fa-cube"></span>
+			<div class="content">
+				<h3>UAL Creative Computing Institute</h3>
+				<p>Opened in 2019, the MSc and BSc in creative computing I helped, along with Ben Stopher and Mick Grierson to author. I wrote a good percentage of the units, have been the course leader on the BSc and now am the course leader on the MSc.<a href="https://www.arts.ac.uk/creative-computing-institute" target="_blank">Check it out</a></p>
+			</div>
+		</article>
 		<article>
 			<span class="icon fa-university"></span>
 			<div class="content">
 				<h3>Goldsmiths MA in Independent Games and Playable Experience Design</h3>
-				<p>Most recently, I wrote an MA in Independent Games and Playable Experience Design at Goldsmiths. Focusing on developing aesthetic awareness, students create compelling mechanics and the ability to craft innovative narratives in games and immersive experiences.<a href="https://www.gold.ac.uk/pg/ma-independent-games-design/" target="_blank">Come hang out</a></p>
-			</div>
-		</article>
-		<article>
-			<span class="icon fa-cube"></span>
-			<div class="content">
-				<h3>Touch Interaffective</h3>
-				<p>Founded in 2018 with Charlie Ann Page, this game studio focuses on games for the senses and creating emotional experiences. Our current game, Bot Party, is a game about holding hands. We were nominated for a GDC Award in the Alt Ctrl catagory this year. <a href="http://www.playbotparty.com" target="_blank">Check our project out</a></p>
+				<p>Most recently, I wrote, validated, and ran the MA in Independent Games and Playable Experience Design at Goldsmiths. Focusing on developing aesthetic awareness, students create compelling mechanics and the ability to craft innovative narratives in games and immersive experiences. I no longer work there, but this MA is great and now run by my good friend, Federico Fasce. <a href="https://www.gold.ac.uk/pg/ma-independent-games-design/" target="_blank">Come hang out</a></p>
 			</div>
 		</article>
 		<article>
