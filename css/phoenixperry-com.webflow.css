@@ -14,12 +14,12 @@
   --red: #ff2d55;
   --black: black;
   --relume-library-lite--rl-black: var(--cream);
-  --relume-library-lite--rl-white: white;
   --headlines: 1em;
   --heading: "Space Mono", sans-serif;
   --white: white;
   --font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   --site-headlines: "Space Mono", sans-serif;
+  --relume-library-lite--rl-white: white;
 }
 
 .w-layout-blockcontainer {
@@ -650,26 +650,6 @@ img {
   padding-bottom: .5em;
 }
 
-.rl-padding-section-large-2 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-.rl-container-large-2 {
-  width: 100%;
-  max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.rl-padding-global-2 {
-  background-color: var(--soft-black);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 0%;
-  padding-right: 0%;
-}
-
 .p-h2 {
   font-family: var(--site_body);
   color: var(--relume-library-lite--rl-black);
@@ -690,12 +670,6 @@ img {
   grid-auto-columns: 1fr;
   place-items: center stretch;
   display: grid;
-}
-
-.rl_section_layout192 {
-  background-color: var(--relume-library-lite--rl-white);
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .body-4 {
@@ -779,16 +753,6 @@ img {
   margin-right: auto;
 }
 
-.rl-padding-global-4 {
-  background-color: var(--soft-black);
-  padding-left: 10%;
-  padding-right: 10%;
-}
-
-.rl_section_layout250 {
-  background-color: var(--soft-black);
-}
-
 .container-7 {
   padding-top: 2em;
   padding-left: 2em;
@@ -843,7 +807,7 @@ img {
   line-height: 1em;
 }
 
-.heading-3, .heading-4 {
+.heading-3 {
   font-family: var(--site_body);
   font-size: 2em;
   font-weight: 400;
@@ -852,6 +816,12 @@ img {
 
 .container-8 {
   padding: 2em 0;
+}
+
+.paragraph {
+  color: var(--pink);
+  text-align: left;
+  font-family: DM Sans, sans-serif;
 }
 
 @media screen and (max-width: 991px) {
@@ -998,10 +968,6 @@ img {
     margin-right: 6%;
   }
 
-  .image-10 {
-    margin-top: 20px;
-  }
-
   .logo_using {
     float: right;
     grid-column-gap: 0px;
@@ -1038,15 +1004,6 @@ img {
     padding-bottom: 1em;
   }
 
-  .rl-padding-section-large-2 {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-  }
-
-  .rl-padding-global-2 {
-    background-color: var(--soft-black);
-  }
-
   .p-h2 {
     font-size: 2.75rem;
   }
@@ -1069,10 +1026,6 @@ img {
   .rl-padding-section-large-4 {
     padding-top: 6rem;
     padding-bottom: 6rem;
-  }
-
-  .div-block-5 {
-    position: relative;
   }
 
   .container-8 {
@@ -1197,11 +1150,6 @@ img {
   .youtube {
     margin-top: auto;
     padding-bottom: 0;
-  }
-
-  .rl-padding-section-large-2 {
-    padding-top: 4em;
-    padding-bottom: 2rem;
   }
 
   .p-h2 {
