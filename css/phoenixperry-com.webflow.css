@@ -12,10 +12,10 @@
   --lime: #a8e622;
   --pink: #e91e63;
   --red: #ff2d55;
+  --p-credits: "Space Mono", sans-serif;
   --black: black;
   --relume-library-lite--rl-black: var(--cream);
   --body-copy: 1rem;
-  --p-credits: "Space Mono", sans-serif;
   --white: white;
   --font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   --site-headlines: "Space Mono", sans-serif;
@@ -399,7 +399,7 @@ img {
 }
 
 .margin-bottom-24px {
-  font-family: var(--site_headline);
+  font-family: var(--p-credits);
   color: var(--cream);
   margin-bottom: 24px;
 }
@@ -425,6 +425,7 @@ img {
 }
 
 .list {
+  font-family: var(--site-body-copy);
   margin-top: 10px;
   padding-top: 10px;
 }
@@ -698,8 +699,8 @@ img {
 }
 
 .p-body {
+  font-family: var(--p-credits);
   color: var(--cream);
-  font-family: DM Sans, sans-serif;
   font-size: var(--body-copy);
   text-align: left;
   margin-top: 0;
@@ -836,6 +837,7 @@ img {
 }
 
 .paragraph-2 {
+  font-family: var(--p-credits);
   margin-bottom: auto;
 }
 
