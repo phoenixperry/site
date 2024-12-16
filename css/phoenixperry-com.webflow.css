@@ -690,7 +690,7 @@ img {
 }
 
 .p-body {
-  font-family: var(--p-credits);
+  font-family: var(--site-body-copy);
   color: var(--cream);
   font-size: var(--body-copy);
   text-align: left;
