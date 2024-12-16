@@ -14,10 +14,10 @@
   --red: #ff2d55;
   --site-headlines: "Space Mono", sans-serif;
   --heading: "Space Mono", sans-serif;
+  --black: black;
   --relume-library-lite--rl-black: var(--cream);
   --relume-library-lite--rl-white: white;
   --white: white;
-  --black: black;
   --font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   --site_padding: 0em;
 }
@@ -470,17 +470,17 @@ img {
 }
 
 .body-2 {
-  background-color: var(--yellow);
+  background-color: var(--soft-black);
 }
 
 .list-2 {
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 0;
+  padding-right: 0;
   font-family: Space Grotesk, sans-serif;
 }
 
 .cell {
-  background-color: var(--cream);
+  background-color: var(--black);
   padding-bottom: 0;
   display: block;
 }
@@ -762,7 +762,7 @@ img {
 }
 
 .p-h2 {
-  font-family: var(--heading);
+  font-family: var(--site_body);
   color: var(--relume-library-lite--rl-black);
   text-align: left;
   margin-top: 0;
@@ -805,6 +805,7 @@ img {
 .p-body {
   font-family: var(--site_body);
   color: var(--cream);
+  text-align: left;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: .2em;
@@ -913,6 +914,7 @@ img {
 .p-subheading {
   font-family: var(--site-headlines);
   color: var(--cream);
+  text-align: left;
   margin-top: auto;
   margin-bottom: auto;
   padding-top: .2em;
