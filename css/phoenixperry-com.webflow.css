@@ -437,6 +437,7 @@ img {
   padding-bottom: 2em;
   font-size: 1em;
   line-height: 1em;
+  position: relative;
 }
 
 .body-2 {
@@ -837,6 +838,72 @@ img {
   font-weight: 400;
 }
 
+.p-video-feature, .div-block-5 {
+  position: relative;
+}
+
+.hero-stack {
+  background-color: var(--soft-black);
+  border-bottom: 1px solid #e4ebf3;
+  padding: 80px 30px;
+  position: relative;
+}
+
+.container-9 {
+  width: 100%;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-wrapper-two {
+  text-align: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+}
+
+.margin-bottom-24px-2 {
+  margin-bottom: 24px;
+}
+
+.button-primary-2 {
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background-color: #1a1b1f;
+  padding: 12px 25px;
+  font-size: 12px;
+  line-height: 20px;
+  transition: all .2s;
+}
+
+.button-primary-2:hover {
+  color: #fff;
+  background-color: #32343a;
+}
+
+.button-primary-2:active {
+  background-color: #43464d;
+}
+
+.hero-image {
+  width: 100%;
+  margin-top: 50px;
+}
+
+.body-7 {
+  background-color: var(--soft-black);
+}
+
+.container-10 {
+  position: relative;
+}
+
 @media screen and (max-width: 991px) {
   p {
     margin-top: 20px;
@@ -1045,6 +1112,10 @@ img {
     padding-left: 2em;
     padding-right: 2em;
   }
+
+  .container-9 {
+    max-width: 728px;
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -1218,11 +1289,15 @@ img {
     display: flex;
   }
 
-  .div-block-4 {
+  .p-video-feature {
     justify-content: flex-start;
     align-items: flex-start;
     padding-left: 2em;
     display: none;
+  }
+
+  .hero-stack {
+    padding: 60px 15px;
   }
 }
 
@@ -1350,7 +1425,7 @@ img {
     display: flex;
   }
 
-  .div-block-4 {
+  .p-video-feature {
     grid-column-gap: 16px;
     grid-row-gap: 16px;
     grid-template-rows: auto auto;
@@ -1359,6 +1434,10 @@ img {
     width: 100%;
     padding-left: 0;
     display: flex;
+  }
+
+  .container-9 {
+    max-width: none;
   }
 }
 
@@ -1428,7 +1507,7 @@ img {
 }
 
 @media screen and (max-width: 767px) {
-  #w-node-_2c1f2bf4-ce76-957c-0c99-b8f4f7f70305-01237ea5 {
+  #w-node-bb77e138-6440-c82c-5d40-34e158b9b535-58b9b534 {
     order: -9999;
   }
 
