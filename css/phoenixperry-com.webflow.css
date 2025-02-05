@@ -1209,6 +1209,11 @@ img {
   font-weight: 400;
 }
 
+.div-block-7 {
+  margin-top: auto;
+  padding-top: 0;
+}
+
 @media screen and (max-width: 991px) {
   p {
     margin-top: 20px;
@@ -1449,6 +1454,11 @@ img {
 
   .quick-stack-8 {
     grid-column-gap: 20px;
+  }
+
+  .div-block-7 {
+    padding-top: .8rem;
+    padding-bottom: .8rem;
   }
 }
 
