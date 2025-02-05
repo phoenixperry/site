@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Savings Projection</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
+    <style>
+        /* Styling for the overall body */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        /* Styling for the main container */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .savings-input {
+            margin: 10px 0;
+            padding: 8px;
+            width: 120px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        label {
+            font-weight: 300;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Retirement Savings Projection</h1>
+        <label for="savings-input">Monthly Savings (£): </label>
+        <input id="savings-input" class="savings-input" type="text" value="700">
+        <div id="chart-container"></div>
+    </div>
+
+    <script>
+        // Variables for chart dimensions and data
+        let chartData = [];
+        let monthlySavings = 700;
+        let chartWidth = 700;
+        let chartHeight = 400;
+        let paddingLeft = 80;
+        let paddingRight = 30;
+        let paddingTop = 30;
+        let paddingBottom = 50;
+
+        // Constants for financial calculations
+        const ROTH_ANNUAL_RETURN = 0.07; // Annual return rate for Roth IRA
+        const TECH_ANNUAL_RETURN = 0.06; // Annual return rate for tech stocks
+        const INFLATION_RATE = 0.02; // Annual inflation rate
+        const ROTH_CONTRIBUTION_INCREASE_RATE = 0.025; // Annual increase rate for Roth IRA contribution limit
+
+        function setup() {
+            // Create canvas and attach to chart container
+            let canvas = createCanvas(chartWidth, chartHeight);
+            canvas.parent('chart-container');
+            
+            // Calculate initial chart data
+            calculateChartData();
+
+            // Add event listener to savings input
+            let savingsInputElement = select('#savings-input');
+            savingsInputElement.input(handleSavingsInput);
+        }
+
+        function handleSavingsInput() {
+            // Get and validate input value
+            let inputValue = this.value().trim();
+            if (inputValue === '' || isNaN(inputValue)) {
+                return;
+            }
+            let newValue = parseFloat(inputValue);
+            if (!isNaN(newValue) && newValue >= 0) {
+                monthlySavings = newValue;
+                calculateChartData();
+            }
+        }
+
+        function draw() {
+            // Clear background and draw chart components
+            background(255);
+            drawChartAxis();
+            drawChartData();
+            drawChartLegend();
+            handleChartTooltip();
+        }
+
+        function calculateChartData() {
+            chartData = [];
+            const savingsYears = 17; // Saving period from age 50 to 68
+            const withdrawalYears = 28; // Withdrawal period from age 68 to 96
+            let rothAnnualLimit = 8000; // Annual Roth IRA contribution limit in USD for 2023
+            const exchangeRate = 1.25; // GBP to USD exchange rate
+
+            let rothTotal = 0;
+            let techTotal = 0;
+
+            // Savings phase calculation
+            for (let year = 0; year <= savingsYears; year++) {
+                let yearlyRothTotal = 0;
+                let yearlyTechTotal = 0;
+
+                // Adjust annual Roth IRA limit for inflation and contribution increase
+                rothAnnualLimit *= (1 + ROTH_CONTRIBUTION_INCREASE_RATE);
+                let inflationAdjustedRothLimit = rothAnnualLimit * Math.pow(1 + INFLATION_RATE, year);
+
+                for (let month = 0; month < 12; month++) {
+                    // Calculate monthly contributions
+                    let monthlyRothLimit = inflationAdjustedRothLimit / 12; // Monthly limit in USD
+                    let rothMonthlyUSD = min(monthlySavings * exchangeRate, monthlyRothLimit);
+                    let rothMonthly = rothMonthlyUSD / exchangeRate; // Convert back to GBP
+                    let techMonthly = monthlySavings - rothMonthly;
+
+                    // Add contributions to totals
+                    rothTotal += rothMonthly;
+                    techTotal += techMonthly;
+
+                    // Apply monthly growth
+                    rothTotal *= (1 + ROTH_ANNUAL_RETURN / 12);
+                    techTotal *= (1 + TECH_ANNUAL_RETURN / 12);
+
+                    // Track yearly contributions
+                    yearlyRothTotal += rothMonthly;
+                    yearlyTechTotal += techMonthly;
+
+                    // Check if we've hit the annual Roth IRA limit
+                    if (yearlyRothTotal * exchangeRate >= inflationAdjustedRothLimit) {
+                        // If we've hit the limit, allocate the rest to tech stocks for the remaining months
+                        let remainingMonths = 12 - (month + 1);
+                        techTotal += monthlySavings * remainingMonths;
+                        yearlyTechTotal += monthlySavings * remainingMonths;
+                        break; // Exit the month loop
+                    }
+                }
+
+                // Store yearly data
+                chartData.push({
+                    age: year + 49,
+                    savings: rothTotal + techTotal,
+                    rothBalance: rothTotal,
+                    techBalance: techTotal,
+                    rothContribution: yearlyRothTotal,
+                    techContribution: yearlyTechTotal,
+                });
+            }
+
+            // Withdrawal phase calculation
+            let retirementSavings = chartData[savingsYears].savings;
+            const withdrawalRate = 0.04; // 4% annual withdrawal rate
+            for (let year = 1; year <= withdrawalYears; year++) {
+                // Calculate annual withdrawal amount
+                const withdrawalAmount = retirementSavings * withdrawalRate;
+                // Calculate new balance after withdrawal and growth
+                retirementSavings = (retirementSavings - withdrawalAmount) * (1 + TECH_ANNUAL_RETURN);
+
+                // Store yearly withdrawal data
+                chartData.push({
+                    age: year + 68,
+                    withdrawal: retirementSavings,
+                    yearlyIncome: withdrawalAmount
+                });
+            }
+
+            console.log('Chart data calculated:', chartData);
+        }
+
+        function drawChartAxis() {
+            // Draw axes for the chart
+            stroke(200);
+            line(paddingLeft, height - paddingBottom, width - paddingRight, height - paddingBottom);
+            line(paddingLeft, paddingTop, paddingLeft, height - paddingBottom);
+
+            textAlign(CENTER, TOP);
+            fill(100);
+            textSize(10);
+            for (let i = 0; i < chartData.length; i += 5) {
+                let x = map(chartData[i].age, 49, chartData[chartData.length - 1].age, paddingLeft, width - paddingRight);
+                stroke(220);
+                line(x, paddingTop, x, height - paddingBottom);
+                noStroke();
+                text(chartData[i].age, x, height - paddingBottom + 5);
+            }
+
+            let maxValue = max(chartData.map(d => d.savings || d.withdrawal));
+            textAlign(RIGHT, CENTER);
+            for (let i = 0; i <= maxValue; i += maxValue / 5) {
+                let y = map(i, 0, maxValue, height - paddingBottom, paddingTop);
+                stroke(220);
+                line(paddingLeft, y, width - paddingRight, y);
+                noStroke();
+                text('£' + nfc(i, 0), paddingLeft - 5, y);
+            }
+
+            textAlign(CENTER, BOTTOM);
+            textSize(12);
+            fill(80);
+            text('Age', width / 2, height - 5);
+            push();
+            translate(15, height / 2);
+            rotate(-HALF_PI);
+            text('Amount (£)', 0, 0);
+            pop();
+        }
+
+        function drawChartData() {
+            // Draw chart data lines
+            let maxValue = max(chartData.map(d => d.savings || d.withdrawal));
+
+            noFill();
+            strokeWeight(2);
+            beginShape();
+            for (let i = 0; i < chartData.length; i++) {
+                let x = map(chartData[i].age, 49, chartData[chartData.length - 1].age, paddingLeft, width - paddingRight);
+                let y = map(chartData[i].savings || chartData[i].withdrawal, 0, maxValue, height - paddingBottom, paddingTop);
+                stroke(0, 121, 107); 
+                vertex(x, y);
+            }
+            endShape();
+        }
+
+        function drawChartLegend() {
+            // Draw legend for the chart
+            fill(80);
+            textAlign(LEFT, CENTER);
+            textSize(12);
+            stroke(0, 121, 107);
+            strokeWeight(2);
+            line(paddingLeft, 20, paddingLeft + 20, 20);
+            noStroke();
+            text('Savings', paddingLeft + 25, 20);
+        }
+
+        function handleChartTooltip() {
+            // Handle displaying tooltip on hover
+            let mouseAge = map(mouseX, paddingLeft, width - paddingRight, 49, chartData[chartData.length - 1].age);
+            let mouseDataIndex = constrain(floor(mouseAge) - 49, 0, chartData.length - 1);
+
+            if (mouseX > paddingLeft && mouseX < width - paddingRight && mouseY > paddingTop && mouseY < height - paddingBottom) {
+                let d = chartData[mouseDataIndex];
+                let tooltipWidth = 230;
+                let tooltipHeight = 140;
+                let xPos = mouseX + 10;
+                let yPos = mouseY - 10;
+
+                // Check if tooltip exceeds canvas width, adjust horizontal position if necessary
+                if (xPos + tooltipWidth > width) {
+                    xPos = mouseX - tooltipWidth - 10;
+                }
+
+                // Check if tooltip exceeds canvas height, adjust vertical position if necessary
+                if (yPos + tooltipHeight > height - paddingBottom) {
+                    yPos = mouseY - tooltipHeight - 10;
+                }
+
+                // Calculate the expected Roth IRA limit for the current year
+                let currentYear = d.age - 49;
+                let rothAnnualLimit = 6500; // Starting limit
+                for (let i = 0; i < currentYear; i++) {
+                    rothAnnualLimit *= (1 + ROTH_CONTRIBUTION_INCREASE_RATE);
+                }
+                let inflationAdjustedRothLimit = rothAnnualLimit * Math.pow(1 + INFLATION_RATE, currentYear);
+
+                // Draw tooltip
+                fill(255, 255, 255, 200);
+                noStroke();
+                rect(xPos, yPos, tooltipWidth, tooltipHeight, 5);
+                fill(80);
+                textSize(12);
+                textAlign(LEFT);
+                text(`Age: ${d.age}`, xPos + 5, yPos + 15);
+                if (d.savings !== undefined) {
+                    text(`Total: £${nfc(d.savings, 0)}`, xPos + 5, yPos + 30);
+                    text(`Roth: £${nfc(d.rothBalance, 0)}`, xPos + 5, yPos + 45);
+                    text(`Tech Stock: £${nfc(d.techBalance, 0)}`, xPos + 5, yPos + 60);
+                    text(`Roth Contribution: £${nfc(d.rothContribution, 0)}`, xPos + 5, yPos + 75);
+                    text(`Tech Contribution: £${nfc(d.techContribution, 0)}`, xPos + 5, yPos + 90);
+                    text(`Annual Roth Limit: $${nfc(inflationAdjustedRothLimit, 0)}`, xPos + 5, yPos + 105);
+                } else {
+                    text(`Balance: £${nfc(d.withdrawal, 0)}`, xPos + 5, yPos + 30);
+                    text(`Yearly Income: £${nfc(d.yearlyIncome, 0)}`, xPos + 5, yPos + 45);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
