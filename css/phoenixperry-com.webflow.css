@@ -1866,8 +1866,26 @@ img {
     padding-bottom: 20px;
   }
 
+  .cards-image-mask {
+    margin-bottom: 1rem;
+  }
+
+  .cards-image {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+  }
+
   .hero {
     padding: 0 0 2em;
+  }
+
+  .video {
+    margin-bottom: 1rem;
+  }
+
+  .button {
+    background-color: var(--blue);
   }
 
   .container-2 {
@@ -1920,15 +1938,27 @@ img {
     margin-right: 0%;
   }
 
+  .youtube {
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
   .p-h2 {
     padding-top: 0;
     padding-bottom: 0;
     line-height: 2.5rem;
   }
 
+  .p-h2.p-h2-calm {
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    font-size: 2rem;
+    line-height: 2.2rem;
+  }
+
   .p-body {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
   }
 
   .rl_layout250_content {
@@ -2002,10 +2032,15 @@ img {
 
   .rl_layout250_content-2 {
     grid-template-columns: 1fr;
+    padding-top: 1rem;
+  }
+
+  .rl_home4-features_image-wrapper-2 {
+    padding-bottom: 1rem;
   }
 
   .p-quickstack {
-    padding: 1rem .5rem;
+    padding: 1rem 0;
   }
 
   .image-5 {
@@ -2030,6 +2065,20 @@ img {
 
   .div-block-8 {
     padding-top: 0;
+  }
+
+  .p-h2-calm.p-h2 {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .button-2 {
+    background-color: var(--blue);
+    color: var(--cream);
+  }
+
+  .image-7 {
+    padding-bottom: 0;
   }
 }
 
