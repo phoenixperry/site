@@ -1284,6 +1284,13 @@ img {
   line-height: 60px;
 }
 
+.p-h1.p-h1-card {
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 2.5rem;
+  line-height: 2.8rem;
+}
+
 .div-block-7 {
   margin-top: auto;
   padding-top: 0;
@@ -1318,6 +1325,10 @@ img {
 
 .image-6 {
   padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.p-hero {
   padding-bottom: 1rem;
 }
 
@@ -1584,6 +1595,11 @@ img {
     grid-column-gap: 20px;
   }
 
+  .p-h1.p-h1-card {
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
   .div-block-7 {
     padding-top: .8rem;
     padding-bottom: .8rem;
@@ -1838,6 +1854,11 @@ img {
     padding: 0 1rem;
   }
 
+  .p-h1.p-h1-card {
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
   .quick-stack-11 {
     padding-left: 0;
     padding-right: 1rem;
@@ -2089,6 +2110,10 @@ img {
     font-size: 2rem;
   }
 
+  .p-h1.p-h1-card {
+    font-size: 2.5rem;
+  }
+
   .youtube-2 {
     margin-left: auto;
     margin-right: auto;
@@ -2110,6 +2135,10 @@ img {
 
   .image-7 {
     padding-bottom: 0;
+  }
+
+  .p-hero {
+    padding-bottom: .5rem;
   }
 }
 
