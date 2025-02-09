@@ -936,7 +936,7 @@ img {
   margin-bottom: auto;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 0 2rem;
+  padding: 0 0 2rem .025rem;
 }
 
 .body-7 {
@@ -1915,8 +1915,8 @@ img {
     grid-auto-columns: 1fr;
     margin-top: 0;
     padding-top: 0;
-    padding-left: 2em;
-    padding-right: 2em;
+    padding-left: .125em;
+    padding-right: .125em;
     display: block;
   }
 
@@ -2040,7 +2040,7 @@ img {
   }
 
   .p-quickstack {
-    padding: 1rem 0;
+    padding: 1rem .125rem;
   }
 
   .image-5 {
