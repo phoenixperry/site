@@ -1,9 +1,14 @@
 // ============================================================
 // sequencer.js — Tone.js Synthesis Engine
-// Manages per-column PolySynths, Transport loop, step triggering.
+// Uses a small shared synth pool (not one per column) to avoid
+// overwhelming the audio graph on large grids.
 // ============================================================
 
-var columnSynths = [];
+var synthPool = [];             // Small pool of PolySynths (reused across columns)
+var synthPoolSize = 4;          // Number of synths in the pool
+var currentPoolIndex = 0;       // Round-robin index into pool
+var currentSynthTypeName = 'Synth';
+var columnSynths = [];          // Kept for per-column type display in headers
 var masterVolume = null;
 var currentStep = 0;
 var totalSteps = 0;
@@ -26,80 +31,97 @@ function initSequencer() {
   masterVolume = new Tone.Volume(-6).toDestination();
 }
 
-// --- Create PolySynths for each column ---
-function buildColumnSynths(numCols, defaultSynthType, maxVoices) {
-  if (maxVoices === undefined) maxVoices = 8;
+// --- Build the shared synth pool ---
+function buildColumnSynths(numCols, defaultSynthType) {
   disposeAllSynths();
 
-  columnSynths = [];
   totalSteps = numCols;
+  currentSynthTypeName = defaultSynthType || 'Synth';
 
-  for (var col = 0; col < numCols; col++) {
-    var SynthClass = SYNTH_TYPES[defaultSynthType] || Tone.Synth;
-    var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: maxVoices });
-
+  // Build a small pool of PolySynths
+  var SynthClass = SYNTH_TYPES[currentSynthTypeName] || Tone.Synth;
+  for (var i = 0; i < synthPoolSize; i++) {
+    var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
     polySynth.set({
       envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
     });
-
     polySynth.connect(masterVolume);
+    synthPool.push(polySynth);
+  }
 
-    columnSynths.push({
-      polySynth: polySynth,
-      synthType: defaultSynthType || 'Synth'
-    });
+  // Keep column display array for header labels
+  columnSynths = [];
+  for (var col = 0; col < numCols; col++) {
+    columnSynths.push({ synthType: currentSynthTypeName });
   }
 }
 
-// --- Change synth type for one column ---
+// --- Change synth type for a column (rebuilds entire pool for simplicity) ---
 function setColumnSynthType(colIndex, synthTypeName) {
   if (colIndex < 0 || colIndex >= columnSynths.length) return;
+  // For v1: changing one column changes the global synth type
+  columnSynths[colIndex].synthType = synthTypeName;
+  // Rebuild pool with the new type
+  currentSynthTypeName = synthTypeName;
+  rebuildSynthPool(synthTypeName);
+}
 
-  var old = columnSynths[colIndex];
-  old.polySynth.dispose();
+function rebuildSynthPool(synthTypeName) {
+  // Dispose old pool
+  for (var i = 0; i < synthPool.length; i++) {
+    synthPool[i].dispose();
+  }
+  synthPool = [];
+  currentPoolIndex = 0;
 
   var SynthClass = SYNTH_TYPES[synthTypeName] || Tone.Synth;
-  var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 8 });
-  polySynth.set({
-    envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
-  });
-  polySynth.connect(masterVolume);
-
-  columnSynths[colIndex] = { polySynth: polySynth, synthType: synthTypeName };
+  for (var i = 0; i < synthPoolSize; i++) {
+    var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
+    polySynth.set({
+      envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+    });
+    polySynth.connect(masterVolume);
+    synthPool.push(polySynth);
+  }
 }
 
 // --- Trigger all active notes in one column ---
 function triggerColumn(colIndex, time) {
   if (!gridDataRef || colIndex >= totalSteps) return;
-  var synth = columnSynths[colIndex];
-  if (!synth) return;
+  if (synthPool.length === 0) return;
 
-  var notes = [];
-  var velocities = [];
-
+  // Collect notes, deduplicate
+  var noteSet = {};
   for (var row = 0; row < gridDataRef.length; row++) {
     var block = gridDataRef[row][colIndex];
     if (block && block.active && block.noteData) {
-      notes.push(block.noteData.note);
-      velocities.push(block.noteData.velocity);
+      var note = block.noteData.note;
+      // Keep the loudest velocity if duplicate
+      if (!noteSet[note] || block.noteData.velocity > noteSet[note]) {
+        noteSet[note] = block.noteData.velocity;
+      }
     }
   }
 
-  if (notes.length === 0) return;
+  var uniqueNotes = Object.keys(noteSet);
+  if (uniqueNotes.length === 0) return;
 
   // Cap simultaneous voices
-  var MAX_SIMULTANEOUS = 8;
-  if (notes.length > MAX_SIMULTANEOUS) {
-    notes = notes.slice(0, MAX_SIMULTANEOUS);
-    velocities = velocities.slice(0, MAX_SIMULTANEOUS);
+  var MAX_SIMULTANEOUS = 6;
+  if (uniqueNotes.length > MAX_SIMULTANEOUS) {
+    uniqueNotes = uniqueNotes.slice(0, MAX_SIMULTANEOUS);
   }
 
+  var velocities = uniqueNotes.map(function(n) { return noteSet[n]; });
   var avgVelocity = velocities.reduce(function(a, b) { return a + b; }, 0) / velocities.length;
 
+  // Round-robin through the synth pool to allow note overlap between steps
+  var synth = synthPool[currentPoolIndex % synthPool.length];
+  currentPoolIndex = (currentPoolIndex + 1) % synthPool.length;
+
   try {
-    synth.polySynth.triggerAttackRelease(notes, stepDuration, time, avgVelocity);
+    synth.triggerAttackRelease(uniqueNotes, stepDuration, time, avgVelocity);
   } catch (e) {
-    // Some synth types may not support certain notes gracefully
     console.warn('Trigger error on column ' + colIndex + ':', e.message);
   }
 }
@@ -109,6 +131,9 @@ function startPlayback(gridData, bpm) {
   if (bpm === undefined) bpm = 120;
   gridDataRef = gridData;
   currentStep = 0;
+
+  // Always ensure audio context is running (browsers can suspend it)
+  Tone.getContext().resume();
 
   Tone.getTransport().bpm.value = bpm;
 
@@ -134,7 +159,7 @@ function startPlayback(gridData, bpm) {
 
 function stopPlayback() {
   Tone.getTransport().stop();
-  Tone.getTransport().cancel(); // cancel all scheduled events including getDraw callbacks
+  Tone.getTransport().cancel();
   Tone.getTransport().position = 0;
   if (loopEvent) {
     loopEvent.stop();
@@ -152,6 +177,7 @@ function pausePlayback() {
 }
 
 function resumePlayback() {
+  Tone.getContext().resume(); // ensure context is running
   Tone.getTransport().start();
   isPlaying = true;
 }
@@ -170,10 +196,10 @@ function setMasterVolume(percent) {
 }
 
 function disposeAllSynths() {
-  for (var i = 0; i < columnSynths.length; i++) {
-    if (columnSynths[i] && columnSynths[i].polySynth) {
-      columnSynths[i].polySynth.dispose();
-    }
+  for (var i = 0; i < synthPool.length; i++) {
+    synthPool[i].dispose();
   }
+  synthPool = [];
+  currentPoolIndex = 0;
   columnSynths = [];
 }

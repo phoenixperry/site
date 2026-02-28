@@ -26,6 +26,36 @@
         <div id="drop-zone">Drop image here</div>
       </div>
 
+      <!-- Measure grid: click two intersections to auto-detect cell size -->
+      <div class="control-group">
+        <label>Grid Measurement</label>
+        <button id="measure-grid-btn">Measure Grid</button>
+        <span id="measure-status" class="measure-label">Click two adjacent grid intersections</span>
+      </div>
+
+      <!-- Grid density — match paper grid -->
+      <div class="control-group">
+        <label for="target-rows-input">Paper Grid Rows</label>
+        <input type="number" id="target-rows-input" min="1" max="200" value="" placeholder="e.g. 31">
+      </div>
+
+      <!-- Fine-tune: block size + offsets -->
+      <div class="control-group">
+        <label for="block-size-slider">Cell Size: <span id="block-size-display">20</span> px</label>
+        <input type="range" id="block-size-slider" min="4" max="80" value="20" step="1">
+      </div>
+      <div class="control-group">
+        <label for="offset-x-slider">X Offset: <span id="offset-x-display">0</span> px</label>
+        <input type="range" id="offset-x-slider" min="0" max="60" value="0" step="1">
+      </div>
+      <div class="control-group">
+        <label for="offset-y-slider">Y Offset: <span id="offset-y-display">0</span> px</label>
+        <input type="range" id="offset-y-slider" min="0" max="60" value="0" step="1">
+      </div>
+      <div class="control-group">
+        <label><input type="checkbox" id="show-photo-cb"> Show photo behind grid</label>
+      </div>
+
       <!-- Transport -->
       <div class="control-group transport-controls">
         <button id="play-btn" disabled>Play</button>
@@ -77,6 +107,12 @@
         </select>
       </div>
 
+      <!-- Color-pitch legend -->
+      <div class="control-group">
+        <label>Color → Pitch</label>
+        <div id="color-legend"></div>
+      </div>
+
       <!-- Default synth -->
       <div class="control-group">
         <label for="synth-select">Default Synth</label>
@@ -90,15 +126,37 @@
         </select>
       </div>
 
-      <!-- Sensitivity thresholds -->
+      <!-- Paint tools -->
       <div class="control-group">
-        <label for="sat-threshold">Color Sensitivity: <span id="sat-display">15</span></label>
-        <input type="range" id="sat-threshold" min="0" max="50" value="15" step="1">
+        <label>Paint</label>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <input type="color" id="paint-color" value="#ff0000">
+          <button id="paint-btn">Paint</button>
+          <button id="erase-btn">Erase</button>
+        </div>
+      </div>
+
+      <!-- White point picker (multi-sample) -->
+      <div class="control-group">
+        <label>White Point</label>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <button id="pick-white-btn" style="flex:1">Pick from grid</button>
+          <button id="reset-white-btn" title="Clear white point samples">Reset</button>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+          <div id="white-point-swatch"></div>
+          <span id="white-point-label" class="swatch-label">Click multiple white areas for best results</span>
+        </div>
       </div>
 
       <div class="control-group">
-        <label for="light-threshold">White Threshold: <span id="light-display">85</span></label>
-        <input type="range" id="light-threshold" min="50" max="100" value="85" step="1">
+        <label for="white-tolerance">Tolerance: <span id="tolerance-display">50</span></label>
+        <input type="range" id="white-tolerance" min="5" max="300" value="50" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="chroma-slider">Color Min: <span id="chroma-display">30</span></label>
+        <input type="range" id="chroma-slider" min="5" max="100" value="30" step="1">
       </div>
 
       <!-- Info -->
