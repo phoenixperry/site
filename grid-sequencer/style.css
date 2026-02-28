@@ -1,0 +1,209 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Space Mono', monospace;
+  background: #1a1a1a;
+  color: #f0f0f0;
+  overflow: hidden;
+}
+
+/* --- Audio start overlay --- */
+#audio-start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay-content {
+  text-align: center;
+}
+
+.overlay-content h1 {
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.overlay-content p {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 24px;
+}
+
+#start-audio-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  padding: 14px 40px;
+  background: #333;
+  color: #fff;
+  border: 2px solid #00ff88;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+#start-audio-btn:hover {
+  background: #00ff88;
+  color: #111;
+}
+
+/* --- App layout --- */
+#app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+#control-panel {
+  width: 260px;
+  min-width: 260px;
+  padding: 16px;
+  background: #222;
+  overflow-y: auto;
+  border-right: 1px solid #444;
+}
+
+#canvas-container {
+  flex: 1;
+  position: relative;
+}
+
+/* --- Controls --- */
+.control-group {
+  margin-bottom: 14px;
+}
+
+.control-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input[type="file"] {
+  width: 100%;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+#drop-zone {
+  border: 2px dashed #555;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #777;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+#drop-zone.drag-over {
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+/* Transport buttons */
+.transport-controls {
+  display: flex;
+  gap: 6px;
+}
+
+button {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  background: #333;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover {
+  background: #444;
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+button:disabled:hover {
+  background: #333;
+}
+
+/* Sliders */
+input[type="range"] {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #444;
+  outline: none;
+  border-radius: 2px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00ff88;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00ff88;
+  cursor: pointer;
+  border: none;
+}
+
+/* Selects */
+select {
+  width: 100%;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  padding: 6px 8px;
+  background: #333;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  outline: none;
+}
+
+select:focus {
+  border-color: #00ff88;
+}
+
+/* Info display */
+#info-display {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid #444;
+}
+
+#info-display p {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+#info-display span {
+  color: #ccc;
+}

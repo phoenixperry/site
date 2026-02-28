@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Paper Step Sequencer</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Audio context requires user gesture — overlay handles this -->
+  <div id="audio-start-overlay">
+    <div class="overlay-content">
+      <h1>Grid Paper Step Sequencer</h1>
+      <p>Draw on grid paper. Photograph it. Play your drawing.</p>
+      <button id="start-audio-btn">Click to Start</button>
+    </div>
+  </div>
+
+  <div id="app-container">
+    <div id="control-panel">
+      <!-- Image loading -->
+      <div class="control-group">
+        <label>Load Grid Image</label>
+        <input type="file" id="image-input" accept="image/*">
+        <div id="drop-zone">Drop image here</div>
+      </div>
+
+      <!-- Transport -->
+      <div class="control-group transport-controls">
+        <button id="play-btn" disabled>Play</button>
+        <button id="pause-btn" disabled>Pause</button>
+        <button id="stop-btn" disabled>Stop</button>
+      </div>
+
+      <!-- Tempo -->
+      <div class="control-group">
+        <label for="tempo-slider">Tempo: <span id="tempo-display">120</span> BPM</label>
+        <input type="range" id="tempo-slider" min="30" max="300" value="120" step="1">
+      </div>
+
+      <!-- Volume -->
+      <div class="control-group">
+        <label for="volume-slider">Volume: <span id="volume-display">75</span>%</label>
+        <input type="range" id="volume-slider" min="0" max="100" value="75" step="1">
+      </div>
+
+      <!-- Scale -->
+      <div class="control-group">
+        <label for="scale-select">Scale</label>
+        <select id="scale-select">
+          <option value="pentatonic_major">Major Pentatonic</option>
+          <option value="pentatonic_minor">Minor Pentatonic</option>
+          <option value="major">Major</option>
+          <option value="minor">Natural Minor</option>
+          <option value="blues">Blues</option>
+          <option value="chromatic">Chromatic</option>
+        </select>
+      </div>
+
+      <!-- Root note -->
+      <div class="control-group">
+        <label for="root-select">Root Note</label>
+        <select id="root-select">
+          <option value="C">C</option>
+          <option value="C#">C#</option>
+          <option value="D">D</option>
+          <option value="D#">D#</option>
+          <option value="E">E</option>
+          <option value="F">F</option>
+          <option value="F#">F#</option>
+          <option value="G">G</option>
+          <option value="G#">G#</option>
+          <option value="A">A</option>
+          <option value="A#">A#</option>
+          <option value="B">B</option>
+        </select>
+      </div>
+
+      <!-- Default synth -->
+      <div class="control-group">
+        <label for="synth-select">Default Synth</label>
+        <select id="synth-select">
+          <option value="Synth">Synth</option>
+          <option value="FMSynth">FM Synth</option>
+          <option value="AMSynth">AM Synth</option>
+          <option value="PluckSynth">Pluck Synth</option>
+          <option value="MembraneSynth">Membrane Synth</option>
+          <option value="MetalSynth">Metal Synth</option>
+        </select>
+      </div>
+
+      <!-- Sensitivity thresholds -->
+      <div class="control-group">
+        <label for="sat-threshold">Color Sensitivity: <span id="sat-display">15</span></label>
+        <input type="range" id="sat-threshold" min="0" max="50" value="15" step="1">
+      </div>
+
+      <div class="control-group">
+        <label for="light-threshold">White Threshold: <span id="light-display">85</span></label>
+        <input type="range" id="light-threshold" min="50" max="100" value="85" step="1">
+      </div>
+
+      <!-- Info -->
+      <div id="info-display">
+        <p>Grid: <span id="grid-size">--</span></p>
+        <p>Active cells: <span id="active-count">--</span></p>
+        <p>Step: <span id="current-step">--</span></p>
+      </div>
+    </div>
+
+    <div id="canvas-container"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="https://unpkg.com/tone@15.0.4/build/Tone.js"></script>
+  <script src="color-music.js"></script>
+  <script src="sequencer.js"></script>
+  <script src="sketch.js"></script>
+</body>
+</html>
