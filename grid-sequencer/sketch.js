@@ -411,7 +411,11 @@ function wireControls() {
   });
 
   // Phase 4: Mobile panel toggle
-  document.getElementById('mobile-panel-toggle').addEventListener('click', function() {
+  // Stop touch events from propagating to p5's window-level handlers
+  // (p5.js registers touchStarted on window, which steals touches from UI controls)
+  var toggleBtn = document.getElementById('mobile-panel-toggle');
+  toggleBtn.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
+  toggleBtn.addEventListener('click', function() {
     var panel = document.getElementById('control-panel');
     var isVisible = panel.classList.toggle('mobile-visible');
     this.innerHTML = isVisible ? '&#10005;' : '&#9776;';
@@ -421,6 +425,12 @@ function wireControls() {
       windowResized();
     }, 50);
   });
+
+  // Prevent p5 from intercepting touch events on the control panel (sliders, buttons, etc.)
+  var controlPanel = document.getElementById('control-panel');
+  controlPanel.addEventListener('touchstart', function(e) { e.stopPropagation(); }, { passive: true });
+  controlPanel.addEventListener('touchmove', function(e) { e.stopPropagation(); }, { passive: true });
+  controlPanel.addEventListener('touchend', function(e) { e.stopPropagation(); }, { passive: true });
 
   // Phase 4: Orientation change
   window.addEventListener('orientationchange', function() {
@@ -1658,8 +1668,16 @@ function mouseWheel(event) {
 }
 
 // --- Phase 4: Touch handlers ---
-function touchStarted() {
+function touchStarted(e) {
   if (!imageLoaded) return true;
+
+  // Only handle touches on the canvas area — let UI controls (hamburger, sliders) work normally
+  if (e && e.target) {
+    var canvasContainer = document.getElementById('canvas-container');
+    if (!canvasContainer.contains(e.target)) {
+      return true;
+    }
+  }
 
   // Auto-close mobile panel when tapping on canvas
   var panel = document.getElementById('control-panel');
@@ -1694,8 +1712,16 @@ function touchStarted() {
   return true;
 }
 
-function touchMoved() {
+function touchMoved(e) {
   if (!imageLoaded) return true;
+
+  // Only handle touches on the canvas area
+  if (e && e.target) {
+    var canvasContainer = document.getElementById('canvas-container');
+    if (!canvasContainer.contains(e.target)) {
+      return true;
+    }
+  }
 
   if (touches.length === 2 && touchState.isPinching) {
     // Pinch zoom + two-finger pan
