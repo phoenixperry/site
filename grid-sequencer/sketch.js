@@ -242,6 +242,15 @@ function wireControls() {
     }
   });
 
+  // Auto detect grid button
+  document.getElementById('auto-detect-grid-btn').addEventListener('click', function() {
+    if (!sourceImage) {
+      document.getElementById('auto-detect-status').textContent = 'Load an image first';
+      return;
+    }
+    autoDetectGrid();
+  });
+
   // Transport
   document.getElementById('play-btn').addEventListener('click', function() {
     if (!imageLoaded || !audioStarted) return;
@@ -365,6 +374,15 @@ function wireControls() {
     recomputeNoteData();
   });
 
+  // Auto-detect white point (paper color) button
+  document.getElementById('auto-detect-white-btn').addEventListener('click', function() {
+    if (!sourceImage) {
+      document.getElementById('white-point-label').textContent = 'Load an image first';
+      return;
+    }
+    autoDetectWhite();
+  });
+
   // White tolerance
   document.getElementById('white-tolerance').addEventListener('input', function(e) {
     whiteTolerance = parseInt(e.target.value);
@@ -416,6 +434,11 @@ function loadImageFromFile(file) {
     // Reset rotation slider
     document.getElementById('rotation-slider').value = 0;
     document.getElementById('rotation-display').textContent = '0.0';
+    // Reset zoom/pan for new image
+    viewZoom = 1.0;
+    viewPanX = 0;
+    viewPanY = 0;
+    updateZoomDisplay();
     sourceImage = img;
     processImage();
     URL.revokeObjectURL(url);
@@ -579,6 +602,415 @@ function autoStraighten() {
   applyRotation(correction);
 }
 
+// --- Find dominant period in a 1D projection via autocorrelation ---
+// Returns the lag (period) with the strongest peak, or 0 if none found.
+function findPeriodByAutocorrelation(projection, minLag, maxLag) {
+  var n = projection.length;
+  if (maxLag >= n) maxLag = n - 1;
+  if (minLag > maxLag) return 0;
+
+  // Subtract mean to remove DC bias
+  var mean = 0;
+  for (var i = 0; i < n; i++) mean += projection[i];
+  mean /= n;
+
+  // Compute lag-0 autocorrelation (total energy) for normalization
+  var acZero = 0;
+  for (var i = 0; i < n; i++) {
+    var v = projection[i] - mean;
+    acZero += v * v;
+  }
+  if (acZero < 1e-6) return 0; // flat signal, no edges
+
+  // Find best lag
+  var bestLag = 0;
+  var bestScore = 0;
+
+  for (var lag = minLag; lag <= maxLag; lag++) {
+    var ac = 0;
+    for (var i = 0; i < n - lag; i++) {
+      ac += (projection[i] - mean) * (projection[i + lag] - mean);
+    }
+    var normalized = ac / acZero;
+    if (normalized > bestScore) {
+      bestScore = normalized;
+      bestLag = lag;
+    }
+  }
+
+  // Confidence check: periodic signal should produce score > 0.10
+  if (bestScore < 0.10) return 0;
+
+  // Sub-pixel parabolic refinement around the peak
+  if (bestLag > minLag && bestLag < maxLag) {
+    var acPrev = 0, acNext = 0;
+    for (var i = 0; i < n - bestLag - 1; i++) {
+      acPrev += (projection[i] - mean) * (projection[i + bestLag - 1] - mean);
+      acNext += (projection[i] - mean) * (projection[i + bestLag + 1] - mean);
+    }
+    acPrev /= acZero;
+    acNext /= acZero;
+    var denom = 2 * (2 * bestScore - acPrev - acNext);
+    if (Math.abs(denom) > 1e-6) {
+      var delta = (acPrev - acNext) / denom;
+      if (Math.abs(delta) < 0.5) {
+        bestLag = bestLag + delta;
+      }
+    }
+  }
+
+  return bestLag;
+}
+
+// --- Find phase offset via epoch folding ---
+// Folds the projection modulo the period, averages, finds peak position.
+function findPhaseOffset(projection, period) {
+  var n = projection.length;
+  var intPeriod = Math.round(period);
+  if (intPeriod < 2 || intPeriod >= n) return 0;
+
+  // Fold projection into one period and average
+  var folded = new Float32Array(intPeriod);
+  var counts = new Float32Array(intPeriod);
+
+  for (var i = 0; i < n; i++) {
+    var bin = i % intPeriod;
+    folded[bin] += projection[i];
+    counts[bin]++;
+  }
+
+  for (var i = 0; i < intPeriod; i++) {
+    if (counts[i] > 0) folded[i] /= counts[i];
+  }
+
+  // Find the peak of the folded signal — that's where grid lines fall
+  var bestBin = 0;
+  var bestVal = folded[0];
+  for (var i = 1; i < intPeriod; i++) {
+    if (folded[i] > bestVal) {
+      bestVal = folded[i];
+      bestBin = i;
+    }
+  }
+
+  return bestBin;
+}
+
+// --- Core grid detection: directional edge projection + autocorrelation ---
+// Returns { blockSize, offsetX, offsetY } or null if no grid detected.
+function detectGridParameters(img) {
+  img.loadPixels();
+  var pixels = img.pixels;
+  var origW = img.width;
+  var origH = img.height;
+
+  // Step 1: Downsample to ~400px wide (same approach as autoStraighten)
+  var downScale = Math.min(1, 400 / origW);
+  var w = Math.floor(origW * downScale);
+  var h = Math.floor(origH * downScale);
+
+  // Grayscale buffer
+  var gray = new Float32Array(w * h);
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      var sx = Math.floor(x / downScale);
+      var sy = Math.floor(y / downScale);
+      var idx = (sy * origW + sx) * 4;
+      gray[y * w + x] = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
+    }
+  }
+
+  // Step 2: Directional Sobel — compute |gx| and |gy| separately
+  var absGx = new Float32Array(w * h); // vertical edge strength
+  var absGy = new Float32Array(w * h); // horizontal edge strength
+
+  for (var y = 1; y < h - 1; y++) {
+    for (var x = 1; x < w - 1; x++) {
+      var gx = -gray[(y - 1) * w + (x - 1)] + gray[(y - 1) * w + (x + 1)]
+             - 2 * gray[y * w + (x - 1)]     + 2 * gray[y * w + (x + 1)]
+             - gray[(y + 1) * w + (x - 1)]   + gray[(y + 1) * w + (x + 1)];
+
+      var gy = -gray[(y - 1) * w + (x - 1)] - 2 * gray[(y - 1) * w + x] - gray[(y - 1) * w + (x + 1)]
+             + gray[(y + 1) * w + (x - 1)]   + 2 * gray[(y + 1) * w + x] + gray[(y + 1) * w + (x + 1)];
+
+      absGx[y * w + x] = Math.abs(gx);
+      absGy[y * w + x] = Math.abs(gy);
+    }
+  }
+
+  // Step 3: 1D Projections
+  // X-projection: sum |gx| down each column → peaks at vertical grid lines
+  var projX = new Float32Array(w);
+  for (var x = 0; x < w; x++) {
+    var sum = 0;
+    for (var y = 1; y < h - 1; y++) {
+      sum += absGx[y * w + x];
+    }
+    projX[x] = sum;
+  }
+
+  // Y-projection: sum |gy| across each row → peaks at horizontal grid lines
+  var projY = new Float32Array(h);
+  for (var y = 0; y < h; y++) {
+    var sum = 0;
+    for (var x = 1; x < w - 1; x++) {
+      sum += absGy[y * w + x];
+    }
+    projY[y] = sum;
+  }
+
+  // Step 4: Autocorrelation to find period
+  var minLag = 4;
+  var maxLagX = Math.min(Math.floor(w / 3), Math.round(80 * downScale));
+  var maxLagY = Math.min(Math.floor(h / 3), Math.round(80 * downScale));
+
+  var periodX = findPeriodByAutocorrelation(projX, minLag, maxLagX);
+  var periodY = findPeriodByAutocorrelation(projY, minLag, maxLagY);
+
+  // Use the average of X and Y periods if they agree (grid should be square)
+  var periodDown;
+  if (periodX > 0 && periodY > 0) {
+    var ratio = periodX / periodY;
+    if (ratio > 0.8 && ratio < 1.25) {
+      periodDown = (periodX + periodY) / 2;
+    } else {
+      // They disagree — use whichever is nonzero, prefer X
+      periodDown = periodX;
+    }
+  } else if (periodX > 0) {
+    periodDown = periodX;
+  } else if (periodY > 0) {
+    periodDown = periodY;
+  } else {
+    return null; // No periodic pattern found
+  }
+
+  // Scale back to original image dimensions
+  var detectedBlockSize = Math.round(periodDown / downScale);
+  detectedBlockSize = Math.max(4, Math.min(80, detectedBlockSize));
+
+  // Step 5: Phase detection for offsets
+  var offsetXDown = findPhaseOffset(projX, periodDown);
+  var offsetYDown = findPhaseOffset(projY, periodDown);
+
+  var detectedOffsetX = Math.round(offsetXDown / downScale);
+  var detectedOffsetY = Math.round(offsetYDown / downScale);
+
+  // Clamp offsets to [0, blockSize-1] then to slider range
+  detectedOffsetX = detectedOffsetX % detectedBlockSize;
+  detectedOffsetY = detectedOffsetY % detectedBlockSize;
+  detectedOffsetX = Math.max(0, Math.min(60, detectedOffsetX));
+  detectedOffsetY = Math.max(0, Math.min(60, detectedOffsetY));
+
+  return {
+    blockSize: detectedBlockSize,
+    offsetX: detectedOffsetX,
+    offsetY: detectedOffsetY
+  };
+}
+
+// --- Auto-detect grid cell size and alignment offsets ---
+function autoDetectGrid() {
+  if (!sourceImage) return;
+
+  var btn = document.getElementById('auto-detect-grid-btn');
+  var statusEl = document.getElementById('auto-detect-status');
+  btn.classList.add('detecting');
+  btn.disabled = true;
+  statusEl.textContent = 'Analyzing grid pattern...';
+
+  // setTimeout lets the UI update before blocking computation
+  setTimeout(function() {
+    try {
+      var result = detectGridParameters(sourceImage);
+
+      if (result === null) {
+        statusEl.textContent = 'Could not detect grid. Try Measure Grid instead.';
+        btn.classList.remove('detecting');
+        btn.disabled = false;
+        return;
+      }
+
+      // Apply detected values
+      BLOCK_SIZE = result.blockSize;
+      sampleOffsetX = result.offsetX;
+      sampleOffsetY = result.offsetY;
+
+      // Sync all sliders and displays
+      document.getElementById('block-size-slider').value = BLOCK_SIZE;
+      document.getElementById('block-size-display').textContent = BLOCK_SIZE;
+      document.getElementById('offset-x-slider').value = sampleOffsetX;
+      document.getElementById('offset-x-display').textContent = sampleOffsetX;
+      document.getElementById('offset-y-slider').value = sampleOffsetY;
+      document.getElementById('offset-y-display').textContent = sampleOffsetY;
+
+      // Reprocess image with new grid parameters
+      if (isPlaying) stopPlayback();
+      processImage();
+
+      statusEl.textContent = 'Detected: ' + BLOCK_SIZE + 'px cells, offset (' +
+        sampleOffsetX + ', ' + sampleOffsetY + ')';
+
+    } catch (e) {
+      console.error('Auto-detect grid error:', e);
+      statusEl.textContent = 'Detection failed. Try Measure Grid instead.';
+    }
+
+    btn.classList.remove('detecting');
+    btn.disabled = false;
+  }, 50);
+}
+
+// --- Auto-detect paper color (white point) from image ---
+// Uses a quantized RGB histogram of bright pixels to find the dominant paper color.
+// Returns { r, g, b } or null if detection fails.
+function autoDetectWhitePoint(img) {
+  img.loadPixels();
+  var pixels = img.pixels;
+  var origW = img.width;
+  var origH = img.height;
+
+  // Step 1: Downsample to ~200px wide for speed
+  var downScale = Math.min(1, 200 / origW);
+  var w = Math.floor(origW * downScale);
+  var h = Math.floor(origH * downScale);
+
+  // Step 2 & 3: Lightness filter + quantized 3D RGB histogram
+  // 4-bit quantization: 16 bins per channel = 4096 total bins
+  var QUANT_SHIFT = 4;
+  var BINS_PER_CH = 16;
+  var histSize = BINS_PER_CH * BINS_PER_CH * BINS_PER_CH; // 4096
+  var histogram = new Int32Array(histSize);
+
+  var lightnessFloor = 80;
+  var totalPixels = w * h;
+  var passedPixels = 0;
+
+  // Try with progressively lower lightness threshold if needed (dim photos)
+  while (lightnessFloor >= 30) {
+    for (var i = 0; i < histSize; i++) histogram[i] = 0;
+    passedPixels = 0;
+
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var sx = Math.floor(x / downScale);
+        var sy = Math.floor(y / downScale);
+        var idx = (sy * origW + sx) * 4;
+        var r = pixels[idx];
+        var g = pixels[idx + 1];
+        var b = pixels[idx + 2];
+
+        // Weighted luminance check
+        var lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        if (lum < lightnessFloor) continue;
+
+        passedPixels++;
+
+        // Quantize to 4-bit and index into flat histogram
+        var rBin = r >> QUANT_SHIFT;
+        var gBin = g >> QUANT_SHIFT;
+        var bBin = b >> QUANT_SHIFT;
+        var binIdx = (rBin * BINS_PER_CH + gBin) * BINS_PER_CH + bBin;
+        histogram[binIdx]++;
+      }
+    }
+
+    // Need at least 10% of pixels to pass for a reliable result
+    if (passedPixels >= totalPixels * 0.10) break;
+    lightnessFloor -= 20;
+  }
+
+  if (passedPixels < totalPixels * 0.05) return null; // too few bright pixels
+
+  // Step 4: Find the mode bin (most common color cluster)
+  var modeBin = 0;
+  var modeCount = 0;
+  for (var i = 0; i < histSize; i++) {
+    if (histogram[i] > modeCount) {
+      modeCount = histogram[i];
+      modeBin = i;
+    }
+  }
+
+  // Step 5: Compute mean RGB of all pixels in the mode bin (sub-bin accuracy)
+  var modeB = modeBin % BINS_PER_CH;
+  var modeG = Math.floor(modeBin / BINS_PER_CH) % BINS_PER_CH;
+  var modeR = Math.floor(modeBin / (BINS_PER_CH * BINS_PER_CH));
+
+  var sumR = 0, sumG = 0, sumB = 0, count = 0;
+
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      var sx = Math.floor(x / downScale);
+      var sy = Math.floor(y / downScale);
+      var idx = (sy * origW + sx) * 4;
+      var r = pixels[idx];
+      var g = pixels[idx + 1];
+      var b = pixels[idx + 2];
+
+      if ((r >> QUANT_SHIFT) === modeR &&
+          (g >> QUANT_SHIFT) === modeG &&
+          (b >> QUANT_SHIFT) === modeB) {
+        sumR += r;
+        sumG += g;
+        sumB += b;
+        count++;
+      }
+    }
+  }
+
+  if (count === 0) return null;
+
+  return {
+    r: Math.round(sumR / count),
+    g: Math.round(sumG / count),
+    b: Math.round(sumB / count)
+  };
+}
+
+// --- Auto-detect white point and apply to UI ---
+function autoDetectWhite() {
+  if (!sourceImage) return;
+
+  var btn = document.getElementById('auto-detect-white-btn');
+  var statusEl = document.getElementById('white-point-label');
+  if (btn) btn.disabled = true;
+  statusEl.textContent = 'Detecting paper color...';
+
+  setTimeout(function() {
+    try {
+      var result = autoDetectWhitePoint(sourceImage);
+
+      if (result === null) {
+        statusEl.textContent = 'Could not detect paper color. Pick manually.';
+        if (btn) btn.disabled = false;
+        return;
+      }
+
+      // Apply as white point
+      whiteSamples = [result];
+      whitePoint = {
+        r: result.r,
+        g: result.g,
+        b: result.b
+      };
+
+      var swatch = document.getElementById('white-point-swatch');
+      swatch.style.background = 'rgb(' + whitePoint.r + ',' + whitePoint.g + ',' + whitePoint.b + ')';
+      statusEl.textContent =
+        'Auto → rgb(' + whitePoint.r + ', ' + whitePoint.g + ', ' + whitePoint.b + ')';
+
+      recomputeNoteData();
+
+    } catch (e) {
+      console.error('Auto-detect white point error:', e);
+      statusEl.textContent = 'Detection failed. Pick manually.';
+    }
+
+    if (btn) btn.disabled = false;
+  }, 50);
+}
+
 // --- Image processing pipeline ---
 function processImage() {
   if (!sourceImage) return;
@@ -625,17 +1057,16 @@ function processImage() {
   calculateCellSize();
   buildColumnSynths(gridCols, currentSynthType);
 
-  // Phase 3: Reset zoom/pan when image is reprocessed
-  viewZoom = 1.0;
-  viewPanX = 0;
-  viewPanY = 0;
-  updateZoomDisplay();
-
   document.getElementById('grid-size').textContent = gridCols + ' x ' + gridRows;
   document.getElementById('active-count').textContent = activeCount;
   syncRowsDisplay();
 
   imageLoaded = true;
+
+  // Auto-detect white point on first load if not already set
+  if (!whitePoint) {
+    autoDetectWhite();
+  }
 }
 
 // --- Sync the rows input placeholder with current grid dimensions ---
@@ -1146,14 +1577,17 @@ function mouseReleased() {
   isPanning = false;
 }
 
-// --- Phase 3: Mouse wheel zoom toward cursor ---
+// --- Phase 3: Mouse wheel zoom (Ctrl/Cmd + scroll only) ---
 function mouseWheel(event) {
-  if (!imageLoaded) return false;
+  if (!imageLoaded) return true; // let page scroll normally
+
+  // Only zoom when Ctrl (Windows/Linux) or Cmd (Mac) is held
+  if (!event.ctrlKey && !event.metaKey) return true; // let page scroll normally
 
   // Check if mouse is over the canvas
-  var container = document.getElementById('canvas-container');
-  var rect = container.getBoundingClientRect();
   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return true;
+
+  event.preventDefault(); // prevent browser zoom when Ctrl+scroll
 
   var zoomFactor = event.delta > 0 ? 0.9 : 1.1;
   var newZoom = viewZoom * zoomFactor;
@@ -1165,7 +1599,7 @@ function mouseWheel(event) {
   viewZoom = newZoom;
 
   updateZoomDisplay();
-  return false; // prevent page scroll
+  return false;
 }
 
 // --- Phase 4: Touch handlers ---

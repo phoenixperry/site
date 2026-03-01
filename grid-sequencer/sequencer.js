@@ -31,6 +31,9 @@ function initSequencer() {
   masterVolume = new Tone.Volume(-6).toDestination();
 }
 
+// --- Synth types that don't support PolySynth (not Monophonic subclass) ---
+var NON_POLY_SYNTHS = { 'PluckSynth': true };
+
 // --- Build the shared synth pool ---
 function buildColumnSynths(numCols, defaultSynthType) {
   disposeAllSynths();
@@ -38,15 +41,32 @@ function buildColumnSynths(numCols, defaultSynthType) {
   totalSteps = numCols;
   currentSynthTypeName = defaultSynthType || 'Synth';
 
-  // Build a small pool of PolySynths
   var SynthClass = SYNTH_TYPES[currentSynthTypeName] || Tone.Synth;
+
   for (var i = 0; i < synthPoolSize; i++) {
-    var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
-    polySynth.set({
-      envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
-    });
-    polySynth.connect(masterVolume);
-    synthPool.push(polySynth);
+    try {
+      var polySynth;
+      if (NON_POLY_SYNTHS[currentSynthTypeName]) {
+        // PluckSynth etc. don't support PolySynth — use mono synth directly
+        polySynth = new SynthClass();
+      } else {
+        polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
+        polySynth.set({
+          envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+        });
+      }
+      polySynth.connect(masterVolume);
+      synthPool.push(polySynth);
+    } catch (e) {
+      console.warn('Synth creation failed for ' + currentSynthTypeName + ', falling back to Synth:', e.message);
+      // Fallback to basic Synth
+      var fallback = new Tone.PolySynth(Tone.Synth, { maxPolyphony: 6 });
+      fallback.set({
+        envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+      });
+      fallback.connect(masterVolume);
+      synthPool.push(fallback);
+    }
   }
 
   // Keep column display array for header labels
@@ -75,13 +95,29 @@ function rebuildSynthPool(synthTypeName) {
   currentPoolIndex = 0;
 
   var SynthClass = SYNTH_TYPES[synthTypeName] || Tone.Synth;
+
   for (var i = 0; i < synthPoolSize; i++) {
-    var polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
-    polySynth.set({
-      envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
-    });
-    polySynth.connect(masterVolume);
-    synthPool.push(polySynth);
+    try {
+      var polySynth;
+      if (NON_POLY_SYNTHS[synthTypeName]) {
+        polySynth = new SynthClass();
+      } else {
+        polySynth = new Tone.PolySynth(SynthClass, { maxPolyphony: 6 });
+        polySynth.set({
+          envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+        });
+      }
+      polySynth.connect(masterVolume);
+      synthPool.push(polySynth);
+    } catch (e) {
+      console.warn('Synth rebuild failed for ' + synthTypeName + ', falling back to Synth:', e.message);
+      var fallback = new Tone.PolySynth(Tone.Synth, { maxPolyphony: 6 });
+      fallback.set({
+        envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+      });
+      fallback.connect(masterVolume);
+      synthPool.push(fallback);
+    }
   }
 }
 
@@ -120,7 +156,12 @@ function triggerColumn(colIndex, time) {
   currentPoolIndex = (currentPoolIndex + 1) % synthPool.length;
 
   try {
-    synth.triggerAttackRelease(uniqueNotes, stepDuration, time, avgVelocity);
+    if (NON_POLY_SYNTHS[currentSynthTypeName]) {
+      // Mono synths: play only the first note
+      synth.triggerAttackRelease(uniqueNotes[0], stepDuration, time, avgVelocity);
+    } else {
+      synth.triggerAttackRelease(uniqueNotes, stepDuration, time, avgVelocity);
+    }
   } catch (e) {
     console.warn('Trigger error on column ' + colIndex + ':', e.message);
   }

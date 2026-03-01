@@ -46,6 +46,7 @@
           <div class="control-group">
             <div style="display: flex; gap: 6px; align-items: center;">
               <button id="pick-white-btn" style="flex:1">Pick from grid</button>
+              <button id="auto-detect-white-btn" title="Auto-detect paper color">Auto</button>
               <button id="reset-white-btn" title="Clear white point samples">Reset</button>
             </div>
             <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
@@ -72,6 +73,8 @@
             <label>Grid Measurement</label>
             <button id="measure-grid-btn">Measure Grid</button>
             <span id="measure-status" class="measure-label">Click two adjacent grid intersections</span>
+            <button id="auto-detect-grid-btn" style="width:100%; margin-top:6px;">Auto Detect Grid</button>
+            <span id="auto-detect-status" class="measure-label"></span>
           </div>
           <div class="control-group">
             <label for="target-rows-input">Paper Grid Rows</label>
@@ -199,8 +202,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
   <script src="https://unpkg.com/tone@15.0.4/build/Tone.js"></script>
-  <script src="color-music.js"></script>
-  <script src="sequencer.js"></script>
-  <script src="sketch.js"></script>
+  <script src="color-music.js?v=5"></script>
+  <script src="sequencer.js?v=5"></script>
+  <script src="sketch.js?v=5"></script>
 </body>
 </html>

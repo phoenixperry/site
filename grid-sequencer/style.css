@@ -329,6 +329,14 @@ select:focus {
   margin-top: 2px;
 }
 
+/* Auto-detect grid button */
+#auto-detect-grid-btn.detecting {
+  background: #ffaa00;
+  color: #111;
+  border-color: #ffaa00;
+  cursor: wait;
+}
+
 /* White point picker */
 #pick-white-btn {
   width: 100%;
