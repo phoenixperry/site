@@ -24,7 +24,9 @@ var pickingWhitePoint = false; // true while in multi-sample picking mode
 var whiteSamples = [];         // array of { r, g, b } — all sampled white points
 var paintMode = false;         // true when paint tool is active
 var eraseMode = false;         // true when erase tool is active
-var paintColor = { r: 255, g: 0, b: 0 };  // current paint color from picker
+var paintColor = { r: 255, g: 0, b: 0 };  // current paint color (derived from hue+sat)
+var paintHue = 0;              // paint hue 0-360
+var paintSat = 100;            // paint saturation 0-100
 var sampleOffsetX = 0;         // pixel offset into source image for grid alignment
 var sampleOffsetY = 0;
 var showPhoto = false;          // show source image behind grid
@@ -34,6 +36,25 @@ var measuringGrid = false;      // true while in measurement mode
 var measurePoint1 = null;       // { sx, sy } — first click in source-image pixel coords
 var measureClickCount = 0;      // 0 = waiting for first click, 1 = waiting for second
 
+// Phase 2: Auto-straighten
+var originalSourceImage = null;  // unrotated original
+var rotationAngle = 0;           // degrees, -15 to +15
+
+// Phase 3: Zoom/pan
+var viewZoom = 1.0;
+var viewPanX = 0, viewPanY = 0;
+var MIN_ZOOM = 0.5, MAX_ZOOM = 10.0;
+var isPanning = false;
+var panStartX, panStartY, panStartViewX, panStartViewY;
+
+// Phase 4: Touch state
+var touchState = {
+  lastPinchDist: 0,
+  lastMidX: 0,
+  lastMidY: 0,
+  isPinching: false
+};
+
 // --- p5 setup ---
 function setup() {
   var container = document.getElementById('canvas-container');
@@ -41,7 +62,13 @@ function setup() {
   var ch = container.offsetHeight;
   var canvas = createCanvas(cw, ch);
   canvas.parent('canvas-container');
-  pixelDensity(1);
+
+  // Phase 4: Retina support (capped at 2x for performance)
+  pixelDensity(Math.min(window.devicePixelRatio || 1, 2));
+
+  // Phase 4: Prevent iOS Safari bounce/scroll on canvas
+  canvas.elt.style.touchAction = 'none';
+
   background(30);
   wireControls();
   initSequencer();
@@ -53,14 +80,35 @@ function setup() {
 function draw() {
   if (!imageLoaded) return;
   background(30);
+
+  // Phase 3: Apply zoom/pan transform
+  push();
+  translate(viewPanX, viewPanY);
+  scale(viewZoom);
+
   drawGrid();
   drawPlayhead();
   drawColumnHeaders();
   drawMeasureOverlay();
+
+  pop();
+}
+
+// --- Phase 1: Wire collapsible section toggles ---
+function wireSectionToggles() {
+  var headers = document.querySelectorAll('.section-header');
+  for (var i = 0; i < headers.length; i++) {
+    headers[i].addEventListener('click', function() {
+      this.parentElement.classList.toggle('collapsed');
+    });
+  }
 }
 
 // --- Wire DOM controls ---
 function wireControls() {
+  // Phase 1: Section toggles
+  wireSectionToggles();
+
   // Audio start overlay
   document.getElementById('start-audio-btn').addEventListener('click', function() {
     Tone.start().then(function() {
@@ -96,9 +144,25 @@ function wireControls() {
     }
   });
 
-  // Also allow clicking the drop zone to trigger file input
+  // Click drop zone to trigger file input
   dropZone.addEventListener('click', function() {
     document.getElementById('image-input').click();
+  });
+
+  // Phase 2: Rotation slider
+  document.getElementById('rotation-slider').addEventListener('input', function(e) {
+    rotationAngle = parseFloat(e.target.value);
+    document.getElementById('rotation-display').textContent = rotationAngle.toFixed(1);
+    if (originalSourceImage) {
+      applyRotation(rotationAngle);
+    }
+  });
+
+  // Phase 2: Auto straighten button
+  document.getElementById('auto-straighten-btn').addEventListener('click', function() {
+    if (originalSourceImage) {
+      autoStraighten();
+    }
   });
 
   // Paper grid rows — compute block size from target row count
@@ -109,7 +173,6 @@ function wireControls() {
     var newBlockSize = Math.floor(imgH / targetRows);
     newBlockSize = Math.max(4, Math.min(80, newBlockSize));
     BLOCK_SIZE = newBlockSize;
-    // Sync the cell size slider
     document.getElementById('block-size-slider').value = BLOCK_SIZE;
     document.getElementById('block-size-display').textContent = BLOCK_SIZE;
     if (imageLoaded) {
@@ -125,7 +188,6 @@ function wireControls() {
     if (imageLoaded) {
       if (isPlaying) stopPlayback();
       processImage();
-      // Update the rows display to reflect current block size
       syncRowsDisplay();
     }
   });
@@ -163,7 +225,6 @@ function wireControls() {
     }
     measuringGrid = !measuringGrid;
     if (measuringGrid) {
-      // Enter measurement mode
       measureClickCount = 0;
       measurePoint1 = null;
       paintMode = false;
@@ -171,14 +232,12 @@ function wireControls() {
       deactivateWhitePointPicking();
       document.getElementById('paint-btn').classList.remove('active');
       document.getElementById('erase-btn').classList.remove('active');
-      // Auto-enable background photo so user can see the grid lines
       showPhoto = true;
       document.getElementById('show-photo-cb').checked = true;
       this.classList.add('measuring');
       this.textContent = 'Click 1st intersection...';
       document.getElementById('measure-status').textContent = 'Click a grid line intersection on the photo';
     } else {
-      // Cancel measurement mode
       deactivateMeasuring();
     }
   });
@@ -262,10 +321,18 @@ function wireControls() {
     this.classList.toggle('active', eraseMode);
   });
 
-  // Paint color picker
-  document.getElementById('paint-color').addEventListener('input', function(e) {
-    var hex = e.target.value;
-    paintColor = hexToRgb(hex);
+  // Paint hue slider
+  document.getElementById('paint-hue-slider').addEventListener('input', function(e) {
+    paintHue = parseInt(e.target.value);
+    document.getElementById('paint-hue-display').textContent = paintHue;
+    updatePaintColor();
+  });
+
+  // Paint saturation slider
+  document.getElementById('paint-sat-slider').addEventListener('input', function(e) {
+    paintSat = parseInt(e.target.value);
+    document.getElementById('paint-sat-display').textContent = paintSat;
+    updatePaintColor();
   });
 
   // White point picker (multi-sample: stays in picking mode until toggled off)
@@ -273,14 +340,13 @@ function wireControls() {
     if (!imageLoaded) return;
     pickingWhitePoint = !pickingWhitePoint;
     if (pickingWhitePoint) {
-      whiteSamples = [];  // start fresh each time picking is activated
+      whiteSamples = [];
       paintMode = false;
       eraseMode = false;
       deactivateMeasuring();
       document.getElementById('paint-btn').classList.remove('active');
       document.getElementById('erase-btn').classList.remove('active');
     } else {
-      // Toggled off — finalize if we have samples
       if (whiteSamples.length > 0) {
         finalizeWhitePoint();
       }
@@ -312,12 +378,44 @@ function wireControls() {
     document.getElementById('chroma-display').textContent = minChroma;
     recomputeNoteData();
   });
+
+  // Phase 3: Zoom reset button
+  document.getElementById('reset-zoom-btn').addEventListener('click', function() {
+    viewZoom = 1.0;
+    viewPanX = 0;
+    viewPanY = 0;
+    updateZoomDisplay();
+  });
+
+  // Phase 4: Mobile panel toggle
+  document.getElementById('mobile-panel-toggle').addEventListener('click', function() {
+    var panel = document.getElementById('control-panel');
+    var isVisible = panel.classList.toggle('mobile-visible');
+    this.innerHTML = isVisible ? '&#10005;' : '&#9776;';
+    this.classList.toggle('panel-open', isVisible);
+    // Recalculate canvas size after panel show/hide
+    setTimeout(function() {
+      windowResized();
+    }, 50);
+  });
+
+  // Phase 4: Orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() {
+      windowResized();
+    }, 300);
+  });
 }
 
-// --- Load image from File object ---
+// --- Phase 2: Load image from File object ---
 function loadImageFromFile(file) {
   var url = URL.createObjectURL(file);
   loadImage(url, function(img) {
+    originalSourceImage = img;  // Store unrotated original
+    rotationAngle = 0;
+    // Reset rotation slider
+    document.getElementById('rotation-slider').value = 0;
+    document.getElementById('rotation-display').textContent = '0.0';
     sourceImage = img;
     processImage();
     URL.revokeObjectURL(url);
@@ -325,6 +423,160 @@ function loadImageFromFile(file) {
     console.error('Failed to load image:', err);
     alert('Could not load image. Please try a JPG or PNG file.');
   });
+}
+
+// --- Phase 2: Apply rotation to original image ---
+function applyRotation(angleDeg) {
+  if (!originalSourceImage) return;
+
+  rotationAngle = angleDeg;
+
+  // Skip rotation for tiny angles — use original directly
+  if (Math.abs(angleDeg) < 0.05) {
+    sourceImage = originalSourceImage;
+    processImage();
+    return;
+  }
+
+  var rad = angleDeg * Math.PI / 180;
+  var cosA = Math.abs(Math.cos(rad));
+  var sinA = Math.abs(Math.sin(rad));
+
+  var origW = originalSourceImage.width;
+  var origH = originalSourceImage.height;
+
+  // Compute rotated bounding box
+  var newW = Math.ceil(origW * cosA + origH * sinA);
+  var newH = Math.ceil(origH * cosA + origW * sinA);
+
+  // Create offscreen canvas for rotation
+  var offCanvas = document.createElement('canvas');
+  offCanvas.width = newW;
+  offCanvas.height = newH;
+  var ctx = offCanvas.getContext('2d');
+
+  // Fill with white background (avoid transparent edges)
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, newW, newH);
+
+  // Draw rotated image
+  ctx.translate(newW / 2, newH / 2);
+  ctx.rotate(rad);
+  originalSourceImage.loadPixels();
+  ctx.drawImage(originalSourceImage.canvas, -origW / 2, -origH / 2);
+
+  // Convert back to p5 image
+  var rotatedImg = createImage(newW, newH);
+  rotatedImg.drawingContext.drawImage(offCanvas, 0, 0);
+  rotatedImg.loadPixels();
+
+  sourceImage = rotatedImg;
+  processImage();
+}
+
+// --- Phase 2: Auto-straighten using gradient direction histogram ---
+function autoStraighten() {
+  if (!originalSourceImage) return;
+
+  originalSourceImage.loadPixels();
+  var pixels = originalSourceImage.pixels;
+  var origW = originalSourceImage.width;
+  var origH = originalSourceImage.height;
+
+  // Downsample to ~400px wide for performance
+  var downScale = Math.min(1, 400 / origW);
+  var w = Math.floor(origW * downScale);
+  var h = Math.floor(origH * downScale);
+
+  // Create grayscale buffer (downsampled)
+  var gray = new Float32Array(w * h);
+  for (var y = 0; y < h; y++) {
+    for (var x = 0; x < w; x++) {
+      var sx = Math.floor(x / downScale);
+      var sy = Math.floor(y / downScale);
+      var idx = (sy * origW + sx) * 4;
+      gray[y * w + x] = 0.299 * pixels[idx] + 0.587 * pixels[idx + 1] + 0.114 * pixels[idx + 2];
+    }
+  }
+
+  // Sobel edge detection + gradient direction histogram
+  var binSize = 0.1; // degrees per bin
+  var numBins = Math.ceil(180 / binSize);
+  var histogram = new Float32Array(numBins);
+
+  for (var y = 1; y < h - 1; y++) {
+    for (var x = 1; x < w - 1; x++) {
+      // Sobel kernels
+      var gx = -gray[(y - 1) * w + (x - 1)] + gray[(y - 1) * w + (x + 1)]
+             - 2 * gray[y * w + (x - 1)]     + 2 * gray[y * w + (x + 1)]
+             - gray[(y + 1) * w + (x - 1)]   + gray[(y + 1) * w + (x + 1)];
+
+      var gy = -gray[(y - 1) * w + (x - 1)] - 2 * gray[(y - 1) * w + x] - gray[(y - 1) * w + (x + 1)]
+             + gray[(y + 1) * w + (x - 1)]   + 2 * gray[(y + 1) * w + x] + gray[(y + 1) * w + (x + 1)];
+
+      var magnitude = Math.sqrt(gx * gx + gy * gy);
+      if (magnitude < 30) continue; // skip weak edges
+
+      // Gradient direction → edge direction is perpendicular
+      var angle = Math.atan2(gy, gx) * 180 / Math.PI;
+      // Normalize to 0-180 range
+      var edgeAngle = ((angle + 90) % 180 + 180) % 180;
+
+      var bin = Math.floor(edgeAngle / binSize);
+      if (bin >= 0 && bin < numBins) {
+        histogram[bin] += magnitude;
+      }
+    }
+  }
+
+  // Find dominant angle near 0° (horizontal lines) and 90° (vertical lines)
+  // Search within ±15° of horizontal (0°/180°) and vertical (90°)
+  var bestAngle = 0;
+  var bestScore = 0;
+
+  // Helper to score a bin with smoothing
+  function scoreBin(centerBin) {
+    var score = 0;
+    for (var offset = -3; offset <= 3; offset++) {
+      var b = centerBin + offset;
+      // Wrap around
+      if (b < 0) b += numBins;
+      if (b >= numBins) b -= numBins;
+      score += histogram[b];
+    }
+    return score;
+  }
+
+  // Search around 0°/180° (horizontal edges)
+  for (var deg = -15; deg <= 15; deg += binSize) {
+    var normalizedDeg = ((deg % 180) + 180) % 180;
+    var bin = Math.floor(normalizedDeg / binSize);
+    var score = scoreBin(bin);
+    if (score > bestScore) {
+      bestScore = score;
+      bestAngle = deg;
+    }
+  }
+
+  // Search around 90° (vertical edges)
+  for (var deg = 75; deg <= 105; deg += binSize) {
+    var bin = Math.floor(deg / binSize);
+    var score = scoreBin(bin);
+    if (score > bestScore) {
+      bestScore = score;
+      bestAngle = deg - 90; // deviation from vertical
+    }
+  }
+
+  // The correction angle is the negative of the detected deviation
+  var correction = -bestAngle;
+  correction = Math.max(-15, Math.min(15, correction));
+
+  // Apply the correction
+  rotationAngle = correction;
+  document.getElementById('rotation-slider').value = correction;
+  document.getElementById('rotation-display').textContent = correction.toFixed(1);
+  applyRotation(correction);
 }
 
 // --- Image processing pipeline ---
@@ -373,6 +625,12 @@ function processImage() {
   calculateCellSize();
   buildColumnSynths(gridCols, currentSynthType);
 
+  // Phase 3: Reset zoom/pan when image is reprocessed
+  viewZoom = 1.0;
+  viewPanX = 0;
+  viewPanY = 0;
+  updateZoomDisplay();
+
   document.getElementById('grid-size').textContent = gridCols + ' x ' + gridRows;
   document.getElementById('active-count').textContent = activeCount;
   syncRowsDisplay();
@@ -383,11 +641,10 @@ function processImage() {
 // --- Sync the rows input placeholder with current grid dimensions ---
 function syncRowsDisplay() {
   var input = document.getElementById('target-rows-input');
-  // Only update the placeholder, not the value — let the user keep their typed number
   input.placeholder = gridRows + ' rows';
 }
 
-// --- Sample average RGB of a 20x20 block ---
+// --- Sample average RGB of a block ---
 function sampleBlock(startX, startY, blockW, blockH) {
   var totalR = 0, totalG = 0, totalB = 0;
   var count = 0;
@@ -466,10 +723,19 @@ function hexToRgb(hex) {
   } : { r: 255, g: 0, b: 0 };
 }
 
+// --- Update paint color from hue + saturation sliders ---
+function updatePaintColor() {
+  var rgb = hslToRgb(paintHue, paintSat, 50);
+  paintColor = rgb;
+  var swatch = document.getElementById('paint-swatch');
+  if (swatch) {
+    swatch.style.background = 'hsl(' + paintHue + ',' + paintSat + '%,50%)';
+  }
+}
+
 // --- Deactivate white point picking mode ---
 function deactivateWhitePointPicking() {
   if (pickingWhitePoint) {
-    // If we have samples, finalize before deactivating
     if (whiteSamples.length > 0) {
       finalizeWhitePoint();
     }
@@ -495,7 +761,6 @@ function finalizeWhitePoint() {
     g: Math.round(totalG / n),
     b: Math.round(totalB / n)
   };
-  // Update UI
   var swatch = document.getElementById('white-point-swatch');
   swatch.style.background = 'rgb(' + whitePoint.r + ',' + whitePoint.g + ',' + whitePoint.b + ')';
   document.getElementById('white-point-label').textContent =
@@ -514,23 +779,34 @@ function deactivateMeasuring() {
   document.getElementById('measure-status').textContent = 'Click two adjacent grid intersections';
 }
 
+// --- Phase 3: Convert screen coords to world coords (invert zoom/pan) ---
+function screenToWorld(sx, sy) {
+  return {
+    x: (sx - viewPanX) / viewZoom,
+    y: (sy - viewPanY) / viewZoom
+  };
+}
+
 // --- Convert screen (display) coords to source image pixel coords ---
 // Returns { sx, sy } — the pixel position in the original image, or null if outside grid
 function screenToSourcePixel(mx, my) {
-  // Check bounds
+  // Phase 3: Convert screen to world first
+  var world = screenToWorld(mx, my);
+
+  // Check bounds in world space
   var gridRight = gridOffsetX + gridCols * cellDisplaySize;
   var gridBottom = gridOffsetY + gridRows * cellDisplaySize;
-  if (mx < gridOffsetX || mx >= gridRight || my < gridOffsetY || my >= gridBottom) return null;
+  if (world.x < gridOffsetX || world.x >= gridRight || world.y < gridOffsetY || world.y >= gridBottom) return null;
 
-  // Display → fraction within grid → source pixel
-  var fracX = (mx - gridOffsetX) / (gridCols * cellDisplaySize);
-  var fracY = (my - gridOffsetY) / (gridRows * cellDisplaySize);
+  // World → fraction within grid → source pixel
+  var fracX = (world.x - gridOffsetX) / (gridCols * cellDisplaySize);
+  var fracY = (world.y - gridOffsetY) / (gridRows * cellDisplaySize);
   var sx = sampleOffsetX + fracX * (gridCols * BLOCK_SIZE);
   var sy = sampleOffsetY + fracY * (gridRows * BLOCK_SIZE);
   return { sx: sx, sy: sy };
 }
 
-// --- Convert source image pixel coords back to display coords ---
+// --- Convert source image pixel coords back to world coords ---
 function sourcePixelToScreen(sx, sy) {
   var fracX = (sx - sampleOffsetX) / (gridCols * BLOCK_SIZE);
   var fracY = (sy - sampleOffsetY) / (gridRows * BLOCK_SIZE);
@@ -551,7 +827,6 @@ function applyPaint(row, col) {
     block.g = 40;
     block.b = 40;
   }
-  // Re-derive note data for this single cell
   var noteData = blockToNoteData(
     block.r, block.g, block.b,
     row, col, gridRows,
@@ -578,12 +853,23 @@ function updateActiveCount() {
 
 // --- Hit test: screen coords to grid row/col or null ---
 function screenToGrid(mx, my) {
+  // Phase 3: Convert screen to world first
+  var world = screenToWorld(mx, my);
+
   var gridBottom = gridOffsetY + gridRows * cellDisplaySize;
-  if (my < gridOffsetY || my >= gridBottom) return null;
-  var col = Math.floor((mx - gridOffsetX) / cellDisplaySize);
-  var row = Math.floor((my - gridOffsetY) / cellDisplaySize);
+  if (world.y < gridOffsetY || world.y >= gridBottom) return null;
+  var col = Math.floor((world.x - gridOffsetX) / cellDisplaySize);
+  var row = Math.floor((world.y - gridOffsetY) / cellDisplaySize);
   if (col < 0 || col >= gridCols || row < 0 || row >= gridRows) return null;
   return { row: row, col: col };
+}
+
+// --- Phase 3: Update zoom display ---
+function updateZoomDisplay() {
+  var el = document.getElementById('zoom-display');
+  if (el) {
+    el.textContent = Math.round(viewZoom * 100);
+  }
 }
 
 // --- Grid rendering ---
@@ -622,13 +908,12 @@ function drawGrid() {
         fill(40);
         rect(x, y, cellDisplaySize, cellDisplaySize);
       }
-      // When showPhoto && !active: skip drawing — let photo show through
     }
   }
 
-  // Grid lines
+  // Grid lines — scale weight so they stay thin when zoomed
   stroke(60);
-  strokeWeight(1);
+  strokeWeight(Math.max(0.5, 1 / viewZoom));
   for (var c = 0; c <= gridCols; c++) {
     var lx = gridOffsetX + c * cellDisplaySize;
     line(lx, gridOffsetY, lx, gridOffsetY + gridRows * cellDisplaySize);
@@ -647,15 +932,13 @@ function drawPlayhead() {
   var y = gridOffsetY;
   var h = gridRows * cellDisplaySize;
 
-  // Semi-transparent overlay
   noStroke();
   fill(255, 255, 255, 50);
   rect(x, y, cellDisplaySize, h);
 
-  // Bright border
   noFill();
   stroke(255, 255, 100);
-  strokeWeight(2);
+  strokeWeight(Math.max(1, 2 / viewZoom));
   rect(x, y, cellDisplaySize, h);
 }
 
@@ -671,10 +954,11 @@ function updatePlayheadPosition(col) {
 
 // --- Column headers (synth type per column) ---
 function drawColumnHeaders() {
-  if (cellDisplaySize < 12) return; // too narrow to show headers
+  if (cellDisplaySize < 12) return;
 
   var headerH = 18;
   var y = gridOffsetY - headerH - 2;
+  var sw = 1 / viewZoom; // scale factor for text
 
   textSize(Math.min(9, cellDisplaySize - 2));
   textAlign(CENTER, CENTER);
@@ -693,35 +977,41 @@ function drawColumnHeaders() {
   }
 }
 
-// --- Draw measurement overlay (dots + line + crosshair) ---
+// --- Draw measurement overlay (world space — inside push/pop) ---
 function drawMeasureOverlay() {
   if (!measuringGrid) return;
 
-  // Draw crosshair at current mouse position when hovering over grid
+  // Convert mouse to world coords for drawing inside the transform
+  var world = screenToWorld(mouseX, mouseY);
   var hover = screenToSourcePixel(mouseX, mouseY);
+
+  // Scale line weights to be constant on screen regardless of zoom
+  var sw = 1 / viewZoom;
+
+  // Draw crosshair at current mouse position when hovering over grid
   if (hover) {
     stroke(255, 255, 0, 150);
-    strokeWeight(1);
+    strokeWeight(sw);
     // Vertical crosshair line
-    line(mouseX, gridOffsetY, mouseX, gridOffsetY + gridRows * cellDisplaySize);
+    line(world.x, gridOffsetY, world.x, gridOffsetY + gridRows * cellDisplaySize);
     // Horizontal crosshair line
-    line(gridOffsetX, mouseY, gridOffsetX + gridCols * cellDisplaySize, mouseY);
+    line(gridOffsetX, world.y, gridOffsetX + gridCols * cellDisplaySize, world.y);
   }
 
   // Draw first point if placed
   if (measurePoint1) {
-    var p1Screen = sourcePixelToScreen(measurePoint1.sx, measurePoint1.sy);
+    var p1 = sourcePixelToScreen(measurePoint1.sx, measurePoint1.sy);
 
     // Bright dot at first point
     noStroke();
     fill(255, 255, 0);
-    ellipse(p1Screen.x, p1Screen.y, 10, 10);
+    ellipse(p1.x, p1.y, 10 * sw, 10 * sw);
 
     // If hovering, draw a line from point 1 to cursor
     if (hover) {
       stroke(255, 255, 0, 200);
-      strokeWeight(2);
-      line(p1Screen.x, p1Screen.y, mouseX, mouseY);
+      strokeWeight(2 * sw);
+      line(p1.x, p1.y, world.x, world.y);
 
       // Show live distance readout near cursor
       var dx = hover.sx - measurePoint1.sx;
@@ -729,9 +1019,9 @@ function drawMeasureOverlay() {
       var dist = Math.sqrt(dx * dx + dy * dy);
       noStroke();
       fill(255, 255, 0);
-      textSize(12);
+      textSize(12 * sw);
       textAlign(LEFT, BOTTOM);
-      text(Math.round(dist) + 'px', mouseX + 12, mouseY - 6);
+      text(Math.round(dist) + 'px', world.x + 12 * sw, world.y - 6 * sw);
     }
   }
 }
@@ -740,6 +1030,21 @@ function drawMeasureOverlay() {
 function mousePressed() {
   if (!imageLoaded) return;
 
+  // Phase 3: Middle-mouse pan
+  if (mouseButton === CENTER) {
+    isPanning = true;
+    panStartX = mouseX;
+    panStartY = mouseY;
+    panStartViewX = viewPanX;
+    panStartViewY = viewPanY;
+    return;
+  }
+
+  // Only handle left clicks for tools
+  if (mouseButton !== LEFT) return;
+
+  // Phase 3: Use world coords for header click detection
+  var world = screenToWorld(mouseX, mouseY);
   var headerH = 18;
   var headerY = gridOffsetY - headerH - 2;
   var cell = screenToGrid(mouseX, mouseY);
@@ -747,10 +1052,9 @@ function mousePressed() {
   // Measurement mode — click two points
   if (measuringGrid) {
     var srcPt = screenToSourcePixel(mouseX, mouseY);
-    if (!srcPt) return; // clicked outside grid area
+    if (!srcPt) return;
 
     if (measureClickCount === 0) {
-      // First click — record point
       measurePoint1 = srcPt;
       measureClickCount = 1;
       var btn = document.getElementById('measure-grid-btn');
@@ -758,45 +1062,32 @@ function mousePressed() {
       document.getElementById('measure-status').textContent =
         'Point 1: (' + Math.round(srcPt.sx) + ', ' + Math.round(srcPt.sy) + ') — now click an adjacent intersection';
     } else {
-      // Second click — compute distance and set BLOCK_SIZE
       var dx = srcPt.sx - measurePoint1.sx;
       var dy = srcPt.sy - measurePoint1.sy;
       var dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Use the larger axis delta (user may click horizontally or vertically)
-      // If they clicked diagonally, use Euclidean / sqrt(2) for one cell
       var absDx = Math.abs(dx);
       var absDy = Math.abs(dy);
       var cellSize;
 
       if (absDx > absDy * 2) {
-        // Mostly horizontal click
         cellSize = Math.round(absDx);
       } else if (absDy > absDx * 2) {
-        // Mostly vertical click
         cellSize = Math.round(absDy);
       } else {
-        // Diagonal — assume one cell diagonal, so divide by sqrt(2)
         cellSize = Math.round(dist / Math.sqrt(2));
       }
 
       cellSize = Math.max(4, Math.min(80, cellSize));
 
-      // Apply the measured cell size
       BLOCK_SIZE = cellSize;
       document.getElementById('block-size-slider').value = BLOCK_SIZE;
       document.getElementById('block-size-display').textContent = BLOCK_SIZE;
 
-      document.getElementById('measure-status').textContent =
-        'Measured: ' + cellSize + 'px per cell — grid reprocessed';
-
-      // Exit measurement mode
       deactivateMeasuring();
-      // Keep the status message (don't reset it)
       document.getElementById('measure-status').textContent =
         'Measured: ' + cellSize + 'px per cell — grid reprocessed';
 
-      // Reprocess
       if (isPlaying) stopPlayback();
       processImage();
     }
@@ -813,19 +1104,15 @@ function mousePressed() {
   if (pickingWhitePoint && cell) {
     var block = gridData[cell.row][cell.col];
     whiteSamples.push({ r: block.r, g: block.g, b: block.b });
-
-    // Live-update: compute running average and show it
     finalizeWhitePoint();
-
-    // Update button to show count
     var btn = document.getElementById('pick-white-btn');
     btn.textContent = whiteSamples.length + ' sampled — click more or click to finish';
     return;
   }
 
-  // Column header click to cycle synth type
-  if (mouseY >= headerY && mouseY <= headerY + headerH) {
-    var col = Math.floor((mouseX - gridOffsetX) / cellDisplaySize);
+  // Column header click to cycle synth type (use world coords)
+  if (world.y >= headerY && world.y <= headerY + headerH) {
+    var col = Math.floor((world.x - gridOffsetX) / cellDisplaySize);
     if (col >= 0 && col < gridCols) {
       var types = Object.keys(SYNTH_TYPES);
       var currentType = columnSynths[col] ? columnSynths[col].synthType : 'Synth';
@@ -836,13 +1123,136 @@ function mousePressed() {
   }
 }
 
-// --- Drag to paint/erase multiple cells ---
+// --- Drag to paint/erase multiple cells or pan ---
 function mouseDragged() {
-  if (!imageLoaded || (!paintMode && !eraseMode)) return;
+  if (!imageLoaded) return;
+
+  // Phase 3: Middle-mouse pan
+  if (isPanning) {
+    viewPanX = panStartViewX + (mouseX - panStartX);
+    viewPanY = panStartViewY + (mouseY - panStartY);
+    return;
+  }
+
+  if (!paintMode && !eraseMode) return;
   var cell = screenToGrid(mouseX, mouseY);
   if (cell) {
     applyPaint(cell.row, cell.col);
   }
+}
+
+// --- Phase 3: Mouse released (end pan) ---
+function mouseReleased() {
+  isPanning = false;
+}
+
+// --- Phase 3: Mouse wheel zoom toward cursor ---
+function mouseWheel(event) {
+  if (!imageLoaded) return false;
+
+  // Check if mouse is over the canvas
+  var container = document.getElementById('canvas-container');
+  var rect = container.getBoundingClientRect();
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) return true;
+
+  var zoomFactor = event.delta > 0 ? 0.9 : 1.1;
+  var newZoom = viewZoom * zoomFactor;
+  newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+
+  // Zoom toward mouse position
+  viewPanX = mouseX - (mouseX - viewPanX) * (newZoom / viewZoom);
+  viewPanY = mouseY - (mouseY - viewPanY) * (newZoom / viewZoom);
+  viewZoom = newZoom;
+
+  updateZoomDisplay();
+  return false; // prevent page scroll
+}
+
+// --- Phase 4: Touch handlers ---
+function touchStarted() {
+  if (!imageLoaded) return true;
+
+  // Auto-close mobile panel when tapping on canvas
+  var panel = document.getElementById('control-panel');
+  if (panel.classList.contains('mobile-visible')) {
+    panel.classList.remove('mobile-visible');
+    var toggle = document.getElementById('mobile-panel-toggle');
+    toggle.innerHTML = '&#9776;';
+    toggle.classList.remove('panel-open');
+    setTimeout(function() { windowResized(); }, 50);
+    return false;
+  }
+
+  if (touches.length === 2) {
+    // Two-finger: start pinch zoom
+    var dx = touches[0].x - touches[1].x;
+    var dy = touches[0].y - touches[1].y;
+    touchState.lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+    touchState.lastMidX = (touches[0].x + touches[1].x) / 2;
+    touchState.lastMidY = (touches[0].y + touches[1].y) / 2;
+    touchState.isPinching = true;
+    return false;
+  }
+
+  if (touches.length === 1) {
+    touchState.isPinching = false;
+    // Single touch — delegate to mousePressed behavior
+    // p5.js sets mouseX/mouseY from first touch
+    mousePressed();
+    return false;
+  }
+
+  return true;
+}
+
+function touchMoved() {
+  if (!imageLoaded) return true;
+
+  if (touches.length === 2 && touchState.isPinching) {
+    // Pinch zoom + two-finger pan
+    var dx = touches[0].x - touches[1].x;
+    var dy = touches[0].y - touches[1].y;
+    var pinchDist = Math.sqrt(dx * dx + dy * dy);
+    var midX = (touches[0].x + touches[1].x) / 2;
+    var midY = (touches[0].y + touches[1].y) / 2;
+
+    // Zoom
+    if (touchState.lastPinchDist > 0) {
+      var zoomFactor = pinchDist / touchState.lastPinchDist;
+      var newZoom = viewZoom * zoomFactor;
+      newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+
+      // Zoom toward pinch midpoint
+      viewPanX = midX - (midX - viewPanX) * (newZoom / viewZoom);
+      viewPanY = midY - (midY - viewPanY) * (newZoom / viewZoom);
+      viewZoom = newZoom;
+    }
+
+    // Two-finger pan
+    viewPanX += midX - touchState.lastMidX;
+    viewPanY += midY - touchState.lastMidY;
+
+    touchState.lastPinchDist = pinchDist;
+    touchState.lastMidX = midX;
+    touchState.lastMidY = midY;
+
+    updateZoomDisplay();
+    return false;
+  }
+
+  if (touches.length === 1) {
+    // Single touch — delegate to mouseDragged behavior
+    mouseDragged();
+    return false;
+  }
+
+  return true;
+}
+
+function touchEnded() {
+  touchState.isPinching = false;
+  touchState.lastPinchDist = 0;
+  return true;
 }
 
 // --- Handle window resize ---

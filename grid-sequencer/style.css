@@ -67,7 +67,7 @@ body {
 #control-panel {
   width: 260px;
   min-width: 260px;
-  padding: 16px;
+  padding: 8px;
   background: #222;
   overflow-y: auto;
   border-right: 1px solid #444;
@@ -76,6 +76,66 @@ body {
 #canvas-container {
   flex: 1;
   position: relative;
+}
+
+/* --- Collapsible Sections --- */
+.section {
+  margin-bottom: 2px;
+  border-bottom: 1px solid #333;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.section-header:hover {
+  background: #2a2a2a;
+}
+
+.section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00ff88;
+  font-weight: 700;
+}
+
+.section-arrow {
+  font-size: 10px;
+  color: #666;
+  transition: transform 0.2s ease;
+  display: inline-block;
+  width: 12px;
+  text-align: center;
+}
+
+.section.collapsed .section-arrow {
+  transform: rotate(-90deg);
+}
+
+.section-body {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  opacity: 1;
+  padding: 0 4px 8px 4px;
+}
+
+.section.collapsed .section-body {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* --- Controls --- */
@@ -217,14 +277,37 @@ select:focus {
   border-color: #00ff88;
 }
 
-#paint-color {
+/* Paint color swatch (preview of selected hue+sat) */
+#paint-swatch {
   width: 36px;
   height: 30px;
-  padding: 1px;
   border: 1px solid #555;
   border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
+  background: hsl(0, 100%, 50%);
+  flex-shrink: 0;
+}
+
+/* Hue slider — rainbow track */
+.hue-slider {
+  background: linear-gradient(to right,
+    hsl(0,100%,50%),
+    hsl(60,100%,50%),
+    hsl(120,100%,50%),
+    hsl(180,100%,50%),
+    hsl(240,100%,50%),
+    hsl(300,100%,50%),
+    hsl(360,100%,50%)
+  ) !important;
+}
+
+.hue-slider::-webkit-slider-thumb {
+  background: #fff !important;
+  border: 2px solid #333;
+}
+
+.hue-slider::-moz-range-thumb {
+  background: #fff !important;
+  border: 2px solid #333;
 }
 
 /* Measure grid button */
@@ -323,9 +406,9 @@ select:focus {
 
 /* Info display */
 #info-display {
-  margin-top: 20px;
-  padding-top: 14px;
+  padding-top: 10px;
   border-top: 1px solid #444;
+  margin-top: 8px;
 }
 
 #info-display p {
@@ -336,4 +419,97 @@ select:focus {
 
 #info-display span {
   color: #ccc;
+}
+
+/* --- Mobile panel toggle --- */
+#mobile-panel-toggle {
+  display: none;
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  background: #333;
+  border: 1px solid #555;
+  color: #00ff88;
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0;
+}
+
+#mobile-panel-toggle:hover {
+  background: #444;
+}
+
+/* --- Mobile breakpoint --- */
+@media (max-width: 600px) {
+  #app-container {
+    flex-direction: column;
+  }
+
+  #control-panel {
+    width: 100%;
+    min-width: unset;
+    max-height: 45vh;
+    border-right: none;
+    border-bottom: 1px solid #444;
+    position: relative;
+    z-index: 50;
+    display: none;
+  }
+
+  #control-panel.mobile-visible {
+    display: block;
+  }
+
+  #canvas-container {
+    flex: 1;
+    min-height: 0;
+  }
+
+  #mobile-panel-toggle {
+    display: block;
+  }
+
+  #mobile-panel-toggle.panel-open {
+    background: #00ff88;
+    color: #111;
+  }
+
+  /* Larger touch targets */
+  button {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  input[type="range"] {
+    height: 8px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  select {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+
+  .section-header {
+    padding: 12px 4px;
+  }
+
+  .section-title {
+    font-size: 13px;
+  }
 }
