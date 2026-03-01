@@ -149,6 +149,11 @@ function wireControls() {
     document.getElementById('image-input').click();
   });
 
+  // Blank grid — start fresh without a photo
+  document.getElementById('blank-grid-btn').addEventListener('click', function() {
+    createBlankGrid();
+  });
+
   // Phase 2: Rotation slider
   document.getElementById('rotation-slider').addEventListener('input', function(e) {
     rotationAngle = parseFloat(e.target.value);
@@ -446,6 +451,56 @@ function loadImageFromFile(file) {
     console.error('Failed to load image:', err);
     alert('Could not load image. Please try a JPG or PNG file.');
   });
+}
+
+// --- Create a blank white grid for drawing from scratch ---
+function createBlankGrid() {
+  var cols = 16, rows = 12;
+  var imgW = cols * BLOCK_SIZE;
+  var imgH = rows * BLOCK_SIZE;
+
+  // Create white image via p5's createImage
+  var img = createImage(imgW, imgH);
+  img.loadPixels();
+  for (var i = 0; i < img.pixels.length; i += 4) {
+    img.pixels[i] = 255;      // R
+    img.pixels[i+1] = 255;    // G
+    img.pixels[i+2] = 255;    // B
+    img.pixels[i+3] = 255;    // A
+  }
+  img.updatePixels();
+
+  // Set as source (reuses entire pipeline)
+  originalSourceImage = img;
+  sourceImage = img;
+  rotationAngle = 0;
+  sampleOffsetX = 0;
+  sampleOffsetY = 0;
+
+  // Reset zoom/pan/rotation UI
+  viewZoom = 1.0;
+  viewPanX = 0;
+  viewPanY = 0;
+  updateZoomDisplay();
+  document.getElementById('rotation-slider').value = 0;
+  document.getElementById('rotation-display').textContent = '0.0';
+
+  // Set white point directly (skip auto-detect — we know it's white)
+  whitePoint = { r: 255, g: 255, b: 255 };
+  whiteSamples = [{ r: 255, g: 255, b: 255 }];
+  document.getElementById('white-point-swatch').style.background = '#fff';
+  document.getElementById('white-point-label').textContent = 'Blank grid (white)';
+
+  // Process the blank image through normal pipeline
+  processImage();
+
+  // Auto-activate paint mode + expand Paint Tools section
+  paintMode = true;
+  eraseMode = false;
+  document.getElementById('paint-btn').classList.add('active');
+  document.getElementById('erase-btn').classList.remove('active');
+  var paintSection = document.getElementById('section-paint');
+  if (paintSection) paintSection.classList.remove('collapsed');
 }
 
 // --- Phase 2: Apply rotation to original image ---
@@ -1735,7 +1790,7 @@ function drawEmptyState() {
   noStroke();
   textAlign(CENTER, CENTER);
   textSize(18);
-  text('Load a grid paper image to begin', width / 2, height / 2);
+  text('Load a grid paper image or start blank', width / 2, height / 2);
   textSize(12);
-  text('Drag & drop or use the file picker', width / 2, height / 2 + 30);
+  text('Drag & drop, use file picker, or click New Blank Grid', width / 2, height / 2 + 30);
 }
