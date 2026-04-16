@@ -15,7 +15,50 @@ var totalSteps = 0;
 var gridDataRef = null;
 var isPlaying = false;
 var loopEvent = null;
-var stepDuration = '8n';
+var stepDuration = '8n';        // loop interval (how fast playhead moves)
+var noteDuration = '8n';        // how long each note rings
+var currentSubdivision = '1/8'; // user-facing subdivision label
+
+// --- Note subdivision map ---
+var SUBDIVISIONS = {
+  '1/32': '32n',
+  '1/16': '16n',
+  '1/8':  '8n',
+  '1/4':  '4n',
+  '1/2':  '2n',
+  '1':    '1n'
+};
+
+// --- Time signature state ---
+var timeSignatureNum = 4;       // beats per measure (numerator)
+var timeSignatureDen = 4;       // beat unit (denominator)
+var stepsPerMeasureCalc = 8;    // how many grid columns = one measure (computed)
+var accentBeat1 = true;         // velocity boost on beat 1
+var ACCENT_BOOST = 0.15;        // added to velocity on beat 1
+
+// --- ADSR envelope settings ---
+var envelopeSettings = {
+  attack: 0.01,
+  decay: 0.2,
+  sustain: 0.1,
+  release: 0.3
+};
+
+// --- Effects chain ---
+var effectsChain = {
+  filter: null,
+  chorus: null,
+  delay: null,
+  reverb: null
+};
+var effectsEnabled = {
+  filter: false,
+  chorus: false,
+  delay: false,
+  reverb: false
+};
+var filterFreqValue = 2000;
+var effectWetValues = { chorus: 0.5, delay: 0.4, reverb: 0.3 };
 
 var SYNTH_TYPES = {
   'Synth':          Tone.Synth,
