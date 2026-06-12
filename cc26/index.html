@@ -104,6 +104,7 @@
   <h1>C&amp;C '26 — Exhibition Layout</h1>
   <span class="sub">drag to arrange · click image to flip · click ×N badge to view all shots</span>
   <a href="plan.html" style="color:#76b8ff;font-size:12px;text-decoration:none">📄 Read the full plan</a>
+  <span id="syncStatus" class="sub" title="Live co-working status">○ local only</span>
   <div class="spacer"></div>
   <div class="legend" id="legend"></div>
   <button id="labelsBtn">Hide labels</button>
@@ -263,6 +264,7 @@ canvas.addEventListener("pointerup",e=>{
   if(drag.moved){
     positions[drag.id]={x:parseFloat(drag.card.style.left),y:parseFloat(drag.card.style.top)};
     save(positions);
+    sendMove(drag.id, positions[drag.id]);
   } else {
     // click = flip to next image
     const w=WORKS.find(x=>x.id===drag.id);
@@ -292,6 +294,7 @@ document.getElementById("resetBtn").onclick=()=>{
   if(location.hash) history.replaceState(null,"",location.pathname);
   positions=suggested(); save(positions);
   WORKS.forEach(w=>{cardEls[w.id].style.left=positions[w.id].x+"px";cardEls[w.id].style.top=positions[w.id].y+"px";});
+  sendReset(positions);
 };
 let labelsOn=true;
 document.getElementById("labelsBtn").onclick=function(){
@@ -318,6 +321,7 @@ document.getElementById("fileInput").onchange=function(){
   r.onload=()=>{ try{
       const p=JSON.parse(r.result); positions=p; save(positions);
       WORKS.forEach(w=>{ if(positions[w.id]){cardEls[w.id].style.left=positions[w.id].x+"px";cardEls[w.id].style.top=positions[w.id].y+"px";}});
+      sendReset(positions);
       toast("Loaded layout from "+f.name);
     }catch(e){ toast("Could not read that file."); } this.value="";
   };
@@ -349,6 +353,43 @@ function openLightbox(w){
 }
 document.getElementById("lbClose").onclick=()=>lb.classList.remove("open");
 lb.addEventListener("click",e=>{ if(e.target===lb) lb.classList.remove("open"); });
+
+// ---- live co-working via Render WebSocket server ----
+// After deploying cc26-sync on Render, replace the URL below with your service
+// URL using the wss:// scheme, e.g. "wss://cc26-sync.onrender.com".
+const SYNC_URL = "wss://REPLACE-WITH-RENDER-URL.onrender.com";
+let ws=null;
+const statusEl=document.getElementById("syncStatus");
+function setStatus(state,n){
+  if(!statusEl) return;
+  if(state==="live"){ statusEl.textContent="● Live"+(n?` · ${n} online`:""); statusEl.style.color="#3fae6f"; }
+  else if(state==="reconnect"){ statusEl.textContent="○ reconnecting…"; statusEl.style.color="#e0a13c"; }
+  else { statusEl.textContent="○ local only"; statusEl.style.color="#8a8f9a"; }
+}
+function placeAll(L){
+  Object.entries(L).forEach(([id,p])=>{ if(cardEls[id]&&p){cardEls[id].style.left=p.x+"px";cardEls[id].style.top=p.y+"px";positions[id]=p;} });
+  save(positions);
+}
+function sendMove(id,pos){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"move",id,pos})); }
+function sendReset(L){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"reset",layout:L})); }
+function connectSync(){
+  if(!SYNC_URL||SYNC_URL.includes("REPLACE")){ setStatus("local"); return; }
+  try{ ws=new WebSocket(SYNC_URL); }catch(e){ setStatus("local"); return; }
+  ws.onopen=()=>setStatus("live");
+  ws.onmessage=ev=>{
+    let m; try{m=JSON.parse(ev.data)}catch(e){return;}
+    if(m.type==="init"){
+      if(m.layout){ placeAll(m.layout); }
+      else if(ws.readyState===1){ ws.send(JSON.stringify({type:"seed",layout:positions})); }
+      setStatus("live",m.clients);
+    } else if(m.type==="move"){
+      if(cardEls[m.id]&&m.pos){ cardEls[m.id].style.left=m.pos.x+"px"; cardEls[m.id].style.top=m.pos.y+"px"; positions[m.id]=m.pos; save(positions); }
+    } else if(m.type==="presence"){ setStatus("live",m.clients); }
+  };
+  ws.onclose=()=>{ setStatus("reconnect"); clearTimeout(connectSync._t); connectSync._t=setTimeout(connectSync,2500); };
+  ws.onerror=()=>{ try{ws.close()}catch(e){} };
+}
+connectSync();
 </script>
 </body>
 </html>
