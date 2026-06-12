@@ -4,6 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>C&amp;C '26 — Exhibition Layout Board</title>
+<style id="gateStyle">
+  html.gated #gateOverlay{display:flex}
+  html.gated body{overflow:hidden}
+  #gateOverlay{display:none;position:fixed;inset:0;z-index:99999;background:#15171c;
+    flex-direction:column;align-items:center;justify-content:center;gap:13px;
+    font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8eaed}
+  #gateOverlay h2{margin:0;font-size:21px}
+  #gateOverlay p{color:#9aa0aa;font-size:13px;margin:0}
+  #gateOverlay input{padding:10px 12px;border-radius:8px;border:1px solid #333845;background:#1d2027;color:#e8eaed;font-size:15px;width:240px;text-align:center}
+  #gateOverlay button{padding:9px 18px;border-radius:8px;border:1px solid #333845;background:#2a2f3a;color:#e8eaed;font-size:14px;cursor:pointer}
+  #gateOverlay button:hover{background:#333a47}
+  #gateOverlay .err{color:#e0683c;font-size:12px;height:14px}
+</style>
+<script>(function(){ if(sessionStorage.getItem('cc26unlock')!=='1') document.documentElement.classList.add('gated'); })();</script>
 <style>
   :root{
     --bg:#15171c; --panel:#1d2027; --ink:#e8eaed; --muted:#9aa0aa; --line:#333845;
@@ -60,6 +74,32 @@
 </style>
 </head>
 <body>
+<div id="gateOverlay">
+  <h2>🔒 C&amp;C '26 — Private</h2>
+  <p>Enter the access password to continue.</p>
+  <input id="gatePw" type="password" placeholder="password" autocomplete="off">
+  <button id="gateBtn">Unlock</button>
+  <div class="err" id="gateErr"></div>
+</div>
+<script>
+(function(){
+  var KEY='cc26unlock';
+  var HASH='66911bda6207c5bd405dc6f84885cc9e119fdd387da31d6467a02279df5238cd';
+  var ov=document.getElementById('gateOverlay');
+  if(sessionStorage.getItem(KEY)==='1'){ document.documentElement.classList.remove('gated'); return; }
+  async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  async function tryUnlock(){
+    var h=await sha(document.getElementById('gatePw').value);
+    if(h===HASH){ sessionStorage.setItem(KEY,'1'); document.documentElement.classList.remove('gated'); }
+    else { document.getElementById('gateErr').textContent='Incorrect password'; }
+  }
+  document.getElementById('gateBtn').onclick=tryUnlock;
+  var pw=document.getElementById('gatePw');
+  pw.addEventListener('keydown',function(e){ if(e.key==='Enter') tryUnlock(); });
+  pw.focus();
+})();
+</script>
 <header>
   <h1>C&amp;C '26 — Exhibition Layout</h1>
   <span class="sub">drag to arrange · click image to flip · click ×N badge to view all shots</span>
