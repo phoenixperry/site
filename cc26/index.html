@@ -357,7 +357,7 @@ lb.addEventListener("click",e=>{ if(e.target===lb) lb.classList.remove("open"); 
 // ---- live co-working via Render WebSocket server ----
 // After deploying cc26-sync on Render, replace the URL below with your service
 // URL using the wss:// scheme, e.g. "wss://cc26-sync.onrender.com".
-const SYNC_URL = "wss://REPLACE-WITH-RENDER-URL.onrender.com";
+const SYNC_URL = "wss://cc26-sync.onrender.com";
 let ws=null;
 const statusEl=document.getElementById("syncStatus");
 function setStatus(state,n){
