@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>C&amp;C '26 — Floor Plan Mapping</title>
 <style id="gateStyle">
   html.gated #gateOverlay{display:flex}
@@ -67,7 +68,7 @@
 <script>
 (function(){
   var KEY='cc26unlock';
-  var HASH='66911bda6207c5bd405dc6f84885cc9e119fdd387da31d6467a02279df5238cd';
+  var HASH='8e509edd0461c26ca19ee4a4f0db7a4255506c6a85cd07b56f08a3329b4bc16a';
   if(sessionStorage.getItem(KEY)==='1'){ document.documentElement.classList.remove('gated'); return; }
   async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
     return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
