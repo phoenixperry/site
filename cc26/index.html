@@ -40,7 +40,7 @@
     padding:7px 11px;font-size:12px;cursor:pointer}
   button:hover{background:#333a47}
   .canvaswrap{overflow:auto;height:calc(100vh - 52px)}
-  #canvas{position:relative;width:1400px;height:780px;margin:18px auto;background:
+  #canvas{position:relative;width:1400px;height:900px;margin:18px auto;background:
     radial-gradient(circle at 1px 1px, #23262e 1px, transparent 0) 0 0/26px 26px,#181a20;
     border:1px solid var(--line);border-radius:12px}
   .zone{position:absolute;border:1.5px dashed #3a4150;border-radius:12px;background:rgba(255,255,255,.012)}
@@ -138,9 +138,9 @@ const THEMES = {
 };
 const ZONES = [
   {id:"atrium", title:"ATRIUM / OPEN SOCIAL SPINE", sub:"daylit · self-running · headphone-isolated", x:20,  y:64,  w:1360, h:250, cols:7},
-  {id:"dark1",  title:"DARK ROOM 1 — Deep AV",        sub:"low light · focused audio",              x:20,  y:344, w:444,  h:404, cols:2},
-  {id:"dark2",  title:"DARK ROOM 2 — Embodied Black-box", sub:"sound-isolated",                     x:484, y:344, w:444,  h:404, cols:2},
-  {id:"perf",   title:"PERFORMANCE / SCHEDULED",      sub:"facilitated · sign-up slots",            x:948, y:344, w:432,  h:404, cols:2},
+  {id:"dark1",  title:"DARK ROOM 1 — Deep AV",        sub:"low light · focused audio",              x:20,  y:344, w:444,  h:520, cols:2},
+  {id:"dark2",  title:"DARK ROOM 2 — Embodied Black-box", sub:"sound-isolated",                     x:484, y:344, w:444,  h:520, cols:2},
+  {id:"perf",   title:"PERFORMANCE / SCHEDULED",      sub:"facilitated · sign-up slots",            x:948, y:344, w:432,  h:520, cols:2},
 ];
 const WORKS = [
   {id:"boucher", artist:"Boucher / IRS", title:"Portfolio of Research Products", theme:"D", zone:"atrium",
@@ -160,6 +160,8 @@ const WORKS = [
     imgs:["Ahn_01.png","Ahn_02.png","Ahn_03.png"]},
   {id:"hieronymi", artist:"Andrew Hieronymi", title:"CONTACT", theme:"A", zone:"dark1", imgs:["Hieronymi_01.jpg"]},
   {id:"raylc", artist:"Ray LC +", title:"Cradle of Success", theme:"C", zone:"dark1", imgs:["RayLC_01.jpg"]},
+  {id:"wolfe", artist:"Hannen E. Wolfe", title:"Paper Bark", theme:"A", zone:"dark1",
+    imgs:["Wolfe_01.png","Wolfe_02.png"]},
 
   {id:"thrum", artist:"Resident Thrum (anon.)", title:"Group Cardiac Synchronisation", theme:"B", zone:"dark2",
     imgs:["ResidentThrum_02.png","ResidentThrum_01.png"]},
