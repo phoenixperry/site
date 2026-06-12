@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C&amp;C '26 — Floor Plan Mapping</title>
+<style id="gateStyle">
+  html.gated #gateOverlay{display:flex}
+  html.gated body{overflow:hidden}
+  #gateOverlay{display:none;position:fixed;inset:0;z-index:99999;background:#15171c;
+    flex-direction:column;align-items:center;justify-content:center;gap:13px;
+    font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8eaed}
+  #gateOverlay h2{margin:0;font-size:21px}
+  #gateOverlay p{color:#9aa0aa;font-size:13px;margin:0}
+  #gateOverlay input{padding:10px 12px;border-radius:8px;border:1px solid #333845;background:#1d2027;color:#e8eaed;font-size:15px;width:240px;text-align:center}
+  #gateOverlay button{padding:9px 18px;border-radius:8px;border:1px solid #333845;background:#2a2f3a;color:#e8eaed;font-size:14px;cursor:pointer}
+  #gateOverlay button:hover{background:#333a47}
+  #gateOverlay .err{color:#e0683c;font-size:12px;height:14px}
+</style>
+<script>(function(){ if(sessionStorage.getItem('cc26unlock')!=='1') document.documentElement.classList.add('gated'); })();</script>
+<style>
+  :root{--bg:#15171c;--panel:#1d2027;--ink:#e8eaed;--muted:#9aa0aa;--line:#333845;
+    --A:#3fae6f;--B:#4a90d9;--C:#e08a3c;--D:#8a8f9a}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  header h1{font-size:15px;margin:0;font-weight:650}
+  header .sub{color:var(--muted);font-size:12px}
+  header a{color:#76b8ff;font-size:12px;text-decoration:none}
+  .spacer{flex:1}
+  .legend{display:flex;gap:12px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  button{background:#2a2f3a;color:var(--ink);border:1px solid var(--line);border-radius:7px;
+    padding:7px 11px;font-size:12px;cursor:pointer}
+  button:hover{background:#333a47}
+  .wrap{overflow:auto;height:calc(100vh - 52px)}
+  #fp{position:relative;width:1600px;height:885px;margin:14px auto;background:#fff;
+    border:1px solid var(--line);border-radius:8px}
+  #fp img.base{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;user-select:none;border-radius:8px}
+  .zlabel{position:absolute;font-size:12px;font-weight:700;color:#0c0d10;
+    background:rgba(255,255,255,.72);padding:2px 7px;border-radius:6px;pointer-events:none;white-space:nowrap;
+    border:1px solid rgba(0,0,0,.15)}
+  .chip{position:absolute;width:150px;background:var(--panel);border:1px solid var(--line);
+    border-radius:9px;overflow:hidden;cursor:grab;box-shadow:0 5px 14px rgba(0,0,0,.5);touch-action:none;
+    transition:box-shadow .12s,transform .05s}
+  .chip:hover{box-shadow:0 9px 22px rgba(0,0,0,.6)}
+  .chip.dragging{cursor:grabbing;z-index:999;box-shadow:0 16px 34px rgba(0,0,0,.7);transform:scale(1.03)}
+  .chip .thumb{width:100%;height:50px;object-fit:cover;display:block;background:#0e0f13;pointer-events:none}
+  .chip .meta{padding:5px 7px 6px;border-top:3px solid var(--D)}
+  .chip .a{font-weight:650;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip .t{color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.72);
+    color:#cfd3da;font-size:12px;padding:7px 13px;border-radius:20px;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="gateOverlay">
+  <h2>🔒 C&amp;C '26 — Private</h2>
+  <p>Enter the access password to continue.</p>
+  <input id="gatePw" type="password" placeholder="password" autocomplete="off">
+  <button id="gateBtn">Unlock</button>
+  <div class="err" id="gateErr"></div>
+</div>
+<script>
+(function(){
+  var KEY='cc26unlock';
+  var HASH='66911bda6207c5bd405dc6f84885cc9e119fdd387da31d6467a02279df5238cd';
+  if(sessionStorage.getItem(KEY)==='1'){ document.documentElement.classList.remove('gated'); return; }
+  async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  async function tryUnlock(){
+    var h=await sha(document.getElementById('gatePw').value);
+    if(h===HASH){ sessionStorage.setItem(KEY,'1'); document.documentElement.classList.remove('gated'); }
+    else { document.getElementById('gateErr').textContent='Incorrect password'; }
+  }
+  document.getElementById('gateBtn').onclick=tryUnlock;
+  var pw=document.getElementById('gatePw');
+  pw.addEventListener('keydown',function(e){ if(e.key==='Enter') tryUnlock(); });
+  pw.focus();
+})();
+</script>
+
+<header>
+  <h1>C&amp;C '26 — Floor Plan Mapping</h1>
+  <span class="sub">drag chips into the pink booths · click image to flip</span>
+  <a href="index.html">↔ Layout board</a>
+  <a href="plan.html">📄 Plan</a>
+  <span id="syncStatus" class="sub" title="Live co-working status">○ local only</span>
+  <div class="spacer"></div>
+  <div class="legend" id="legend"></div>
+  <button id="resetBtn">Reset to suggested</button>
+</header>
+
+<div class="wrap">
+  <div id="fp">
+    <img class="base" src="floorplan-base.png" alt="CSM floor plan">
+  </div>
+</div>
+
+<div class="hint" id="hint">Tip: chips auto-save and sync live to everyone on this page.</div>
+
+<script>
+const W=1600, H=885, STORE="ccFloorplan.v1";
+const SYNC_URL = "wss://cc26-sync.onrender.com/?room=floorplan";
+const DIR = "images/";
+const enc=f=>encodeURI(DIR+f);
+const THEMES={A:{name:"Ecologies",color:"#3fae6f"},B:{name:"Bodies/Breath",color:"#4a90d9"},
+  C:{name:"AI/Critical",color:"#e08a3c"},D:{name:"Everyday/Speculative",color:"#8a8f9a"}};
+
+// fx,fy = fractional CENTRE of the chip over the floor plan (0..1)
+const WORKS=[
+  // ATRIUM (12x45m facing booths) — 11 works, two facing rows
+  {id:"boucher",a:"Boucher / IRS",t:"Portfolio of Research Products",theme:"D",fx:0.15,fy:0.515,imgs:["Boucher_01.png","Boucher_02.png","Boucher_03.png","Boucher_04.png","Boucher_05.png","Boucher_06.png"]},
+  {id:"cai",a:"Shuang Cai +",t:"Inter:Lace",theme:"C",fx:0.245,fy:0.515,imgs:["Cai_01.jpg"]},
+  {id:"cole",a:"Adam Cole +",t:"World Simulator",theme:"C",fx:0.34,fy:0.515,imgs:["Cole_01.png","Cole_02.png","Cole_03.png","Cole_04.png","Cole_05.png"]},
+  {id:"williams",a:"Alexander Williams +",t:"Adversarial Aesthetics",theme:"C",fx:0.435,fy:0.515,imgs:["Williams_01.png"]},
+  {id:"jiang",a:"Zhongjing Jiang",t:"I Dream a Lot but I Never Sleep",theme:"B",fx:0.53,fy:0.515,imgs:["Jiang_01.jpg"]},
+  {id:"almeda",a:"SHM G. Almeda",t:"Artist-in-the-Loop",theme:"C",fx:0.625,fy:0.515,imgs:["Almeda_01.jpg"]},
+  {id:"hieronymi",a:"Andrew Hieronymi",t:"CONTACT",theme:"A",fx:0.20,fy:0.655,imgs:["Hieronymi_01.jpg"]},
+  {id:"zhao",a:"Yawei Zhao +",t:"The Blooming Archive",theme:"A",fx:0.31,fy:0.655,imgs:["Zhao_01.png","Zhao_02.png"]},
+  {id:"lee",a:"Cassandra Lee +",t:"Rock Talk",theme:"A",fx:0.42,fy:0.655,imgs:["Lee_01.png","Lee_02.png","Lee_03.png","Lee_04.png"]},
+  {id:"bendto",a:"Bend To (artist TBC)",t:"VR Experience",theme:"D",fx:0.525,fy:0.655,imgs:["BendTo_01.png","BendTo_02.png","BendTo_03.png","BendTo_04.png"]},
+  {id:"wolfe",a:"Hannen E. Wolfe",t:"Paper Bark",theme:"A",fx:0.625,fy:0.655,imgs:["Wolfe_01.png","Wolfe_02.png"]},
+  // STUDIO THEATRE (J004) = DARK ROOM 1 — 4 works
+  {id:"chen",a:"Qiyao Chen",t:"Spirit: A Tech-Ritual",theme:"B",fx:0.505,fy:0.305,imgs:["Chen_01.jpg"]},
+  {id:"breathe",a:"Piyakorn Koowattanataworn",t:"Breathe Kritisk",theme:"B",fx:0.605,fy:0.305,imgs:["Koowattanataworn_01.jpeg"]},
+  {id:"ahn",a:"Sabina Hyoju Ahn +",t:"PlaSphere",theme:"A",fx:0.505,fy:0.41,imgs:["Ahn_01.png","Ahn_02.png","Ahn_03.png"]},
+  {id:"raylc",a:"Ray LC +",t:"Cradle of Success",theme:"C",fx:0.605,fy:0.41,imgs:["RayLC_01.jpg"]},
+  // BLACK LABORATORY (J006) = DARK ROOM 2 — 2 works
+  {id:"thrum",a:"Resident Thrum (anon.)",t:"Group Cardiac Synchronisation",theme:"B",fx:0.235,fy:0.335,imgs:["ResidentThrum_02.png","ResidentThrum_01.png"]},
+  {id:"hedayati",a:"Mona Hedayati",t:"The Body & the Counter-Archive",theme:"B",fx:0.31,fy:0.335,imgs:["Hedayati_01.png","Hedayati_02.png","Hedayati_03.png","Hedayati_04.png","Hedayati_05.png","Hedayati_06.png"]},
+  // PERFORMANCE (no booth marked) — placed in White Laboratory J005 as a suggestion
+  {id:"kumar",a:"Angelina Kumar",t:"Hyphae of Kindness  (performance — confirm spot)",theme:"A",fx:0.415,fy:0.305,imgs:["Kumar_01.jpg"]},
+];
+
+// faint room tags
+const TAGS=[
+  {x:0.40,y:0.45,text:"ATRIUM · 12×45 m (facing booths)"},
+  {x:0.50,y:0.245,text:"DARK ROOM 1 = Studio Theatre J004"},
+  {x:0.205,y:0.245,text:"DARK ROOM 2 = Black Lab J006"},
+  {x:0.40,y:0.245,text:"Performance? (White Lab J005)"},
+];
+
+const fp=document.getElementById("fp");
+const CHIP_W=150, CHIP_H=92;
+const toPx=(w)=>({x:Math.round(w.fx*W-CHIP_W/2), y:Math.round(w.fy*H-CHIP_H/2)});
+function suggested(){ const p={}; WORKS.forEach(w=>p[w.id]=toPx(w)); return p; }
+function load(){ try{return JSON.parse(localStorage.getItem(STORE))||null}catch(e){return null} }
+function save(p){ localStorage.setItem(STORE, JSON.stringify(p)); }
+
+let positions = load() || suggested();
+const idx={};
+
+// room tags
+TAGS.forEach(t=>{
+  const d=document.createElement("div"); d.className="zlabel";
+  d.style.left=(t.x*W)+"px"; d.style.top=(t.y*H)+"px"; d.textContent=t.text;
+  fp.appendChild(d);
+});
+
+// chips
+const chipEls={};
+WORKS.forEach(w=>{
+  idx[w.id]=0;
+  const c=document.createElement("div");
+  c.className="chip"; c.dataset.id=w.id;
+  const p=positions[w.id]||toPx(w);
+  c.style.left=p.x+"px"; c.style.top=p.y+"px";
+  c.innerHTML=`<img class="thumb" src="${enc(w.imgs[0])}" alt="${w.a}">
+    <div class="meta" style="border-top-color:${THEMES[w.theme].color}">
+      <div class="a">${w.a}</div><div class="t">${w.t}</div></div>`;
+  fp.appendChild(c); chipEls[w.id]=c;
+});
+
+// drag + click-to-flip
+let drag=null;
+fp.addEventListener("pointerdown",e=>{
+  const c=e.target.closest(".chip"); if(!c) return;
+  drag={id:c.dataset.id,c,sx:e.clientX,sy:e.clientY,ox:parseFloat(c.style.left),oy:parseFloat(c.style.top),moved:false};
+  c.setPointerCapture(e.pointerId); c.classList.add("dragging");
+});
+fp.addEventListener("pointermove",e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(Math.abs(dx)>4||Math.abs(dy)>4) drag.moved=true;
+  let nx=Math.max(0,Math.min(W-CHIP_W,drag.ox+dx)), ny=Math.max(0,Math.min(H-CHIP_H,drag.oy+dy));
+  drag.c.style.left=nx+"px"; drag.c.style.top=ny+"px";
+});
+fp.addEventListener("pointerup",()=>{
+  if(!drag) return;
+  drag.c.classList.remove("dragging");
+  if(drag.moved){
+    positions[drag.id]={x:parseFloat(drag.c.style.left),y:parseFloat(drag.c.style.top)};
+    save(positions); sendMove(drag.id,positions[drag.id]);
+  } else {
+    const w=WORKS.find(x=>x.id===drag.id);
+    if(w.imgs.length>1){ idx[w.id]=(idx[w.id]+1)%w.imgs.length; drag.c.querySelector(".thumb").src=enc(w.imgs[idx[w.id]]); }
+  }
+  drag=null;
+});
+
+// legend
+const legend=document.getElementById("legend");
+Object.values(THEMES).forEach(t=>{const s=document.createElement("span");s.innerHTML=`<i style="background:${t.color}"></i>${t.name}`;legend.appendChild(s);});
+
+document.getElementById("resetBtn").onclick=()=>{
+  positions=suggested(); save(positions);
+  WORKS.forEach(w=>{chipEls[w.id].style.left=positions[w.id].x+"px";chipEls[w.id].style.top=positions[w.id].y+"px";});
+  sendReset(positions);
+};
+
+// ---- live sync (room=floorplan) ----
+let ws=null;
+const statusEl=document.getElementById("syncStatus");
+function setStatus(s,n){ if(!statusEl)return;
+  if(s==="live"){statusEl.textContent="● Live"+(n?` · ${n} online`:"");statusEl.style.color="#3fae6f";}
+  else if(s==="reconnect"){statusEl.textContent="○ reconnecting…";statusEl.style.color="#e0a13c";}
+  else{statusEl.textContent="○ local only";statusEl.style.color="#8a8f9a";} }
+function placeAll(L){ Object.entries(L).forEach(([id,p])=>{if(chipEls[id]&&p){chipEls[id].style.left=p.x+"px";chipEls[id].style.top=p.y+"px";positions[id]=p;}}); save(positions); }
+function sendMove(id,pos){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"move",id,pos})); }
+function sendReset(L){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"reset",layout:L})); }
+function connectSync(){
+  try{ ws=new WebSocket(SYNC_URL); }catch(e){ setStatus("local"); return; }
+  ws.onopen=()=>setStatus("live");
+  ws.onmessage=ev=>{ let m; try{m=JSON.parse(ev.data)}catch(e){return;}
+    if(m.type==="init"){ if(m.layout){placeAll(m.layout);} else if(ws.readyState===1){ws.send(JSON.stringify({type:"seed",layout:positions}));} setStatus("live",m.clients); }
+    else if(m.type==="move"){ if(chipEls[m.id]&&m.pos){chipEls[m.id].style.left=m.pos.x+"px";chipEls[m.id].style.top=m.pos.y+"px";positions[m.id]=m.pos;save(positions);} }
+    else if(m.type==="presence"){ setStatus("live",m.clients); } };
+  ws.onclose=()=>{ setStatus("reconnect"); clearTimeout(connectSync._t); connectSync._t=setTimeout(connectSync,2500); };
+  ws.onerror=()=>{ try{ws.close()}catch(e){} };
+}
+connectSync();
+</script>
+</body>
+</html>
