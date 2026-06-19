@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>C&amp;C '26 — Exhibition Plan</title>
+<style id="gateStyle">
+  html.gated #gateOverlay{display:flex}
+  html.gated body{overflow:hidden}
+  #gateOverlay{display:none;position:fixed;inset:0;z-index:99999;background:#15171c;
+    flex-direction:column;align-items:center;justify-content:center;gap:13px;
+    font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8eaed}
+  #gateOverlay h2{margin:0;font-size:21px}
+  #gateOverlay p{color:#9aa0aa;font-size:13px;margin:0}
+  #gateOverlay input{padding:10px 12px;border-radius:8px;border:1px solid #333845;background:#1d2027;color:#e8eaed;font-size:15px;width:240px;text-align:center}
+  #gateOverlay button{padding:9px 18px;border-radius:8px;border:1px solid #333845;background:#2a2f3a;color:#e8eaed;font-size:14px;cursor:pointer}
+  #gateOverlay button:hover{background:#333a47}
+  #gateOverlay .err{color:#e0683c;font-size:12px;height:14px}
+</style>
+<script>(function(){ if(sessionStorage.getItem('cc26unlock')!=='1') document.documentElement.classList.add('gated'); })();</script>
+<style>
+  :root{--bg:#15171c;--panel:#1d2027;--ink:#e8eaed;--muted:#9aa0aa;--line:#333845;
+    --A:#3fae6f;--B:#4a90d9;--C:#e08a3c;--D:#8a8f9a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 22px 80px}
+  header.top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:8px}
+  h1{font-size:24px;margin:0;letter-spacing:.2px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+  .pill{font-size:12px;color:#0c0d10;padding:2px 9px;border-radius:20px;font-weight:700}
+  a{color:#76b8ff}
+  .meta{color:var(--muted);font-size:13px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#23262e;font-weight:600}
+  tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+  td.thumb{width:84px;padding:4px}
+  td.thumb img{width:76px;height:50px;object-fit:cover;border-radius:4px;display:block}
+  .themecard{border-left:4px solid var(--line);padding:4px 0 4px 14px;margin:14px 0}
+  .themecard ul{margin:6px 0 0;padding-left:18px}
+  .themecard li{margin:3px 0}
+  em{color:var(--muted)}
+  pre{background:#0e0f13;border:1px solid var(--line);border-radius:8px;padding:14px;
+    overflow:auto;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;color:#cdd2db}
+  .note{background:rgba(224,138,60,.1);border:1px solid rgba(224,138,60,.4);border-radius:8px;padding:10px 13px;font-size:13px;margin:14px 0}
+  .flag{color:var(--C);font-weight:600}
+  .btn{display:inline-block;background:#2a2f3a;color:var(--ink);border:1px solid var(--line);
+    border-radius:7px;padding:7px 12px;font-size:13px;text-decoration:none}
+  .btn:hover{background:#333a47}
+</style>
+</head>
+<body>
+<div id="gateOverlay">
+  <h2>🔒 C&amp;C '26 — Private</h2>
+  <p>Enter the access password to continue.</p>
+  <input id="gatePw" type="password" placeholder="password" autocomplete="off">
+  <button id="gateBtn">Unlock</button>
+  <div class="err" id="gateErr"></div>
+</div>
+<script>
+(function(){
+  var KEY='cc26unlock';
+  var HASH='8e509edd0461c26ca19ee4a4f0db7a4255506c6a85cd07b56f08a3329b4bc16a';
+  if(sessionStorage.getItem(KEY)==='1'){ document.documentElement.classList.remove('gated'); return; }
+  async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  async function tryUnlock(){
+    var h=await sha(document.getElementById('gatePw').value);
+    if(h===HASH){ sessionStorage.setItem(KEY,'1'); document.documentElement.classList.remove('gated'); }
+    else { document.getElementById('gateErr').textContent='Incorrect password'; }
+  }
+  document.getElementById('gateBtn').onclick=tryUnlock;
+  var pw=document.getElementById('gatePw');
+  pw.addEventListener('keydown',function(e){ if(e.key==='Enter') tryUnlock(); });
+  pw.focus();
+})();
+</script>
+<div class="wrap">
+  <header class="top">
+    <h1>C&amp;C '26 — Exhibition Plan</h1>
+    <a class="btn" href="index.html">↔ Open the drag-and-drop layout board</a>
+    <a class="btn" href="floorplan.html">🗺 Floor plan mapping</a>
+  </header>
+  <p class="meta">18 artwork submissions · grouped by theme · with spatial requirements and a suggested floor layout. Venue signal from the riders: <strong>"The Street" atrium, Central Saint Martins</strong>.</p>
+
+  <h2>1 · Submission index</h2>
+  <table>
+    <tr><th></th><th>Artist(s)</th><th>Artwork</th><th>Theme</th></tr>
+    <tr><td class="thumb"><img src="images/Boucher_01.png"></td><td>Andy Boucher &amp; Interaction Research Studio (Gaver, Brown, Matsuda, Ovalle, Sheen, Vanis), Northumbria</td><td><b>Portfolio of Research Products</b></td><td>D</td></tr>
+    <tr><td class="thumb"><img src="images/Almeda_01.jpg"></td><td>SHM Garanganao Almeda, UC Berkeley</td><td><b>Artist-in-the-Loop [Recursive Self Portrait #03]</b></td><td>C</td></tr>
+    <tr><td class="thumb"><img src="images/Chen_01.jpg"></td><td>Qiyao Chen, Loughborough</td><td><b>Spirit: A Tech-Ritual</b></td><td>B</td></tr>
+    <tr><td class="thumb"><img src="images/Kumar_01.jpg"></td><td>Angelina Kumar</td><td><b>Hyphae of Kindness</b></td><td>A</td></tr>
+    <tr><td class="thumb"><img src="images/RayLC_01.jpg"></td><td>Ray LC, Long Ling, Bowen Liu, Sijia Liu, City U Hong Kong</td><td><b>Cradle of Success</b></td><td>C</td></tr>
+    <tr><td class="thumb"><img src="images/Zhao_01.png"></td><td>Yawei Zhao et al., HKUST (Guangzhou)</td><td><b>The Blooming Archive</b></td><td>A</td></tr>
+    <tr><td class="thumb"><img src="images/Jiang_01.jpg"></td><td>Zhongjing Jiang &amp; Yuanzhao Zhang</td><td><b>I Dream a Lot but I Never Sleep</b></td><td>B</td></tr>
+    <tr><td class="thumb"><img src="images/Lee_01.png"></td><td>Cassandra Lee, Chuanqi Sun, Saetbyeol Leeyouk, MIT</td><td><b>Rock Talk</b></td><td>A</td></tr>
+    <tr><td class="thumb"><img src="images/Koowattanataworn_01.jpeg"></td><td>Piyakorn Koowattanataworn, ITU Copenhagen</td><td><b>Breathe Kritisk</b></td><td>B</td></tr>
+    <tr><td class="thumb"><img src="images/Ahn_01.png"></td><td>Sabina Hyoju Ahn, Ryan Millett, Seyeon Park, UCSB</td><td><b>PlaSphere</b></td><td>A</td></tr>
+    <tr><td class="thumb"><img src="images/Cai_01.jpg"></td><td>Shuang Cai, Avery Ko, Sang Leigh, Cornell</td><td><b>Inter:Lace</b></td><td>C</td></tr>
+    <tr><td class="thumb"><img src="images/ResidentThrum_02.png"></td><td><em>Anonymous (under review)</em></td><td><b>Resident Thrum</b></td><td>B</td></tr>
+    <tr><td class="thumb"><img src="images/Hedayati_01.png"></td><td>Mona Hedayati, University of Cambridge</td><td><b>The Body &amp; the Counter-Archive</b></td><td>B</td></tr>
+    <tr><td class="thumb"><img src="images/Cole_01.png"></td><td>Adam Cole &amp; Mick Grierson, UAL</td><td><b>World Simulator</b></td><td>C</td></tr>
+    <tr><td class="thumb"><img src="images/Hieronymi_01.jpg"></td><td>Andrew Hieronymi, Penn State</td><td><b>CONTACT</b></td><td>A</td></tr>
+    <tr><td class="thumb"><img src="images/Williams_01.png"></td><td>Alexander Williams, Yutian Hu, Stefan Lattner, Mathieu Barthet</td><td><b>Adversarial Aesthetics</b></td><td>C</td></tr>
+    <tr><td class="thumb"><img src="images/BendTo_01.png"></td><td><em>Artist not named in files</em></td><td><b>Bend To</b> (VR)</td><td>D</td></tr>
+    <tr><td class="thumb"><img src="images/Wolfe_01.png"></td><td>Hannen E. Wolfe, Colby College <em>(C&amp;C '25)</em></td><td><b>Paper Bark</b> (experimental film + VR)</td><td>A</td></tr>
+  </table>
+  <div class="note">Two works could not be name-labelled: <b>Resident Thrum</b> (paper anonymised for review) and <b>Bend To</b> (only a technical rider supplied). They're labelled by title — send the artists and they can be updated.</div>
+
+  <h2>2 · Thematic grouping</h2>
+
+  <div class="themecard" style="border-left-color:var(--A)">
+    <h3><span class="pill" style="background:var(--A)">A</span> 🌱 More-than-Human Ecologies</h3>
+    <div class="meta">Nature, plants, microbes, materials and care extended across species.</div>
+    <ul>
+      <li><b>Hyphae of Kindness</b> (Kumar) — mycelial care networks</li>
+      <li><b>The Blooming Archive</b> (Zhao) — human–plant relations, decolonial posthumanism</li>
+      <li><b>PlaSphere</b> (Ahn) — plastiglomerates, coastal ecology, AI-generated organisms</li>
+      <li><b>CONTACT</b> (Hieronymi) — microbiome &amp; climate change through embodied play</li>
+      <li><b>Paper Bark</b> (Wolfe) — Maine paper-mill collapse, decolonization &amp; rebirth via film/VR; <em>bridges A ↔ D</em></li>
+      <li><em><b>Rock Talk</b> (Lee) — AI community garden; bridges A ↔ D</em></li>
+    </ul>
+  </div>
+
+  <div class="themecard" style="border-left-color:var(--B)">
+    <h3><span class="pill" style="background:var(--B)">B</span> 🫁 Bodies, Breath &amp; Biofeedback</h3>
+    <div class="meta">Physiological signals, ritual, and the felt body as interface.</div>
+    <ul>
+      <li><b>Spirit</b> (Chen) — breath-driven tech-ritual with robotic vacuums</li>
+      <li><b>Breathe Kritisk</b> (Koowattanataworn) — breath, trust and clinical control</li>
+      <li><b>Resident Thrum</b> — group cardiac synchronisation</li>
+      <li><b>The Body &amp; the Counter-Archive</b> (Hedayati) — biosensing + sound; <em>bridges to socio-political</em></li>
+      <li><em><b>I Dream a Lot but I Never Sleep</b> (Jiang) — embodied intimacy; bridges B ↔ C</em></li>
+    </ul>
+  </div>
+
+  <div class="themecard" style="border-left-color:var(--C)">
+    <h3><span class="pill" style="background:var(--C)">C</span> 🤖 AI, Authorship &amp; Critical Machines</h3>
+    <div class="meta">Generative AI interrogated for ethics, bias, authorship and its blind spots.</div>
+    <ul>
+      <li><b>Artist-in-the-Loop</b> (Almeda) — hand-painting vs. generative image production</li>
+      <li><b>Cradle of Success</b> (Ray LC) — fortune-telling, stereotypes &amp; generative AI</li>
+      <li><b>World Simulator</b> (Cole) — the limits/blindness of AI "world simulators"</li>
+      <li><b>Adversarial Aesthetics</b> (Williams) — steganography &amp; data-poisoning as artist resistance</li>
+      <li><b>Inter:Lace</b> (Cai) — outsourcing social self-regulation to AI</li>
+    </ul>
+  </div>
+
+  <div class="themecard" style="border-left-color:var(--D)">
+    <h3><span class="pill" style="background:var(--D)">D</span> 🛋️ Everyday, Slow &amp; Speculative Tech</h3>
+    <div class="meta">Long-lived, critical and speculative alternatives to consumer technology.</div>
+    <ul>
+      <li><b>Portfolio of Research Products</b> (Boucher / IRS) — two decades of slow, field-ready artefacts</li>
+      <li><b>Bend To</b> (VR) — speculative immersive experience</li>
+      <li><em><b>I Dream a Lot but I Never Sleep</b> (Jiang) — speculative companionship; bridges C/B ↔ D</em></li>
+    </ul>
+  </div>
+
+  <h2>3 · Spatial requirements (from each technical rider)</h2>
+  <table>
+    <tr><th>Work</th><th>Footprint</th><th>Light</th><th>Audio</th><th>Notes</th></tr>
+    <tr><td>Boucher / IRS</td><td>6 plinths + wall for prints</td><td>Ambient OK</td><td>Low</td><td>Unattended, no internet, mains power</td></tr>
+    <tr><td>Almeda</td><td>Table + 2 monitors + laptop</td><td>Ambient</td><td>Low</td><td>Performance moments</td></tr>
+    <tr><td>Chen (Spirit)</td><td>Life-scale projection</td><td class="flag">Shaded/recessed</td><td>Stereo</td><td>7:30 loop</td></tr>
+    <tr><td>Kumar (Hyphae)</td><td>3×3 m, soil, cushions</td><td>Ambient</td><td class="flag">Bluetooth headphones</td><td>Atrium-friendly</td></tr>
+    <tr><td>Ray LC (Cradle)</td><td>5×4×3 m, 10 mini LED screens</td><td>Dim-ish</td><td>Low</td><td>Larger floor work</td></tr>
+    <tr><td>Zhao (Blooming)</td><td>100" display + stand</td><td>Ambient</td><td>Low</td><td class="flag">Needs internet + GPU</td></tr>
+    <tr><td>Jiang (I Dream)</td><td>2–3 × 3–4 m, two sofas</td><td class="flag">Low/warm</td><td>Reduced noise</td><td>Atrium-flexible</td></tr>
+    <tr><td>Lee (Rock Talk)</td><td>12×12 ft rock garden + niche</td><td>Ambient</td><td class="flag">Headphone stations</td><td>Atrium-friendly</td></tr>
+    <tr><td>Koowattanataworn (Breathe)</td><td>2 m-tall chamber</td><td>Ambient</td><td>Low</td><td class="flag">Performer-assisted</td></tr>
+    <tr><td>Ahn (PlaSphere)</td><td>12–20 m², 2.5 m ceiling</td><td class="flag">Low/enclosed</td><td class="flag">Multichannel 8–16 spk</td><td>Holograms artist-installed</td></tr>
+    <tr><td>Cai (Inter:Lace)</td><td>Wall + mannequin display</td><td>Ambient</td><td>None</td><td>Retail/consumer-goods vibe</td></tr>
+    <tr><td>Resident Thrum</td><td>4×4 m, black box</td><td class="flag">Black gallery</td><td class="flag">Sound isolation essential</td><td>Scheduled slots, biometric data</td></tr>
+    <tr><td>Hedayati (Counter-Archive)</td><td>2×2 m, enclosure ideal</td><td class="flag">Low/darkness</td><td>Speakers</td><td>30-min scheduled performance</td></tr>
+    <tr><td>Cole (World Simulator)</td><td>~50×50 cm wall</td><td class="flag">Dim preferred</td><td>None</td><td>4 tiny screens, plug-and-play</td></tr>
+    <tr><td>Hieronymi (CONTACT)</td><td>12×9 ft wall + 12×9 ft floor</td><td>Dim-ish</td><td>Stereo</td><td>Short-throw projector, controllers</td></tr>
+    <tr><td>Williams (Adversarial)</td><td>Room or TV + headphones</td><td class="flag">Dark, acoustically treated</td><td class="flag">Stereo PA / deep listening</td><td>Bean bags, 20-min loop</td></tr>
+    <tr><td>Bend To (VR)</td><td>Station + spectator wall</td><td>Flexible</td><td>Headset</td><td>VR + wall projection mirror</td></tr>
+    <tr><td>Paper Bark (Wolfe)</td><td>Projection screen + VR station</td><td class="flag">Dark</td><td>Stereo</td><td>Experimental film loop + VR headset; deep-AV room</td></tr>
+  </table>
+
+  <h2>4 · Suggested layout (zones)</h2>
+<pre>
+  ENTRANCE
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────┐
+│  ATRIUM / OPEN SOCIAL SPINE  (daylit, headphone-isolated)    │
+│  Boucher portfolio · Kumar · Lee · Jiang · Zhao · Cai · Cole │
+└─────────────────────────────────────────────────────────────┘
+     │                          │                        │
+     ▼                          ▼                        ▼
+┌───────────────┐    ┌────────────────────┐   ┌────────────────────┐
+│ DARK ROOM 1   │    │ DARK ROOM 2        │   │ PERFORMANCE / SLOTS │
+│ "Deep AV"     │    │ "Embodied black-   │   │ (facilitated)       │
+│ Williams ·    │    │  box"              │   │ Hedayati ·          │
+│  Adversarial  │    │ Resident Thrum     │   │  Counter-Archive    │
+│ Ahn·PlaSphere │    │  (sound-isolated)  │   │ Koowattanataworn ·  │
+│ Hieronymi ·   │    │ Chen · Spirit      │   │  Breathe Kritisk    │
+│  CONTACT      │    │  (recessed proj.)  │   │ Almeda (perf)       │
+│ Ray LC·Cradle │    │                    │   │ Bend To · VR station│
+│ Wolfe·PaperBrk│    │                    │   │                     │
+└───────────────┘    └────────────────────┘   └────────────────────┘
+</pre>
+  <ul>
+    <li><b>Open atrium spine</b> — self-running, daylight-tolerant, audio-isolated-by-headphones works (Themes A &amp; D); the social "front of house."</li>
+    <li><b>Dark Room 1 (Deep AV)</b> — projection/multichannel pieces needing low light + focused audio.</li>
+    <li><b>Dark Room 2 (Embodied black-box)</b> — sound-isolated, body-signal works. Keep apart from the other audio-primary rooms.</li>
+    <li><b>Performance / scheduled zone</b> — facilitated, time-slotted works; put a sign-up board here.</li>
+    <li>Ensure a network drop near <b>Zhao</b> (needs internet); <b>Boucher</b> needs none.</li>
+  </ul>
+
+  <h2>5 · Figma board structure</h2>
+  <p class="meta">If you build the board, four frames left→right work well:</p>
+  <ol>
+    <li><b>Legend &amp; Themes</b> — 4 colour swatches (A green / B blue / C orange / D grey) + key.</li>
+    <li><b>Submission Wall</b> — 4-column grid of all 18 works, thumbnail + artist/title, colour-tagged by theme.</li>
+    <li><b>Floorplan</b> — the zone diagram above as boxes; drop each thumbnail into its zone.</li>
+    <li><b>Logistics</b> — the §3 requirements as stickies (light / audio / power / scheduled flags) to surface conflicts.</li>
+  </ol>
+  <p class="meta" style="margin-top:30px">Interactive version: <a href="index.html">the drag-and-drop layout board →</a></p>
+</div>
+</body>
+</html>

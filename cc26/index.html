@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>C&amp;C '26 — Exhibition Layout Board</title>
+<style id="gateStyle">
+  html.gated #gateOverlay{display:flex}
+  html.gated body{overflow:hidden}
+  #gateOverlay{display:none;position:fixed;inset:0;z-index:99999;background:#15171c;
+    flex-direction:column;align-items:center;justify-content:center;gap:13px;
+    font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8eaed}
+  #gateOverlay h2{margin:0;font-size:21px}
+  #gateOverlay p{color:#9aa0aa;font-size:13px;margin:0}
+  #gateOverlay input{padding:10px 12px;border-radius:8px;border:1px solid #333845;background:#1d2027;color:#e8eaed;font-size:15px;width:240px;text-align:center}
+  #gateOverlay button{padding:9px 18px;border-radius:8px;border:1px solid #333845;background:#2a2f3a;color:#e8eaed;font-size:14px;cursor:pointer}
+  #gateOverlay button:hover{background:#333a47}
+  #gateOverlay .err{color:#e0683c;font-size:12px;height:14px}
+</style>
+<script>(function(){ if(sessionStorage.getItem('cc26unlock')!=='1') document.documentElement.classList.add('gated'); })();</script>
+<style>
+  :root{
+    --bg:#15171c; --panel:#1d2027; --ink:#e8eaed; --muted:#9aa0aa; --line:#333845;
+    --A:#3fae6f; --B:#4a90d9; --C:#e08a3c; --D:#8a8f9a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .sub{color:var(--muted);font-size:12px}
+  .spacer{flex:1}
+  .legend{display:flex;gap:14px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+  .legend span:hover{color:var(--ink)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .legend span.off{opacity:.35}
+  button{background:#2a2f3a;color:var(--ink);border:1px solid var(--line);border-radius:7px;
+    padding:7px 11px;font-size:12px;cursor:pointer}
+  button:hover{background:#333a47}
+  .canvaswrap{overflow:auto;height:calc(100vh - 52px)}
+  #canvas{position:relative;width:1400px;height:900px;margin:18px auto;background:
+    radial-gradient(circle at 1px 1px, #23262e 1px, transparent 0) 0 0/26px 26px,#181a20;
+    border:1px solid var(--line);border-radius:12px}
+  .zone{position:absolute;border:1.5px dashed #3a4150;border-radius:12px;background:rgba(255,255,255,.012)}
+  .zone .zlabel{position:absolute;top:8px;left:14px;font-size:12px;font-weight:650;color:#c7ccd6;letter-spacing:.3px}
+  .zone .zsub{position:absolute;top:25px;left:14px;font-size:11px;color:var(--muted)}
+  .card{position:absolute;width:166px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;cursor:grab;box-shadow:0 6px 16px rgba(0,0,0,.35);
+    touch-action:none;transition:box-shadow .12s,transform .05s}
+  .card:hover{box-shadow:0 10px 26px rgba(0,0,0,.5)}
+  .card.dragging{cursor:grabbing;z-index:999;box-shadow:0 18px 40px rgba(0,0,0,.6);transform:scale(1.02)}
+  .card .thumb{width:100%;height:98px;object-fit:cover;display:block;background:#0e0f13;pointer-events:none}
+  .card .meta{padding:7px 9px 8px;border-top:3px solid var(--D)}
+  .card .artist{font-weight:650;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .title{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .badge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.72);color:#fff;
+    font-size:10.5px;border-radius:20px;padding:2px 7px;cursor:pointer;user-select:none}
+  .card .badge:hover{background:#000}
+  .card.dim{opacity:.18}
+  .hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);
+    color:#cfd3da;font-size:12px;padding:7px 13px;border-radius:20px;border:1px solid var(--line)}
+  /* lightbox */
+  #lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;z-index:1000;
+    align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:24px}
+  #lb.open{display:flex}
+  #lb img{max-width:90vw;max-height:74vh;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+  #lb .cap{color:#e8eaed;font-size:14px}
+  #lb .strip{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:90vw}
+  #lb .strip img{width:84px;height:60px;object-fit:cover;cursor:pointer;opacity:.55;border:2px solid transparent}
+  #lb .strip img.sel{opacity:1;border-color:#fff}
+  #lb .close{position:absolute;top:18px;right:24px;font-size:26px;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="gateOverlay">
+  <h2>🔒 C&amp;C '26 — Private</h2>
+  <p>Enter the access password to continue.</p>
+  <input id="gatePw" type="password" placeholder="password" autocomplete="off">
+  <button id="gateBtn">Unlock</button>
+  <div class="err" id="gateErr"></div>
+</div>
+<script>
+(function(){
+  var KEY='cc26unlock';
+  var HASH='8e509edd0461c26ca19ee4a4f0db7a4255506c6a85cd07b56f08a3329b4bc16a';
+  var ov=document.getElementById('gateOverlay');
+  if(sessionStorage.getItem(KEY)==='1'){ document.documentElement.classList.remove('gated'); return; }
+  async function sha(s){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  async function tryUnlock(){
+    var h=await sha(document.getElementById('gatePw').value);
+    if(h===HASH){ sessionStorage.setItem(KEY,'1'); document.documentElement.classList.remove('gated'); }
+    else { document.getElementById('gateErr').textContent='Incorrect password'; }
+  }
+  document.getElementById('gateBtn').onclick=tryUnlock;
+  var pw=document.getElementById('gatePw');
+  pw.addEventListener('keydown',function(e){ if(e.key==='Enter') tryUnlock(); });
+  pw.focus();
+})();
+</script>
+<header>
+  <h1>C&amp;C '26 — Exhibition Layout</h1>
+  <span class="sub">drag to arrange · click image to flip · click ×N badge to view all shots</span>
+  <a href="plan.html" style="color:#76b8ff;font-size:12px;text-decoration:none">📄 Read the full plan</a>
+  <a href="floorplan.html" style="color:#76b8ff;font-size:12px;text-decoration:none">🗺 Floor plan</a>
+  <span id="syncStatus" class="sub" title="Live co-working status">○ local only</span>
+  <div class="spacer"></div>
+  <div class="legend" id="legend"></div>
+  <button id="labelsBtn">Hide labels</button>
+  <button id="saveBtn" title="Download your arrangement as a file">Save file</button>
+  <button id="loadBtn" title="Load a saved arrangement file">Load file</button>
+  <button id="shareBtn" title="Copy a link that restores this exact layout">Share link</button>
+  <button id="resetBtn">Reset to suggested</button>
+  <input type="file" id="fileInput" accept="application/json" style="display:none">
+</header>
+
+<div class="canvaswrap">
+  <div id="canvas"></div>
+</div>
+
+<div class="hint" id="hint">Tip: your arrangement auto-saves in this browser.</div>
+
+<div id="lb">
+  <div class="close" id="lbClose">&times;</div>
+  <img id="lbImg" alt="">
+  <div class="cap" id="lbCap"></div>
+  <div class="strip" id="lbStrip"></div>
+</div>
+
+<script>
+const DIR = "images/";
+const THEMES = {
+  A:{name:"More-than-Human Ecologies", color:"#3fae6f"},
+  B:{name:"Bodies, Breath & Biofeedback", color:"#4a90d9"},
+  C:{name:"AI, Authorship & Critical Machines", color:"#e08a3c"},
+  D:{name:"Everyday, Slow & Speculative Tech", color:"#8a8f9a"},
+};
+const ZONES = [
+  {id:"atrium", title:"ATRIUM / OPEN SOCIAL SPINE", sub:"daylit · self-running · headphone-isolated", x:20,  y:64,  w:1360, h:250, cols:7},
+  {id:"dark1",  title:"DARK ROOM 1 — Deep AV",        sub:"low light · focused audio",              x:20,  y:344, w:444,  h:520, cols:2},
+  {id:"dark2",  title:"DARK ROOM 2 — Embodied Black-box", sub:"sound-isolated",                     x:484, y:344, w:444,  h:520, cols:2},
+  {id:"perf",   title:"PERFORMANCE / SCHEDULED",      sub:"facilitated · sign-up slots",            x:948, y:344, w:432,  h:520, cols:2},
+];
+const WORKS = [
+  {id:"boucher", artist:"Boucher / IRS", title:"Portfolio of Research Products", theme:"D", zone:"atrium",
+    imgs:["Boucher_01.png","Boucher_02.png","Boucher_03.png","Boucher_04.png","Boucher_05.png","Boucher_06.png"]},
+  {id:"kumar", artist:"Angelina Kumar", title:"Hyphae of Kindness", theme:"A", zone:"atrium", imgs:["Kumar_01.jpg"]},
+  {id:"lee", artist:"Cassandra Lee +", title:"Rock Talk", theme:"A", zone:"atrium",
+    imgs:["Lee_01.png","Lee_02.png","Lee_03.png","Lee_04.png"]},
+  {id:"jiang", artist:"Zhongjing Jiang", title:"I Dream a Lot but I Never Sleep", theme:"B", zone:"atrium", imgs:["Jiang_01.jpg"]},
+  {id:"zhao", artist:"Yawei Zhao +", title:"The Blooming Archive", theme:"A", zone:"atrium",
+    imgs:["Zhao_01.png","Zhao_02.png"]},
+  {id:"cai", artist:"Shuang Cai +", title:"Inter:Lace", theme:"C", zone:"atrium", imgs:["Cai_01.jpg"]},
+  {id:"cole", artist:"Adam Cole +", title:"World Simulator", theme:"C", zone:"atrium",
+    imgs:["Cole_01.png","Cole_02.png","Cole_03.png","Cole_04.png","Cole_05.png"]},
+
+  {id:"williams", artist:"Alexander Williams +", title:"Adversarial Aesthetics", theme:"C", zone:"dark1", imgs:["Williams_01.png"]},
+  {id:"ahn", artist:"Sabina Hyoju Ahn +", title:"PlaSphere", theme:"A", zone:"dark1",
+    imgs:["Ahn_01.png","Ahn_02.png","Ahn_03.png"]},
+  {id:"hieronymi", artist:"Andrew Hieronymi", title:"CONTACT", theme:"A", zone:"dark1", imgs:["Hieronymi_01.jpg"]},
+  {id:"raylc", artist:"Ray LC +", title:"Cradle of Success", theme:"C", zone:"dark1", imgs:["RayLC_01.jpg"]},
+  {id:"wolfe", artist:"Hannen E. Wolfe", title:"Paper Bark", theme:"A", zone:"dark1",
+    imgs:["Wolfe_01.png","Wolfe_02.png"]},
+
+  {id:"thrum", artist:"Resident Thrum (anon.)", title:"Group Cardiac Synchronisation", theme:"B", zone:"dark2",
+    imgs:["ResidentThrum_02.png","ResidentThrum_01.png"]},
+  {id:"chen", artist:"Qiyao Chen", title:"Spirit: A Tech-Ritual", theme:"B", zone:"dark2", imgs:["Chen_01.jpg"]},
+
+  {id:"hedayati", artist:"Mona Hedayati", title:"The Body & the Counter-Archive", theme:"B", zone:"perf",
+    imgs:["Hedayati_01.png","Hedayati_02.png","Hedayati_03.png","Hedayati_04.png","Hedayati_05.png","Hedayati_06.png"]},
+  {id:"breathe", artist:"Piyakorn Koowattanataworn", title:"Breathe Kritisk", theme:"B", zone:"perf", imgs:["Koowattanataworn_01.jpeg"]},
+  {id:"almeda", artist:"SHM G. Almeda", title:"Artist-in-the-Loop", theme:"C", zone:"perf", imgs:["Almeda_01.jpg"]},
+  {id:"bendto", artist:"Bend To (artist TBC)", title:"VR Experience", theme:"D", zone:"perf",
+    imgs:["BendTo_01.png","BendTo_02.png","BendTo_03.png","BendTo_04.png"]},
+];
+
+const CARD_W=166, CARD_H=140, STORE="ccExhibitLayout.v1";
+const canvas=document.getElementById("canvas");
+const enc=f=>encodeURI(DIR+f);
+
+// ---- suggested grid positions ----
+function suggested(){
+  const pos={};
+  ZONES.forEach(z=>{
+    const items=WORKS.filter(w=>w.zone===z.id);
+    const headerH=44, padX=14, gapY=18;
+    const cellW=(z.w-padX*2)/z.cols;
+    items.forEach((w,i)=>{
+      const col=i%z.cols, row=Math.floor(i/z.cols);
+      pos[w.id]={
+        x:Math.round(z.x+padX+col*cellW+(cellW-CARD_W)/2),
+        y:Math.round(z.y+headerH+row*(CARD_H+gapY))
+      };
+    });
+  });
+  return pos;
+}
+function load(){ try{return JSON.parse(localStorage.getItem(STORE))||null}catch(e){return null} }
+function save(p){ localStorage.setItem(STORE, JSON.stringify(p)); }
+function readHash(){
+  if(!location.hash.length>1) return null;
+  try{ return JSON.parse(decodeURIComponent(location.hash.slice(1))); }catch(e){ return null; }
+}
+
+// priority: shared URL > this browser's saved layout > suggested grid
+let positions = readHash() || load() || suggested();
+if(readHash()) save(positions); // adopt a shared layout into local autosave
+const idx = {}; // current image index per work
+
+// ---- render zones ----
+ZONES.forEach(z=>{
+  const d=document.createElement("div");
+  d.className="zone";
+  d.style.cssText=`left:${z.x}px;top:${z.y}px;width:${z.w}px;height:${z.h}px`;
+  d.innerHTML=`<div class="zlabel">${z.title}</div><div class="zsub">${z.sub}</div>`;
+  canvas.appendChild(d);
+});
+
+// ---- render cards ----
+const cardEls={};
+WORKS.forEach(w=>{
+  idx[w.id]=0;
+  const c=document.createElement("div");
+  c.className="card"; c.dataset.id=w.id; c.dataset.theme=w.theme;
+  const p=positions[w.id]||{x:20,y:20};
+  c.style.left=p.x+"px"; c.style.top=p.y+"px";
+  const badge = w.imgs.length>1 ? `<div class="badge" title="View all images">×${w.imgs.length}</div>` : "";
+  c.innerHTML=`
+    <img class="thumb" src="${enc(w.imgs[0])}" alt="${w.artist}">
+    ${badge}
+    <div class="meta" style="border-top-color:${THEMES[w.theme].color}">
+      <div class="artist">${w.artist}</div>
+      <div class="title">${w.title}</div>
+    </div>`;
+  canvas.appendChild(c);
+  cardEls[w.id]=c;
+  if(badge){
+    c.querySelector(".badge").addEventListener("click",e=>{e.stopPropagation();openLightbox(w);});
+  }
+});
+
+// ---- drag + click-to-flip ----
+let drag=null;
+canvas.addEventListener("pointerdown",e=>{
+  const card=e.target.closest(".card");
+  if(!card || e.target.classList.contains("badge")) return;
+  const id=card.dataset.id;
+  drag={id,card,sx:e.clientX,sy:e.clientY,
+        ox:parseFloat(card.style.left), oy:parseFloat(card.style.top),moved:false};
+  card.setPointerCapture(e.pointerId);
+  card.classList.add("dragging");
+});
+canvas.addEventListener("pointermove",e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(Math.abs(dx)>4||Math.abs(dy)>4) drag.moved=true;
+  let nx=drag.ox+dx, ny=drag.oy+dy;
+  nx=Math.max(0,Math.min(canvas.clientWidth-CARD_W,nx));
+  ny=Math.max(0,Math.min(canvas.clientHeight-CARD_H,ny));
+  drag.card.style.left=nx+"px"; drag.card.style.top=ny+"px";
+});
+canvas.addEventListener("pointerup",e=>{
+  if(!drag) return;
+  drag.card.classList.remove("dragging");
+  if(drag.moved){
+    positions[drag.id]={x:parseFloat(drag.card.style.left),y:parseFloat(drag.card.style.top)};
+    save(positions);
+    sendMove(drag.id, positions[drag.id]);
+  } else {
+    // click = flip to next image
+    const w=WORKS.find(x=>x.id===drag.id);
+    if(w.imgs.length>1){
+      idx[w.id]=(idx[w.id]+1)%w.imgs.length;
+      drag.card.querySelector(".thumb").src=enc(w.imgs[idx[w.id]]);
+    }
+  }
+  drag=null;
+});
+
+// ---- legend / theme filter ----
+const legend=document.getElementById("legend");
+const off=new Set();
+Object.entries(THEMES).forEach(([k,t])=>{
+  const s=document.createElement("span");
+  s.innerHTML=`<i style="background:${t.color}"></i>${t.name}`;
+  s.onclick=()=>{ off.has(k)?off.delete(k):off.add(k); s.classList.toggle("off"); applyFilter(); };
+  legend.appendChild(s);
+});
+function applyFilter(){
+  WORKS.forEach(w=>cardEls[w.id].classList.toggle("dim", off.has(w.theme)));
+}
+
+// ---- buttons ----
+document.getElementById("resetBtn").onclick=()=>{
+  if(location.hash) history.replaceState(null,"",location.pathname);
+  positions=suggested(); save(positions);
+  WORKS.forEach(w=>{cardEls[w.id].style.left=positions[w.id].x+"px";cardEls[w.id].style.top=positions[w.id].y+"px";});
+  sendReset(positions);
+};
+let labelsOn=true;
+document.getElementById("labelsBtn").onclick=function(){
+  labelsOn=!labelsOn;
+  document.querySelectorAll(".card .meta").forEach(m=>m.style.display=labelsOn?"":"none");
+  this.textContent=labelsOn?"Hide labels":"Show labels";
+};
+
+// ---- save / load / share ----
+function toast(msg){
+  const h=document.getElementById("hint"); h.textContent=msg;
+  clearTimeout(toast._t); toast._t=setTimeout(()=>{h.textContent="Tip: your arrangement auto-saves in this browser.";},2600);
+}
+document.getElementById("saveBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(positions,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="cc26-exhibition-layout.json"; a.click();
+  URL.revokeObjectURL(a.href); toast("Saved layout to cc26-exhibition-layout.json");
+};
+document.getElementById("loadBtn").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange=function(){
+  const f=this.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{
+      const p=JSON.parse(r.result); positions=p; save(positions);
+      WORKS.forEach(w=>{ if(positions[w.id]){cardEls[w.id].style.left=positions[w.id].x+"px";cardEls[w.id].style.top=positions[w.id].y+"px";}});
+      sendReset(positions);
+      toast("Loaded layout from "+f.name);
+    }catch(e){ toast("Could not read that file."); } this.value="";
+  };
+  r.readAsText(f);
+};
+document.getElementById("shareBtn").onclick=()=>{
+  const url=location.origin+location.pathname+"#"+encodeURIComponent(JSON.stringify(positions));
+  location.hash=encodeURIComponent(JSON.stringify(positions));
+  navigator.clipboard?.writeText(url).then(
+    ()=>toast("Share link copied — anyone who opens it sees this layout."),
+    ()=>toast("Share link is now in the address bar — copy it to share.")
+  );
+};
+
+// ---- lightbox ----
+const lb=document.getElementById("lb"), lbImg=document.getElementById("lbImg"),
+      lbCap=document.getElementById("lbCap"), lbStrip=document.getElementById("lbStrip");
+function openLightbox(w){
+  function show(i){
+    lbImg.src=enc(w.imgs[i]);
+    lbCap.textContent=`${w.artist} — ${w.title}  (${i+1}/${w.imgs.length})`;
+    [...lbStrip.children].forEach((t,j)=>t.classList.toggle("sel",j===i));
+  }
+  lbStrip.innerHTML="";
+  w.imgs.forEach((f,i)=>{
+    const t=document.createElement("img"); t.src=enc(f); t.onclick=()=>show(i); lbStrip.appendChild(t);
+  });
+  show(0); lb.classList.add("open");
+}
+document.getElementById("lbClose").onclick=()=>lb.classList.remove("open");
+lb.addEventListener("click",e=>{ if(e.target===lb) lb.classList.remove("open"); });
+
+// ---- live co-working via Render WebSocket server ----
+// After deploying cc26-sync on Render, replace the URL below with your service
+// URL using the wss:// scheme, e.g. "wss://cc26-sync.onrender.com".
+const SYNC_URL = "wss://cc26-sync.onrender.com";
+let ws=null;
+const statusEl=document.getElementById("syncStatus");
+function setStatus(state,n){
+  if(!statusEl) return;
+  if(state==="live"){ statusEl.textContent="● Live"+(n?` · ${n} online`:""); statusEl.style.color="#3fae6f"; }
+  else if(state==="reconnect"){ statusEl.textContent="○ reconnecting…"; statusEl.style.color="#e0a13c"; }
+  else { statusEl.textContent="○ local only"; statusEl.style.color="#8a8f9a"; }
+}
+function placeAll(L){
+  Object.entries(L).forEach(([id,p])=>{ if(cardEls[id]&&p){cardEls[id].style.left=p.x+"px";cardEls[id].style.top=p.y+"px";positions[id]=p;} });
+  save(positions);
+}
+function sendMove(id,pos){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"move",id,pos})); }
+function sendReset(L){ if(ws&&ws.readyState===1) ws.send(JSON.stringify({type:"reset",layout:L})); }
+function connectSync(){
+  if(!SYNC_URL||SYNC_URL.includes("REPLACE")){ setStatus("local"); return; }
+  try{ ws=new WebSocket(SYNC_URL); }catch(e){ setStatus("local"); return; }
+  ws.onopen=()=>setStatus("live");
+  ws.onmessage=ev=>{
+    let m; try{m=JSON.parse(ev.data)}catch(e){return;}
+    if(m.type==="init"){
+      if(m.layout){ placeAll(m.layout); }
+      else if(ws.readyState===1){ ws.send(JSON.stringify({type:"seed",layout:positions})); }
+      setStatus("live",m.clients);
+    } else if(m.type==="move"){
+      if(cardEls[m.id]&&m.pos){ cardEls[m.id].style.left=m.pos.x+"px"; cardEls[m.id].style.top=m.pos.y+"px"; positions[m.id]=m.pos; save(positions); }
+    } else if(m.type==="presence"){ setStatus("live",m.clients); }
+  };
+  ws.onclose=()=>{ setStatus("reconnect"); clearTimeout(connectSync._t); connectSync._t=setTimeout(connectSync,2500); };
+  ws.onerror=()=>{ try{ws.close()}catch(e){} };
+}
+connectSync();
+</script>
+</body>
+</html>
