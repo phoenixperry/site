@@ -23,6 +23,8 @@
     --teal-deep:#15807D;
     --rust:#E07B61;
     --rust-deep:#7d3422;
+    --amber:#E2B23E;
+    --amber-deep:#6a531a;
     --display:"Space Grotesk", system-ui, sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, monospace;
     --body:"Inter", system-ui, sans-serif;
@@ -103,6 +105,13 @@
   .day-head .dnum{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.12em;color:var(--teal);}
   .day-head h2{font-family:var(--display);font-weight:600;font-size:1.1rem;letter-spacing:-.01em;margin:0;}
   .day-head .dtag{margin-left:auto;font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+  .venue{
+    font-family:var(--mono);font-size:.66rem;color:var(--mid);line-height:1.55;
+    margin:.6rem 0 .1rem;padding:.55rem .65rem;background:var(--surface);
+    border:1px solid var(--rule);border-left:3px solid var(--teal-deep);border-radius:8px;
+  }
+  .venue b{color:var(--ink);font-weight:600;}
+  .venue a{color:var(--teal);}
 
   /* ---------- card ---------- */
   .card{
@@ -133,6 +142,7 @@
   .tag.top{background:var(--teal);color:#04201f;}
   .tag.pick{border:1px solid var(--teal-deep);color:var(--teal);}
   .tag.miss{background:var(--rust-deep);color:var(--rust);}
+  .tag.reg{background:transparent;border:1px solid var(--amber);color:var(--amber);}
   .chev{flex:0 0 auto;font-family:var(--display);font-size:1.2rem;color:var(--faint);transition:transform .26s ease;line-height:1;padding-top:.1rem;}
   .card.open .chev{transform:rotate(90deg);color:var(--teal);}
 
@@ -155,6 +165,11 @@
     padding:.34rem .55rem;border-radius:6px;
   }
   .links a:active{background:var(--surface);}
+  .links a.reg{border-color:var(--amber-deep);color:var(--amber);}
+  .regnote{
+    font-family:var(--mono);font-size:.66rem;line-height:1.55;color:var(--amber);
+    margin-top:.55rem;padding-top:.5rem;border-top:1px dashed var(--rule);
+  }
 
   .empty{display:none;text-align:center;color:var(--faint);font-family:var(--mono);font-size:.72rem;padding:2.5rem 1rem;}
 
@@ -192,32 +207,35 @@
 
   <!-- ============ TUE ============ -->
   <section class="day" data-day="tue">
-    <div class="day-head"><span class="dnum">DAY 0</span><h2>Tue 23 Jun</h2><span class="dtag">Workshops · sign-up</span></div>
+    <div class="day-head"><span class="dnum">DAY 0</span><h2>Tue 23 Jun</h2><span class="dtag">Workshops · LUL</span></div>
+    <div class="venue"><b>Loughborough University London</b> · Here East, 3 Lesney Avenue, Queen Elizabeth Olympic Park, London E20 3BS · nearest: Hackney Wick (10 min walk) · <a href="https://maps.app.goo.gl/i3oTDxYgx8iKHqnQA" target="_blank" rel="noopener">map ↗</a><br>No lunch provided on workshop day — eat at Here East.</div>
 
     <article class="card" data-cat="pick">
       <button class="card-head" aria-expanded="false">
         <span class="time">09:00<br>13:00</span>
-        <span class="mid"><span class="ttl">From Tacit to Tokenised: AI Text-to-Audio Interfaces</span>
-          <span class="tags"><span class="tag pick">Aligned</span></span></span>
+        <span class="mid"><span class="ttl">From Tacit to Tokenised: AI Text-to-Audio Interfaces<span class="room">Room 206 · hybrid</span></span>
+          <span class="tags"><span class="tag pick">Aligned</span><span class="tag reg">Emailed · walk-in</span></span></span>
         <span class="chev">›</span>
       </button>
       <div class="card-body"><div class="inner"><div class="bwrap">
         <p class="note"><span class="who">Saitis · Morreale · Fiebrink (UAL) · Reed</span>Direct hit for your AI-critique thread. Fiebrink is UAL and among NIME's most-cited.</p>
-        <div class="links"><a href="https://nime2026.org/proceedings/649.html" target="_blank" rel="noopener">Workshop ↗</a></div>
+        <p class="regnote">Room 206, morning (9–13). Sign-up deadline (9 Jun) passed — you've emailed; if no reply, walk up. Organiser: c.saitis@qmul.ac.uk</p>
+        <div class="links"><a class="reg" href="https://comma.eecs.qmul.ac.uk/critical-text-audio-interfaces/" target="_blank" rel="noopener">Workshop site ↗</a><a href="https://nime2026.org/proceedings/649.html" target="_blank" rel="noopener">NIME page ↗</a></div>
       </div></div></div>
     </article>
 
     <article class="card" data-cat="clash">
       <button class="card-head" aria-expanded="false">
         <span class="time">14:00<br>18:00</span>
-        <span class="mid"><span class="ttl">I Resist the Body Electric: Subverting Gesture Capture for AI</span>
-          <span class="tags"><span class="tag pick">Top aligned</span><span class="tag miss">Clash</span></span></span>
+        <span class="mid"><span class="ttl">I Resist the Body Electric: Subverting Gesture Capture for AI<span class="room">LDN 4.01</span></span>
+          <span class="tags"><span class="tag pick">Top aligned</span><span class="tag reg">Emailed · walk-in</span><span class="tag miss">Clash</span></span></span>
         <span class="chev">›</span>
       </button>
       <div class="card-body"><div class="inner"><div class="bwrap">
-        <p class="note"><span class="who">Morreale · Scheuerman · Lepri · Pram · Bin</span>Maps almost exactly onto your data-capture / "gravity wells" critique.</p>
-        <p class="clashline">Same slot — pick one:<br><span class="strike">What Makes it Fun? Playful Interaction in Music-Making with AI · Fiebrink, Sun et al.</span></p>
-        <div class="links"><a href="https://nime2026.org/proceedings/644.html" target="_blank" rel="noopener">I Resist… ↗</a><a href="https://nime2026.org/proceedings/692.html" target="_blank" rel="noopener">What Makes it Fun ↗</a></div>
+        <p class="note"><span class="who">Morreale · Scheuerman · Lepri · Pram · Bin</span>Maps almost exactly onto your data-capture / "gravity wells" critique. <b>Room LDN 4.01</b>, afternoon (14–18).</p>
+        <p class="clashline">Same slot — pick one:<br><span class="strike">What Makes it Fun? Playful Interaction with AI · Fiebrink, Sun et al. — Room LDN 2.05</span></p>
+        <p class="regnote">Deadlines passed (19 Jun / 2 Jun) — you've emailed; if no reply, walk up. Organisers: mail@fabio.kiwi · j.sun23@imperial.ac.uk</p>
+        <div class="links"><a class="reg" href="https://resist-the-capture.surge.sh/" target="_blank" rel="noopener">I Resist site ↗</a><a class="reg" href="https://sites.google.com/view/nime26-workshop/home/" target="_blank" rel="noopener">What Makes it Fun site ↗</a></div>
       </div></div></div>
     </article>
   </section>
@@ -402,7 +420,9 @@
   <p class="empty" id="empty">No sessions in this filter.</p>
 
   <footer>
-    <div><b>Selection logic:</b> research alignment · author citation weight · learning value</div>
+    <div><b>Workshops (Tue, LUL):</b> sign-up deadlines passed — emailed organisers, walking up. Rooms listed per card.</div>
+    <div><b>Conference registration</b> → <a href="https://nime2026.org/registration/" target="_blank" rel="noopener">nime2026.org/registration</a></div>
+    <div style="margin-top:.5rem"><b>Selection logic:</b> research alignment · author citation weight · learning value</div>
     <div>Times BST · rooms per nime2026.org · verify on-site</div>
   </footer>
 </main>
