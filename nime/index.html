@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0E0F11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NIME 2026 · Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0F11;
+    --surface:#17191C;
+    --surface-2:#1E2126;
+    --ink:#ECEDEA;
+    --mid:#9DA1A2;
+    --faint:#686C6E;
+    --rule:#292C30;
+    --teal:#2FBDB8;
+    --teal-deep:#15807D;
+    --rust:#E07B61;
+    --rust-deep:#7d3422;
+    --display:"Space Grotesk", system-ui, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+    --body:"Inter", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--body);line-height:1.45;
+    padding-bottom:env(safe-area-inset-bottom);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--teal);text-decoration:none;}
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:rgba(14,15,17,.86);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--rule);
+    padding:calc(env(safe-area-inset-top) + .85rem) 1.1rem .2rem;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:.62rem;font-weight:500;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--teal);margin:0;
+  }
+  .htop{display:flex;justify-content:space-between;align-items:flex-end;gap:.6rem;}
+  h1{font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:-.02em;margin:.15rem 0 0;}
+  .toggle-all{
+    font-family:var(--mono);font-size:.6rem;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--mid);background:var(--surface-2);
+    border:1px solid var(--rule);padding:.42rem .6rem;border-radius:7px;cursor:pointer;
+  }
+  .toggle-all:active{background:var(--surface);}
+
+  .mytalk{
+    display:flex;align-items:center;gap:.55rem;width:100%;
+    margin:.7rem 0 .15rem;padding:.55rem .7rem;
+    background:linear-gradient(90deg,var(--surface-2),var(--surface));
+    border:1px solid var(--rule);border-left:3px solid var(--ink);
+    border-radius:8px;cursor:pointer;text-align:left;color:var(--ink);
+  }
+  .mytalk .star{flex:0 0 auto;width:.7rem;height:.7rem;border:1.6px solid var(--ink);}
+  .mytalk .mt-txt{font-family:var(--mono);font-size:.66rem;letter-spacing:.02em;color:var(--mid);}
+  .mytalk .mt-txt b{color:var(--ink);font-weight:600;}
+  .mytalk .go{margin-left:auto;font-family:var(--mono);font-size:.62rem;color:var(--teal);}
+
+  /* ---------- filter chips ---------- */
+  .chips{
+    display:flex;gap:.45rem;overflow-x:auto;scrollbar-width:none;
+    padding:.7rem 1.1rem .75rem;margin:0;
+    position:sticky;top:0;
+  }
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:0 0 auto;font-family:var(--mono);font-size:.66rem;font-weight:500;
+    letter-spacing:.03em;color:var(--mid);background:var(--surface);
+    border:1px solid var(--rule);padding:.42rem .72rem;border-radius:20px;cursor:pointer;
+    white-space:nowrap;transition:.15s;
+  }
+  .chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#04201f;font-weight:600;}
+  .chip .dot{display:inline-block;width:.5rem;height:.5rem;margin-right:.34rem;vertical-align:0;}
+  .chip .dot.pick{background:var(--teal);}
+  .chip .dot.star{border:1.4px solid var(--ink);}
+  .chip .dot.clash{background:var(--rust-deep);border:1.4px solid var(--rust);}
+  .chip .dot.opt{border:1.4px solid var(--faint);}
+  .chip[aria-pressed="true"] .dot{filter:brightness(0) saturate(0);opacity:.55;}
+
+  main{padding:0 1.1rem 2.4rem;}
+
+  /* ---------- day group ---------- */
+  .day{margin-top:1.35rem;}
+  .day-head{
+    position:sticky;top:118px;z-index:10;
+    display:flex;align-items:baseline;gap:.6rem;
+    background:var(--bg);padding:.35rem 0 .45rem;
+    border-bottom:1px solid var(--rule);
+  }
+  .day-head .dnum{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.12em;color:var(--teal);}
+  .day-head h2{font-family:var(--display);font-weight:600;font-size:1.1rem;letter-spacing:-.01em;margin:0;}
+  .day-head .dtag{margin-left:auto;font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+
+  /* ---------- card ---------- */
+  .card{
+    margin-top:.6rem;background:var(--surface);
+    border:1px solid var(--rule);border-radius:11px;overflow:hidden;
+    border-left:3px solid var(--faint);
+  }
+  .card[data-cat="pick"]{border-left-color:var(--teal);}
+  .card[data-cat="star"]{border-left-color:var(--ink);}
+  .card[data-cat="clash"]{border-left-color:var(--rust);}
+  .card[data-cat="opt"]{border-left-color:var(--rule);}
+
+  .card-head{
+    display:flex;align-items:flex-start;gap:.7rem;width:100%;
+    background:none;border:none;color:inherit;text-align:left;
+    padding:.85rem .9rem;cursor:pointer;font-family:inherit;
+  }
+  .card-head .time{
+    flex:0 0 auto;width:50px;font-family:var(--mono);font-size:.66rem;font-weight:500;
+    color:var(--mid);line-height:1.3;padding-top:.12rem;
+  }
+  .card-head .mid{flex:1 1 auto;min-width:0;}
+  .ttl{font-family:var(--display);font-weight:600;font-size:.92rem;line-height:1.25;}
+  .room{font-family:var(--mono);font-weight:500;font-size:.6rem;color:var(--faint);letter-spacing:.03em;margin-left:.4rem;white-space:nowrap;}
+  .tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem;}
+  .tag{font-family:var(--mono);font-size:.55rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:.16rem .4rem;border-radius:4px;}
+  .tag.you{background:var(--ink);color:var(--bg);}
+  .tag.top{background:var(--teal);color:#04201f;}
+  .tag.pick{border:1px solid var(--teal-deep);color:var(--teal);}
+  .tag.miss{background:var(--rust-deep);color:var(--rust);}
+  .chev{flex:0 0 auto;font-family:var(--display);font-size:1.2rem;color:var(--faint);transition:transform .26s ease;line-height:1;padding-top:.1rem;}
+  .card.open .chev{transform:rotate(90deg);color:var(--teal);}
+
+  .card-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease;}
+  .card.open .card-body{grid-template-rows:1fr;}
+  .card-body .inner{overflow:hidden;}
+  .bwrap{padding:0 .9rem .9rem 1.6rem;}
+  .note{font-size:.82rem;color:var(--mid);line-height:1.5;margin:0;}
+  .note b{color:var(--ink);font-weight:600;}
+  .who{font-family:var(--mono);font-size:.68rem;color:var(--faint);display:block;margin-bottom:.3rem;}
+  .clashline{
+    font-family:var(--mono);font-size:.68rem;line-height:1.5;color:var(--rust);
+    margin-top:.55rem;padding-top:.5rem;border-top:1px dashed var(--rule);
+  }
+  .clashline .strike{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--rule);}
+  .links{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.65rem;}
+  .links a{
+    font-family:var(--mono);font-size:.64rem;font-weight:500;letter-spacing:.02em;
+    background:var(--surface-2);border:1px solid var(--rule);
+    padding:.34rem .55rem;border-radius:6px;
+  }
+  .links a:active{background:var(--surface);}
+
+  .empty{display:none;text-align:center;color:var(--faint);font-family:var(--mono);font-size:.72rem;padding:2.5rem 1rem;}
+
+  footer{
+    border-top:1px solid var(--rule);margin-top:2rem;padding:1.1rem 0 0;
+    font-family:var(--mono);font-size:.62rem;color:var(--faint);line-height:1.7;letter-spacing:.02em;
+  }
+  footer b{color:var(--mid);}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">NIME 2026 · 23–27 June · London</p>
+  <div class="htop">
+    <h1>Your Agenda</h1>
+    <button class="toggle-all" id="toggleAll">Expand all</button>
+  </div>
+  <button class="mytalk" id="jumpTalk">
+    <span class="star"></span>
+    <span class="mt-txt"><b>Your talk</b> · Wed 11:00 · Papers 1B · Room B</span>
+    <span class="go">jump ↗</span>
+  </button>
+</header>
+
+<nav class="chips" id="chips">
+  <button class="chip" data-filter="all" aria-pressed="true">All</button>
+  <button class="chip" data-filter="star" aria-pressed="false"><span class="dot star"></span>My talk</button>
+  <button class="chip" data-filter="pick" aria-pressed="false"><span class="dot pick"></span>Recommended</button>
+  <button class="chip" data-filter="clash" aria-pressed="false"><span class="dot clash"></span>Clashes</button>
+  <button class="chip" data-filter="opt" aria-pressed="false"><span class="dot opt"></span>Browse</button>
+</nav>
+
+<main id="main">
+
+  <!-- ============ TUE ============ -->
+  <section class="day" data-day="tue">
+    <div class="day-head"><span class="dnum">DAY 0</span><h2>Tue 23 Jun</h2><span class="dtag">Workshops · sign-up</span></div>
+
+    <article class="card" data-cat="pick">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">09:00<br>13:00</span>
+        <span class="mid"><span class="ttl">From Tacit to Tokenised: AI Text-to-Audio Interfaces</span>
+          <span class="tags"><span class="tag pick">Aligned</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><span class="who">Saitis · Morreale · Fiebrink (UAL) · Reed</span>Direct hit for your AI-critique thread. Fiebrink is UAL and among NIME's most-cited.</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/649.html" target="_blank" rel="noopener">Workshop ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="clash">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">14:00<br>18:00</span>
+        <span class="mid"><span class="ttl">I Resist the Body Electric: Subverting Gesture Capture for AI</span>
+          <span class="tags"><span class="tag pick">Top aligned</span><span class="tag miss">Clash</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><span class="who">Morreale · Scheuerman · Lepri · Pram · Bin</span>Maps almost exactly onto your data-capture / "gravity wells" critique.</p>
+        <p class="clashline">Same slot — pick one:<br><span class="strike">What Makes it Fun? Playful Interaction in Music-Making with AI · Fiebrink, Sun et al.</span></p>
+        <div class="links"><a href="https://nime2026.org/proceedings/644.html" target="_blank" rel="noopener">I Resist… ↗</a><a href="https://nime2026.org/proceedings/692.html" target="_blank" rel="noopener">What Makes it Fun ↗</a></div>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ============ WED ============ -->
+  <section class="day" data-day="wed">
+    <div class="day-head"><span class="dnum">DAY 1</span><h2>Wed 24 Jun</h2><span class="dtag">Your day</span></div>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">09:30<br>10:30</span>
+        <span class="mid"><span class="ttl">Keynote 1 · Kathy Hinde<span class="room">LDN 001</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Opening keynote.</p>
+        <div class="links"><a href="https://nime2026.org/keynotes" target="_blank" rel="noopener">Keynotes ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="star" id="mytalk">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">11:00<br>12:30</span>
+        <span class="mid"><span class="ttl">Papers 1B · Sensing &amp; Actuating<span class="room">Room B</span></span>
+          <span class="tags"><span class="tag you">You present · 16 min</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><b>Crip Design for Collaborative Musical Interfaces: Bot Party, a Touch-Based Sonic Game.</b> Shared bill with McPherson / Schmidt sensing-and-actuation papers and the blind/VI spatial-audio mixing paper.</p>
+        <p class="clashline">✕ you miss (parallel, Room A):<br><span class="strike">Papers 1A Togethering — SynthAccess · Audionce</span> → grab PDFs / catch authors</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/631.html" target="_blank" rel="noopener">Your paper ↗</a><a href="https://nime2026.org/proceedings/266.html" target="_blank" rel="noopener">SynthAccess ↗</a><a href="https://nime2026.org/proceedings/71.html" target="_blank" rel="noopener">Audionce ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">12:30<br>14:00</span>
+        <span class="mid"><span class="ttl">Posters 1 — browse<span class="room">Poster area</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Seek out <b>Human-in-the-Loop: Crossmodal AI Alignment between Movement and Audio Latent Spaces</b> (Tahiroğlu).</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/241.html" target="_blank" rel="noopener">Crossmodal latent ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="pick">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">14:00<br>15:30</span>
+        <span class="mid"><span class="ttl">Papers 2A · Toolkits and Code<span class="room">Room A</span></span>
+          <span class="tags"><span class="tag top">Don't miss</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><b>Probing Latent Space Interactions with Real-time Generative Audio Models Through a Physical Controller</b> (Stefani / Dal Rì / Turchet) — nearly a spec for your Anti-Gravity Machine. Plus Z-Wah (Bernardo &amp; McPherson).</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/357.html" target="_blank" rel="noopener">Probing latent space ↗</a><a href="https://nime2026.org/proceedings/280.html" target="_blank" rel="noopener">Z-Wah ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">16:00<br>17:00</span>
+        <span class="mid"><span class="ttl">Papers 3B · Distributed &amp; Extended Realities<span class="room">Room B</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">If staying: <b>Sounds from Mismatch — Sensorimotor Prediction Error as Sonic Material in AR</b> (Turchet group).</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/354.html" target="_blank" rel="noopener">Sounds from Mismatch ↗</a></div>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ============ THU ============ -->
+  <section class="day" data-day="thu">
+    <div class="day-head"><span class="dnum">DAY 2</span><h2>Thu 25 Jun</h2><span class="dtag">Theory day</span></div>
+
+    <article class="card" data-cat="pick">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">09:00<br>10:30</span>
+        <span class="mid"><span class="ttl">Papers 4A · Theory in Practice<span class="room">Room A</span></span>
+          <span class="tags"><span class="tag top">Don't miss</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Your theoretical lane: <b>Thor Magnusson</b> — Kicking Against Methodology · <b>Andrew McPherson</b> — On Values, Technological Mediation · Astrid Bin on "touch" · Guzmán on Latin American Cyborgism.</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/428.html" target="_blank" rel="noopener">Magnusson ↗</a><a href="https://nime2026.org/proceedings/210.html" target="_blank" rel="noopener">McPherson ↗</a><a href="https://nime2026.org/proceedings/529.html" target="_blank" rel="noopener">Cyborgism ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">12:30<br>14:30</span>
+        <span class="mid"><span class="ttl">Posters 2 — browse<span class="room">Poster area</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Worth a scan between sessions.</p>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">14:30<br>15:30</span>
+        <span class="mid"><span class="ttl">Paper Session 6 · alt.nime</span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><b>Speed Makes Us Oblivious: A Slow, Responsible Approach to Audio Sample Archives</b> (Khallaghi, Bennett &amp; <b>Atau Tanaka</b>).</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/695.html" target="_blank" rel="noopener">Speed Makes Us Oblivious ↗</a></div>
+      </div></div></div>
+    </article>
+  </section>
+
+  <!-- ============ FRI ============ -->
+  <section class="day" data-day="fri">
+    <div class="day-head"><span class="dnum">DAY 3</span><h2>Fri 26 Jun</h2><span class="dtag">Machines &amp; latent space</span></div>
+
+    <article class="card" data-cat="pick">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">09:00<br>10:30</span>
+        <span class="mid"><span class="ttl">Papers 8B · Embodying<span class="room">LDN 001</span></span>
+          <span class="tags"><span class="tag pick">Go</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><b>Con Moto: Embodied Steering of Music Transformers</b> (Cheng-Zhi Anna Huang — one of the most-cited names here). Embodied steering of generative models = your navigation thread.</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/51.html" target="_blank" rel="noopener">Con Moto ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="clash">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">11:00<br>12:30</span>
+        <span class="mid"><span class="ttl">Papers 9A · Learning with the Machines<span class="room">Room A</span></span>
+          <span class="tags"><span class="tag top">Most aligned</span><span class="tag miss">Clash</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">The single most on-target session: <b>Network Bending</b> · <b>Latent Terrain</b> (neural audio autoencoders as design material — Bryan-Kinns) · Tuneable ML (Kiefer) · <b>Performing with the Inclusive Machine</b> · <b>Distributed Agency with Intelligent Instruments</b> (Magnusson).</p>
+        <p class="clashline">Parallel (Room B) Papers 9B:<br><span class="strike">In The Round — Cultural Model of Disability in Accessible Improvisation</span> · Charles Martin → room-hop for the crip paper or grab its PDF</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/191.html" target="_blank" rel="noopener">Latent Terrain ↗</a><a href="https://nime2026.org/proceedings/226.html" target="_blank" rel="noopener">Network Bending ↗</a><a href="https://nime2026.org/proceedings/432.html" target="_blank" rel="noopener">Distributed Agency ↗</a><a href="https://nime2026.org/proceedings/126.html" target="_blank" rel="noopener">In The Round ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">12:30<br>14:30</span>
+        <span class="mid"><span class="ttl">Posters 3 — browse<span class="room">Poster area</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note"><b>Murzinograph: Navigating Sound through Latent Space Visualizations</b> (Guzmán) · <b>Peripersonal Modular Interfaces for Care Ecologies</b> — accessible DMIs.</p>
+        <div class="links"><a href="https://nime2026.org/proceedings/530.html" target="_blank" rel="noopener">Murzinograph ↗</a><a href="https://nime2026.org/proceedings/447.html" target="_blank" rel="noopener">Care Ecologies ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="pick">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">14:30<br>15:30</span>
+        <span class="mid"><span class="ttl">Keynote 2 · Georgina Born<span class="room">LDN 001</span></span>
+          <span class="tags"><span class="tag top">Unmissable</span></span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Foundational on the anthropology of music, cultural production &amp; AI — straight into your cultural-memory / Fisher / Assmann thread.</p>
+        <div class="links"><a href="https://nime2026.org/keynotes" target="_blank" rel="noopener">Keynotes ↗</a></div>
+      </div></div></div>
+    </article>
+
+    <article class="card" data-cat="opt">
+      <button class="card-head" aria-expanded="false">
+        <span class="time">16:00<br>17:00</span>
+        <span class="mid"><span class="ttl">Town Hall</span></span>
+        <span class="chev">›</span>
+      </button>
+      <div class="card-body"><div class="inner"><div class="bwrap">
+        <p class="note">Community closing plenary.</p>
+      </div></div></div>
+    </article>
+  </section>
+
+  <p class="empty" id="empty">No sessions in this filter.</p>
+
+  <footer>
+    <div><b>Selection logic:</b> research alignment · author citation weight · learning value</div>
+    <div>Times BST · rooms per nime2026.org · verify on-site</div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  // ---- accordion ----
+  document.querySelectorAll('.card-head').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.card');
+      var open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      syncToggleAll();
+    });
+  });
+
+  // ---- expand / collapse all ----
+  var toggleAll = document.getElementById('toggleAll');
+  function syncToggleAll(){
+    var cards = visibleCards();
+    var allOpen = cards.length && cards.every(function(c){return c.classList.contains('open');});
+    toggleAll.textContent = allOpen ? 'Collapse all' : 'Expand all';
+  }
+  function visibleCards(){
+    return Array.prototype.filter.call(document.querySelectorAll('.card'),
+      function(c){return c.style.display !== 'none';});
+  }
+  toggleAll.addEventListener('click', function(){
+    var cards = visibleCards();
+    var allOpen = cards.length && cards.every(function(c){return c.classList.contains('open');});
+    cards.forEach(function(c){
+      c.classList.toggle('open', !allOpen);
+      var b = c.querySelector('.card-head');
+      if(b) b.setAttribute('aria-expanded', (!allOpen).toString());
+    });
+    syncToggleAll();
+  });
+
+  // ---- filter chips ----
+  var chips = document.getElementById('chips');
+  var empty = document.getElementById('empty');
+  chips.addEventListener('click', function(e){
+    var chip = e.target.closest('.chip');
+    if(!chip) return;
+    chips.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed','false');});
+    chip.setAttribute('aria-pressed','true');
+    applyFilter(chip.dataset.filter);
+  });
+  function applyFilter(f){
+    var anyVisible = false;
+    document.querySelectorAll('.card').forEach(function(c){
+      var show = (f === 'all') || (c.dataset.cat === f);
+      c.style.display = show ? '' : 'none';
+      if(show) anyVisible = true;
+    });
+    // hide day groups with no visible cards
+    document.querySelectorAll('.day').forEach(function(day){
+      var hasCard = Array.prototype.some.call(day.querySelectorAll('.card'),
+        function(c){return c.style.display !== 'none';});
+      day.style.display = hasCard ? '' : 'none';
+    });
+    empty.style.display = anyVisible ? 'none' : 'block';
+    syncToggleAll();
+  }
+
+  // ---- jump to my talk ----
+  document.getElementById('jumpTalk').addEventListener('click', function(){
+    chips.querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed','false');});
+    chips.querySelector('[data-filter="all"]').setAttribute('aria-pressed','true');
+    applyFilter('all');
+    var t = document.getElementById('mytalk');
+    t.classList.add('open');
+    t.querySelector('.card-head').setAttribute('aria-expanded','true');
+    t.scrollIntoView({behavior:'smooth', block:'center'});
+    syncToggleAll();
+  });
+
+  syncToggleAll();
+})();
+</script>
+</body>
+</html>
