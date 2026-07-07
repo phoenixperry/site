@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phoenix Perry · Research · LCC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ── Resonant Thrum design system · light skin ─────────────────
+     Two values: canvas + ink. Greys are ink at fixed opacity only.
+     Space Grotesk: display & numerics. DM Sans: everything else.
+     Radius 0 · depth is a single 1px outline · slow breathing motion. */
+  :root{
+    --canvas:#fff;
+    --ink:#000;
+    --ink-line:rgba(0,0,0,0.18);
+    --ink-muted:rgba(0,0,0,0.5);
+    --ink-faint:rgba(0,0,0,0.05);
+  }
+  .reveal-viewport{ background:var(--canvas); }
+  .reveal{
+    font-family:'DM Sans', -apple-system, sans-serif;
+    font-weight:400;
+    color:var(--ink);
+    font-size:30px;
+  }
+  .reveal .slides section{ text-align:left; padding:0 40px; box-sizing:border-box; }
+  .reveal h1,.reveal h2,.reveal h3{
+    font-family:'Space Grotesk', -apple-system, sans-serif;
+    font-weight:500; color:var(--ink);
+    text-transform:none; letter-spacing:-0.5px;
+    margin-bottom:.4em;
+  }
+  .reveal h1{ font-size:3em; line-height:1.02; }
+  .reveal h2{ font-size:2em; line-height:1.08; }
+  .reveal h1 em,.reveal h2 em{ font-style:normal; }
+  .kicker{
+    font-family:'DM Sans',sans-serif; font-size:.42em; font-weight:500;
+    letter-spacing:2.4px; text-transform:uppercase; color:var(--ink-muted);
+    display:block; margin-bottom:1.8em;
+  }
+  .rule{ width:64px; height:1px; background:var(--ink); margin:1.2em 0 1.4em; }
+  .reveal ul{ list-style:none; margin:0; width:100%; }
+  .reveal ul li{
+    margin:.55em 0; padding-left:1.4em; position:relative;
+    line-height:1.42; font-size:.76em;
+  }
+  .reveal ul li::before{
+    content:""; position:absolute; left:0; top:.66em;
+    width:14px; height:1px; background:var(--ink);
+  }
+  .reveal ul li strong{ font-weight:700; }
+  .reveal strong{ font-weight:700; }
+  .dim{ color:var(--ink-muted); }
+  .small{ font-size:.58em; color:var(--ink-muted); line-height:1.5; }
+  .bigquote{
+    font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:1.7em;
+    line-height:1.22; letter-spacing:-0.5px; max-width:24ch;
+  }
+  .canvas-bg{ position:absolute; inset:0; z-index:-1; overflow:hidden; }
+  .canvas-bg canvas{ width:100%; height:100%; display:block; }
+  .cols{ display:flex; gap:1.5em; align-items:flex-start; }
+  .cols > div{ flex:1; }
+  .footer-line{
+    position:absolute; bottom:34px; left:40px; right:40px;
+    display:flex; justify-content:space-between;
+    font-family:'DM Sans',sans-serif; font-weight:500; font-size:.38em;
+    letter-spacing:2.2px; text-transform:uppercase; color:var(--ink-muted);
+  }
+  .reveal .progress{ color:var(--ink); height:2px; }
+  .reveal .controls{ color:var(--ink); }
+  .reveal .slides section .fragment{ opacity:0; transition:opacity .6s ease; }
+  .reveal .slides section .fragment.visible{ opacity:1; }
+  .num{
+    font-family:'Space Grotesk',sans-serif; font-weight:500;
+    font-variant-numeric:tabular-nums; letter-spacing:-0.5px;
+    font-size:2.2em; line-height:1; display:block; margin-bottom:.14em;
+  }
+  .statgrid{ display:flex; gap:2em; margin-top:1.1em; }
+  .statgrid .small{ max-width:16ch; }
+  .photo{ margin:.2em 0 0; }
+  .photo img{
+    width:100%; display:block;
+    border:1px solid var(--ink-line);
+  }
+  .photo figcaption{
+    font-family:'DM Sans',sans-serif; font-weight:500; font-size:.4em;
+    color:var(--ink-muted); letter-spacing:2.2px;
+    text-transform:uppercase; margin-top:.9em;
+  }
+  /* ── grants ledger · 1px rules, tabular numerals ── */
+  .grants{ font-size:.46em; }
+  .grants .g{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:1.2em; padding:.6em 0; border-bottom:1px solid var(--ink-line);
+  }
+  .grants .g:first-child{ border-top:1px solid var(--ink-line); }
+  .grants .t{ font-weight:500; }
+  .grants .t span{ display:block; color:var(--ink-muted); font-weight:400; font-size:.85em; margin-top:.1em; }
+  .grants .amt{
+    font-family:'Space Grotesk',sans-serif; font-weight:500;
+    font-variant-numeric:tabular-nums; letter-spacing:-0.5px; white-space:nowrap;
+  }
+  .grants .total{
+    display:flex; justify-content:space-between; padding-top:.7em; font-weight:700;
+  }
+  /* ── the breathing circle · two concentric 1px rings ──────────
+     inner swells 0.78 → 1.02 on a smooth sine, looping at 60/BPM s */
+  @keyframes rt-breathe{
+    0%   { transform:scale(0.78); }
+    50%  { transform:scale(1.02); }
+    100% { transform:scale(0.78); }
+  }
+  .pulse{ position:relative; }
+  .pulse .ring{
+    position:absolute; inset:0;
+    border:1px solid var(--ink); border-radius:50%;
+  }
+  .pulse .ring.inner{
+    animation:rt-breathe 0.9375s cubic-bezier(0.37,0,0.63,1) infinite;
+  }
+  .pulse .readout{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .pulse .readout .bpm{
+    font-family:'Space Grotesk',sans-serif; font-weight:500;
+    font-variant-numeric:tabular-nums; font-size:1.1em; line-height:1;
+  }
+  .pulse .readout .unit{
+    font-family:'DM Sans',sans-serif; font-weight:500; font-size:.34em;
+    letter-spacing:2.2px; text-transform:uppercase; color:var(--ink-muted);
+    margin-top:.5em;
+  }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 · TITLE -->
+<section>
+  <!-- <div class="canvas-bg"><canvas id="wellTitle"></canvas></div> -->
+  <div class="pulse" style="width:74px;height:74px;margin-bottom:1.4em;">
+    <div class="ring"></div><div class="ring inner"></div>
+  </div>
+  <span class="kicker">London College of Communication · July 2026</span>
+  <div class="cols">
+    <div style="flex:1.1;">
+      <h1>Phoenix Perry</h1>
+      <div class="rule"></div>
+      <p class="dim" style="font-size:.7em;">Reader, UAL Creative Computing Institute</p>
+    </div>
+    <div style="flex:0 0 46%;">
+      <div class="grants">
+        <div class="g"><span class="t">FDCCC · AHRC BRAID<span>Research Lead</span></span><span class="amt">£228,153</span></div>
+        <div class="g"><span class="t">4i · EPSRC<span>Co-Investigator</span></span><span class="amt">£497,829</span></div>
+        <div class="g"><span class="t">Music RAI · RAI UK / UKRI<span>Co-Investigator</span></span><span class="amt">£122,420</span></div>
+        <div class="g"><span class="t">InteractML · Epic MegaGrant<span>Principal Investigator</span></span><span class="amt">£21,000</span></div>
+        <div class="g"><span class="t">IML for game developers · Google<span>Principal Investigator</span></span><span class="amt">$20,000</span></div>
+        <div class="g"><span class="t">Anti-Gravity Machine · AHRC × SSHRC<span>UK Lead</span></span><span class="amt dim" style="font-size:.85em;">bid submitted</span></div>
+        <div class="total"><span>Combined full economic cost</span><span class="amt">£850,000+</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-line"><span>Research · five minutes</span><span>phoenixperry.com</span></div>
+  <aside class="notes">0:00–0:25 · Hello, I'm Phoenix Perry, Creative Computing Institute. Five minutes: my values, where I speak from, and what I'm building.</aside>
+</section>
+
+<!-- 2 · VALUES -->
+<section>
+  <span class="kicker">01 · Values</span>
+  <h2>What I hold to be true</h2>
+  <div class="rule"></div>
+  <ul>
+    <li class="fragment"><strong>There is no data without positionality.</strong> Data carries the values, ontologies and ways of knowing of its makers.</li>
+    <li class="fragment"><strong>Access is a creative practice</strong>, not a compliance checklist.</li>
+    <li class="fragment"><strong>Communities should govern the data and tools that represent them.</strong> Refusal is a governance act, not a failure.</li>
+    <li class="fragment"><strong>Play is how bodies think.</strong> Embodiment is a research method.</li>
+    <li class="fragment"><strong>Small, slow, low-carbon computation</strong> is a design position, not a constraint.</li>
+  </ul>
+  <aside class="notes">0:25–1:05 · These five commitments run through everything: no neutral data, access as aesthetics, community governance, embodied play, sustainable compute.</aside>
+</section>
+
+<!-- 3 · POSITIONALITY -->
+<section>
+  <span class="kicker">02 · Positionality</span>
+  <h2>Where I speak from</h2>
+  <div class="rule"></div>
+  <div class="cols">
+    <div style="flex:1.3;">
+      <ul>
+        <li><strong>Disabled arts practitioner</strong>, making games, installations and instruments since 1998; my body is in the work.</li>
+        <li><strong>Artist–activist</strong> who uses culture as a medium: building institutions is writing social fiction. <em>What world do we want? How do we get there?</em></li>
+        <li>14 years as an art &amp; creative director in industry before 13 years teaching across four universities.</li>
+        <li>Positionality as method: <strong>crip and intersectional feminist critique</strong> shapes what I build, who I build with, and what I refuse.</li>
+      </ul>
+    </div>
+    <div style="flex:0 0 32%;">
+      <figure class="photo">
+        <img src="forest_daydream.jpg"
+             onerror="this.closest('figure').style.display='none';"
+             alt="Forest Daydream: an illuminated geodesic dome among 8-bit trees in a pink-lit room">
+        <figcaption>Forest Daydream · 2019</figcaption>
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">1:05–1:45 · I don't do the neutral-observer voice. Disabled practitioner, activist, industry-to-academia. The critique isn't applied afterwards; it's the design method.</aside>
+</section>
+
+<!-- 4 · JUSTICE WORK -->
+<section>
+  <span class="kicker">03 · Decades of justice work in tech</span>
+  <h2>Building the rooms I wasn't given</h2>
+  <div class="rule"></div>
+  <div class="cols">
+    <div style="flex:1.35;">
+      <ul>
+        <li><strong>Devotion Gallery</strong>, Brooklyn (2009–2014): a home for art + technology practice.</li>
+        <li><strong>Code Liberation Foundation</strong> (2012–2022): free creative-technology education for women and non-binary people; <strong>6,000+ learners</strong>.</li>
+        <li>Co-founded the <strong>Creative Computing Institute</strong> at UAL; contributed to three degree programmes, authored the MSc and BSc in Creative Computing.</li>
+        <li>Processing Foundation advisory board · ACM Games editorial board · former British Games Institute trustee.</li>
+        <li><strong>Music RAI</strong> (EPSRC): countering Western bias in AI music generation.</li>
+      </ul>
+    </div>
+    <div style="flex:0 0 30%;">
+      <figure class="photo">
+        <img src="devotion.jpg"
+             onerror="this.closest('figure').style.display='none';"
+             alt="Devotion Gallery: pink and red faceted cone sculptures seen from below">
+        <figcaption>Devotion Gallery</figcaption>
+      </figure>
+      <figure class="photo" style="margin-top:.7em;">
+        <img src="codelib.jpg"
+             onerror="this.closest('figure').style.display='none';"
+             alt="Code Liberation Foundation cohort in front of the curly-brace smiley logo">
+        <figcaption>Code Liberation</figcaption>
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">1:45–2:20 · Not a diversity side-project; two decades of infrastructure. Devotion, Code Liberation's 6,000+ learners, co-founding CCI, and now the same politics inside AI research with Music RAI.</aside>
+</section>
+
+<!-- 5 · PHD -->
+<section>
+  <span class="kicker">04 · PhD · Goldsmiths, 2024</span>
+  <h2><em>Cripping the Controller</em></h2>
+  <div class="rule"></div>
+  <div class="cols">
+    <div style="flex:1.2;">
+      <ul>
+        <li>Custom input systems and interfaces designed from disabled practice: the controller as a site of politics.</li>
+        <li>A <strong>“criptastic” design framework</strong>: the values and methods of disabled designers, centred.</li>
+        <li><strong>Bot Party</strong>: accessibility through playful, embodied touch. GDC Award nominee · IndieCade selection.</li>
+        <li>Redefines accessibility as a <strong>creative process</strong>, not a checklist.</li>
+      </ul>
+    </div>
+    <div style="flex:0 0 36%;">
+      <figure class="photo">
+        <img src="botparty.jpg"
+             onerror="this.onerror=null;this.src='https://phoenixperry.com/images/botpartyoverlayphoto.jpg';"
+             alt="Bot Party: glowing cube bots with brass glasses on a wooden table">
+        <figcaption>Bot Party · with Charlie Ann Page</figcaption>
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">2:20–2:50 · The PhD formalised what my practice already knew: when disabled designers lead, access becomes aesthetics. Bot Party is the playable proof.</aside>
+</section>
+
+<!-- 6 · INTERACTML -->
+<section>
+  <span class="kicker">05 · InteractML</span>
+  <h2>Programming by moving</h2>
+  <div class="rule"></div>
+  <div class="cols">
+    <div style="flex:1.1;">
+      <p style="font-size:.74em; max-width:32ch;">Node-based interactive machine learning inside game engines, where dancers, artists and movement practitioners teach models by <strong>demonstration, not code</strong>.</p>
+      <div class="statgrid">
+        <div><span class="num">60,000+</span><span class="small">active users</span></div>
+        <div><span class="num">Epic · Google</span><span class="small">MegaGrant &amp; Google funded</span></div>
+      </div>
+      <p class="small" style="margin-top:1em;">VRST · TEI · NordiCHI · MOCO publications</p>
+    </div>
+    <div style="flex:0 0 42%;">
+      <figure class="photo">
+        <img src="interactML.png" style="border:none;"
+             onerror="this.closest('figure').style.display='none';"
+             alt="Semaphore alphabet in VR: a player signals letters with motion controllers">
+        <figcaption>Semaphore · movement as input</figcaption>
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">2:50–3:15 · InteractML puts machine learning in the hands of people who move for a living. Sixty thousand users. This is the access agenda at tool scale. The semaphore study: your whole body becomes the keyboard.</aside>
+</section>
+
+<!-- 7 · THRUM -->
+<section>
+  <span class="kicker">06 · Current artwork</span>
+  <h2>Resident Thrum</h2>
+  <div class="rule"></div>
+  <div class="cols">
+    <div style="flex:1.15;">
+      <ul>
+        <li>A three-minute <strong>ritual of cardiac synchronisation</strong>: two to six players on a hexagonal grid of haptic tiles, hearts nudging one another toward synchrony.</li>
+        <li>Haptic, sonic and light feedback generated live from participants' heartbeats; as the group converges, the soundscape warms.</li>
+        <li>An active research site: <strong>group interoception</strong>, prosocial behaviour, and the permeable boundary of the self.</li>
+      </ul>
+    </div>
+    <div style="flex:0 0 34%;">
+      <figure class="photo">
+        <img src="https://phoenixperry.com/images/thrum01.jpg"
+             alt="Resident Thrum: participants seated on a hexagonal grid of plywood haptic tiles">
+        <figcaption>Resident Thrum · hexagonal haptic grid</figcaption>
+      </figure>
+      <div class="pulse" style="width:96px;height:96px;margin:1.1em auto 0;">
+        <div class="ring"></div><div class="ring inner"></div>
+        <div class="readout"><span class="bpm">64</span><span class="unit">bpm</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">3:15–3:45 · Thrum is the values made flesh: several people breathe together and their hearts converge. The system makes the group's physiology tangible, one calm instrument.</aside>
+</section>
+
+<!-- 8 · FDCCC -->
+<section>
+  <span class="kicker">07 · Federated Data Commons for Creative Communities</span>
+  <h2>FDCCC <span class="dim" style="font-size:.5em;">AHRC · BRAID · funded to 2027</span></h2>
+  <div class="rule"></div>
+  <ul>
+    <li>Inverts federated learning: <strong>data-centric, not model-centric</strong>. Data doesn't exist to improve someone's central model.</li>
+    <li>Each community <strong>crafts its own governance</strong> from lived experience, decides what counts as data, and retains custody.</li>
+    <li><strong>Refusal and withdrawal are governance acts.</strong> Training only on open, inspectable weights.</li>
+    <li>Bias, under community control, becomes a <strong>resource</strong> rather than a defect.</li>
+  </ul>
+  <aside class="notes">3:45–4:15 · FDCCC is the values slide made infrastructure: communities own the constitution of their data, not just its afterlife.</aside>
+</section>
+
+<!-- 9 · ANTIGRAVITY MACHINE -->
+<section>
+  <div class="canvas-bg"><canvas id="wellAGM"></canvas></div>
+  <span class="kicker">08 · The Antigravity Machine</span>
+  <h2>Escaping the gravity wells<br>of generative AI</h2>
+  <div class="rule"></div>
+  <ul style="max-width:26em;">
+    <li>Generative models pull every request toward <strong>dominant cultural attractors</strong>: homogenisation by design.</li>
+    <li>AGM makes latent space <strong>visible, navigable and deliberately slow</strong>: fork trajectories, map journeys, hold ambiguity, diagnose the pull.</li>
+    <li>UK–Canada AHRC/SSHRC sandpit · <strong>PI (UK)</strong>, with Stephen DiPaola (SFU) · partners incl. ComfyUI &amp; Factory International.</li>
+    <li>~<strong>95% lower energy</strong>: exploration on consumer GPUs.</li>
+  </ul>
+  <aside class="notes">4:15–4:50 · What you see moving behind me is the argument: mass bends the field, and every trajectory confesses where the wells are. AGM is a machine for climbing out.</aside>
+</section>
+
+<!-- 10 · CLOSE -->
+<section>
+  <span class="kicker">Aims</span>
+  <p class="bigquote">“Agency begins not at the model's interface but at the constitution of data itself.”</p>
+  <div class="rule"></div>
+  <p class="small">Tools, commons and frameworks that return agency to the communities technology claims to serve.</p>
+  <p class="small" style="margin-top:1.2em; color:var(--ink);">phoenix@phoenixperry.com · phoenixperry.com</p>
+  <div class="footer-line"><span>Phoenix Perry · UAL CCI</span></div>
+  <aside class="notes">4:50–5:00 · One sentence of aims: agency begins at the constitution of data. Controllers, commons, anti-gravity machines: everything I make is that sentence, built. Thank you.</aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  width:1280, height:720, margin:0.06,
+  hash:true, controls:true, progress:true,
+  transition:'fade', transitionSpeed:'slow',
+  plugins:[ RevealNotes ]
+});
+
+/* ---------------------------------------------------------------
+   Hauntography, in the Resonant Thrum system.
+   A signed potential field seeded with point masses; a bent sheet
+   of rings-and-meridians linework; test bodies on harmonic orbits
+   leaving long-exposure trails. Pure ink on canvas, 1px strokes.
+---------------------------------------------------------------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+
+function hauntograph(canvasId, opts){
+  const cv = document.getElementById(canvasId);
+  if(!cv) return;
+  const ctx = cv.getContext('2d');
+  const rng = mulberry32(opts.seed);
+  const DPR = Math.min(window.devicePixelRatio||1, 2);
+
+  // wells: position (world units, sheet spans [-1,1]²), depth, width
+  const wells = [];
+  for(let i=0;i<opts.wells;i++){
+    const ang = rng()*Math.PI*2, rad = 0.18 + rng()*0.5;
+    wells.push({
+      x: Math.cos(ang)*rad, y: Math.sin(ang)*rad,
+      d: 0.35 + rng()*0.45,          // depth
+      s: 0.16 + rng()*0.14           // sigma
+    });
+  }
+
+  function potential(x,y){
+    let v=0;
+    for(const w of wells){
+      const dx=x-w.x, dy=y-w.y;
+      v -= w.d*Math.exp(-(dx*dx+dy*dy)/(2*w.s*w.s));
+    }
+    return v;
+  }
+  function accel(x,y){
+    let ax=0, ay=0;
+    for(const w of wells){
+      const dx=x-w.x, dy=y-w.y;
+      const g = w.d*Math.exp(-(dx*dx+dy*dy)/(2*w.s*w.s))/(w.s*w.s);
+      ax -= g*dx; ay -= g*dy;
+    }
+    return [ax*opts.g, ay*opts.g];
+  }
+
+  // test bodies — angular velocities drawn from a harmonic series
+  const harmonics = [1, 3/2, 2/3, 5/4, 4/5, 7/4, 5/3, 9/8];
+  const bodies = [];
+  for(let i=0;i<opts.bodies;i++){
+    const w = wells[i % wells.length];
+    const r = 0.14 + rng()*0.38;
+    const th = rng()*Math.PI*2;
+    const x = w.x + Math.cos(th)*r, y = w.y + Math.sin(th)*r;
+    const [ax,ay] = accel(x,y);
+    const vcirc = Math.sqrt(Math.max(1e-6, Math.hypot(ax,ay)*r));
+    const h = harmonics[i % harmonics.length] * (rng()<0.3 ? -1 : 1); // some retrograde
+    bodies.push({ x, y,
+      vx: -Math.sin(th)*vcirc*h, vy: Math.cos(th)*vcirc*h,
+      trail: [] });
+  }
+
+  let yaw = rng()*Math.PI*2;
+  let running = true;
+
+  function resize(){
+    const r = cv.parentElement.getBoundingClientRect();
+    cv.width  = Math.max(2, r.width*DPR);
+    cv.height = Math.max(2, r.height*DPR);
+  }
+  resize();
+  new ResizeObserver(resize).observe(cv.parentElement);
+
+  function project(x,y){
+    const c=Math.cos(yaw), s=Math.sin(yaw);
+    const xr = x*c - y*s, yr = x*s + y*c;
+    const z  = potential(x,y);
+    const W=cv.width, H=cv.height, S=Math.min(W,H)*opts.scale;
+    return [ W/2 + xr*S, H*opts.cy + yr*S*0.48 - z*S*opts.zlift ];
+  }
+
+  const N = opts.lines, M = 64;
+  function drawSheet(){
+    ctx.lineWidth = 1*DPR;
+    for(let pass=0; pass<2; pass++){
+      for(let i=0;i<=N;i++){
+        const u = -1 + 2*i/N;
+        ctx.beginPath();
+        for(let j=0;j<=M;j++){
+          const v = -1 + 2*j/M;
+          const [x,y] = pass===0 ? [v,u] : [u,v];
+          const p = project(x,y);
+          j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);
+        }
+        ctx.strokeStyle = 'rgba(0,0,0,'+opts.gridAlpha+')';
+        ctx.stroke();
+      }
+    }
+    // equipotential rings around each well — the funnel throat
+    for(const w of wells){
+      for(let k=1;k<=5;k++){
+        const rr = w.s * Math.pow(1.45,k) * 0.55;
+        ctx.beginPath();
+        for(let j=0;j<=48;j++){
+          const t = j/48*Math.PI*2;
+          const p = project(w.x+Math.cos(t)*rr, w.y+Math.sin(t)*rr);
+          j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);
+        }
+        ctx.strokeStyle = 'rgba(0,0,0,'+(opts.gridAlpha*1.7/k+0.02)+')';
+        ctx.stroke();
+      }
+    }
+  }
+
+  function step(dt){
+    for(const b of bodies){
+      const [ax,ay] = accel(b.x,b.y);
+      b.vx += ax*dt; b.vy += ay*dt;
+      b.x += b.vx*dt; b.y += b.vy*dt;
+      if(Math.hypot(b.x,b.y) > 1.55){          // fell off the sheet: re-seed
+        const w = wells[Math.floor(rng()*wells.length)];
+        const r = 0.15 + rng()*0.35, th = rng()*Math.PI*2;
+        b.x = w.x+Math.cos(th)*r; b.y = w.y+Math.sin(th)*r;
+        const [ax2,ay2]=accel(b.x,b.y);
+        const vc=Math.sqrt(Math.max(1e-6,Math.hypot(ax2,ay2)*r));
+        b.vx=-Math.sin(th)*vc; b.vy=Math.cos(th)*vc; b.trail.length=0;
+      }
+      b.trail.push([b.x,b.y]);
+      if(b.trail.length>opts.trail) b.trail.shift();
+    }
+  }
+
+  function drawBodies(){
+    for(const b of bodies){
+      const L=b.trail.length;
+      for(let i=1;i<L;i++){
+        const a = Math.pow(i/L,2)*opts.trailAlpha;
+        const p0=project(b.trail[i-1][0],b.trail[i-1][1]);
+        const p1=project(b.trail[i][0],b.trail[i][1]);
+        ctx.beginPath(); ctx.moveTo(p0[0],p0[1]); ctx.lineTo(p1[0],p1[1]);
+        ctx.strokeStyle='rgba(0,0,0,'+a+')';
+        ctx.lineWidth=1.2*DPR; ctx.stroke();
+      }
+      const h=project(b.x,b.y);
+      ctx.beginPath(); ctx.arc(h[0],h[1],2.2*DPR,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,0,0,.85)'; ctx.fill();
+    }
+  }
+
+  let last=performance.now();
+  function frame(now){
+    if(running){
+      const dt=Math.min(0.033,(now-last)/1000); last=now;
+      yaw += dt*opts.spin;                     // one slow, imperceptible yaw
+      for(let s=0;s<2;s++) step(dt*0.5);
+      ctx.clearRect(0,0,cv.width,cv.height);
+      drawSheet(); drawBodies();
+    } else { last=now; }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return { setRunning(v){ running=v; } };
+}
+
+const anims = {
+  wellTitle: hauntograph('wellTitle', { seed:20260707, wells:2, bodies:5,
+    lines:16, g:0.55, spin:0.05, scale:0.52, cy:0.55, zlift:0.30,
+    gridAlpha:0.08, trail:110, trailAlpha:0.28 }),
+  wellAGM: hauntograph('wellAGM', { seed:19980412, wells:3, bodies:8,
+    lines:22, g:0.65, spin:0.07, scale:0.55, cy:0.52, zlift:0.34,
+    gridAlpha:0.14, trail:150, trailAlpha:0.42 })
+};
+
+// only animate canvases on the current slide
+function syncAnims(){
+  const cur = Reveal.getCurrentSlide();
+  for(const id in anims){
+    const el = document.getElementById(id);
+    if(anims[id]) anims[id].setRunning(!!(el && cur.contains(el)));
+  }
+}
+Reveal.on('ready', syncAnims);
+Reveal.on('slidechanged', syncAnims);
+</script>
+</body>
+</html>
