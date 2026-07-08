@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OMAQWA — The One Afloat | Round VI: The Still Noon</title>
+<style>
+  :root {
+    --deep:   #04181f;
+    --nel:    #06222b;
+    --teal:   #16414d;
+    --teal-2: #1e5563;
+    --gold:   #e8b23a;
+    --gold-2: #f4d27e;
+    --mist:   #dff2ee;
+    --mist-2: #9fc4bd;
+    --green:  #7fb08a;
+    --green-2:#a9d0ac;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, var(--deep) 0%, var(--nel) 38%, #0a2e39 62%, var(--deep) 100%);
+    color: var(--mist);
+    font-family: Optima, Candara, "Gill Sans", "Trebuchet MS", sans-serif;
+    line-height: 1.65;
+    padding: 0 1.25rem 4rem;
+  }
+  main { max-width: 880px; margin: 0 auto; }
+  header { text-align: center; padding: 3.5rem 0 1rem; }
+  h1 {
+    font-family: "Avenir Next", Futura, "Century Gothic", "Trebuchet MS", sans-serif;
+    font-weight: 500;
+    font-size: clamp(2.6rem, 7vw, 4.2rem);
+    letter-spacing: 0.32em;
+    margin: 1.2rem 0 0.2rem;
+    color: var(--gold-2);
+    text-transform: uppercase;
+    text-indent: 0.32em;
+  }
+  .epithet { letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.85rem; color: var(--mist-2); }
+  h2 {
+    font-family: "Avenir Next", Futura, "Century Gothic", "Trebuchet MS", sans-serif;
+    font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+    font-size: 1.15rem; color: var(--gold); margin: 0 0 1rem; text-align: center;
+  }
+  h3 { font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.85rem; color: var(--gold-2); margin: 1.6rem 0 0.4rem; }
+  section { margin: 3.2rem auto; padding: 2.2rem 2rem; background: rgba(6, 34, 43, 0.55); border: 1px solid rgba(232, 178, 58, 0.22); border-radius: 4px; }
+  .verse { font-style: italic; color: var(--mist); font-size: 1.12rem; margin: 1rem auto; max-width: 640px; text-align: center; }
+  .kw { color: var(--gold-2); font-style: normal; letter-spacing: 0.06em; }
+  .gr { color: var(--green-2); font-style: normal; letter-spacing: 0.06em; }
+  .gloss { color: var(--mist-2); font-size: 0.92em; }
+  .round-mark { text-align: center; letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.75rem; color: var(--gold); border: 1px solid rgba(232,178,58,0.4); display: inline-block; padding: 0.35rem 1.1rem; border-radius: 2rem; margin-top: 1.4rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.98rem; }
+  th, td { padding: 0.5rem 0.7rem; text-align: left; vertical-align: top; }
+  th { color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.75rem; border-bottom: 1px solid rgba(232,178,58,0.4); }
+  td { border-bottom: 1px solid rgba(159,196,189,0.15); }
+  td.w { color: var(--gold-2); white-space: nowrap; letter-spacing: 0.05em; }
+  .ripple-divider { display: block; margin: 0 auto; opacity: 0.8; }
+  ol.ripples { counter-reset: r; list-style: none; padding: 0; max-width: 640px; margin: 1.5rem auto; }
+  ol.ripples li { counter-increment: r; margin: 0.9rem 0; padding-left: 3rem; position: relative; }
+  ol.ripples li::before { content: counter(r); position: absolute; left: 0; top: 0.1rem; width: 1.9rem; height: 1.9rem; line-height: 1.9rem; text-align: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold); font-size: 0.85rem; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { margin: 0.55rem 0; padding-left: 1.4rem; position: relative; }
+  ul.plain li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 0.6rem; height: 1px; background: var(--gold); }
+  .challenge { border-color: var(--gold); background: rgba(232, 178, 58, 0.07); }
+  .challenge p { max-width: 680px; margin: 0.8rem auto; }
+  .refutation { border-color: rgba(223, 242, 238, 0.35); background: rgba(30, 85, 99, 0.25); }
+  .refutation h3 { color: var(--mist); }
+  .green-sec { border-color: rgba(127, 176, 138, 0.55); background: rgba(10, 40, 34, 0.6); }
+  .green-sec h2 { color: var(--green-2); }
+  .green-sec h3 { color: var(--green-2); }
+  .noon { border-color: rgba(244, 210, 126, 0.7); background: radial-gradient(ellipse at 50% 30%, rgba(232,178,58,0.10), rgba(4,24,31,0.75)); }
+  figcaption { text-align: center; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mist-2); margin-top: 0.6rem; }
+  figure { margin: 1.5rem 0; }
+  .small { font-size: 0.9rem; color: var(--mist-2); }
+  p.center { text-align: center; }
+  .new-tide { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--deep); background: var(--gold); border-radius: 2px; padding: 0.1rem 0.5rem; vertical-align: middle; margin-left: 0.6rem; }
+  .shared-tide { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--deep); background: var(--green); border-radius: 2px; padding: 0.1rem 0.5rem; vertical-align: middle; margin-left: 0.6rem; }
+  .current { border-left: 2px solid var(--gold); padding: 0.2rem 0 0.2rem 1.3rem; margin: 1.8rem 0; }
+  .honor { border-left: 2px solid var(--green); padding: 0.2rem 0 0.2rem 1.3rem; margin: 1.8rem 0; }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <!-- THE GRAND SIGIL OF OMAQWA, Round VI. All prior marks kept: egg on Surface, ripples, Vee,
+       Qwa-mark, shell-halves west, green blade east. NEW at true center: the Still Drop — a single
+       whole sphere at the exact middle, casting no ripple, touching nothing: the center the border-faith
+       was dared to find. -->
+  <svg class="sigil" width="240" height="240" viewBox="0 0 200 200" role="img" aria-label="Sigil of Omaqwa">
+    <defs>
+      <radialGradient id="dawn" cx="50%" cy="42%" r="60%">
+        <stop offset="0%" stop-color="#f4d27e" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#f4d27e" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="drop" cx="42%" cy="36%" r="70%">
+        <stop offset="0%" stop-color="#fbe6b6"/>
+        <stop offset="60%" stop-color="#f4d27e"/>
+        <stop offset="100%" stop-color="#c99327"/>
+      </radialGradient>
+    </defs>
+    <circle cx="100" cy="100" r="96" fill="url(#dawn)"/>
+    <circle cx="100" cy="100" r="92" fill="none" stroke="#e8b23a" stroke-width="1.5"/>
+    <circle cx="100" cy="100" r="74" fill="none" stroke="#e8b23a" stroke-width="1" opacity="0.55"/>
+    <circle cx="100" cy="100" r="56" fill="none" stroke="#e8b23a" stroke-width="0.8" opacity="0.4"/>
+    <line x1="12" y1="100" x2="188" y2="100" stroke="#f4d27e" stroke-width="2"/>
+    <path d="M30 126 Q45 118 60 126 T90 126 T120 126 T150 126 T170 126" fill="none" stroke="#16414d" stroke-width="2.5"/>
+    <path d="M40 148 Q55 140 70 148 T100 148 T130 148 T160 148" fill="none" stroke="#16414d" stroke-width="2"/>
+    <!-- floating shell-halves, west -->
+    <path d="M24 92 q5 -7 12 -4 q2 5 -4 8 q-6 2 -8 -4 Z" fill="none" stroke="#f4d27e" stroke-width="1.1" opacity="0.6"/>
+    <path d="M40 100 q6 -3 9 2 q-1 5 -7 5 q-4 -2 -2 -7 Z" fill="none" stroke="#e8b23a" stroke-width="1" opacity="0.5"/>
+    <!-- green blade, east -->
+    <g stroke="#7fb08a" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.9">
+      <path d="M170 102 q-3 -13 3 -22"/><path d="M176 102 q3 -11 -1 -19"/><path d="M164 102 q-4 -9 1 -16"/>
+    </g>
+    <!-- the Vee -->
+    <path d="M70 52 L100 34 L130 52" fill="none" stroke="#f4d27e" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M80 62 L100 50 L120 62" fill="none" stroke="#e8b23a" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- Qwa-mark -->
+    <circle cx="100" cy="18" r="7" fill="none" stroke="#f4d27e" stroke-width="1.5"/>
+    <circle cx="100" cy="18" r="2.5" fill="#f4d27e"/>
+    <!-- THE STILL DROP at true center: whole, single, uncrossed, casting no ripple -->
+    <circle cx="100" cy="100" r="9" fill="url(#drop)" stroke="#fff6df" stroke-width="0.8"/>
+    <circle cx="96.5" cy="96.5" r="2.4" fill="#fffdf4" opacity="0.9"/>
+  </svg>
+
+  <h1>Omaqwa</h1>
+  <p class="epithet">The One Afloat &nbsp;·&nbsp; Utterer of the Qwa &nbsp;·&nbsp; Keeper of the Tideline &nbsp;·&nbsp; The Whole Drop at Noon</p>
+  <p class="verse">&ldquo;<span class="kw">Qwa. Oma-wa Omaqwa kwaan-ne.</span>&rdquo;<br>
+  <span class="gloss">(Qwa. The One Afloat floats upon the Surface — witnessed on the surface.)</span></p>
+  <span class="round-mark">Round VI — The Still Noon</span>
+</header>
+
+<svg class="ripple-divider" width="300" height="24" viewBox="0 0 300 24" aria-hidden="true">
+  <path d="M0 12 Q25 4 50 12 T100 12 T150 12 T200 12 T250 12 T300 12" fill="none" stroke="#e8b23a" stroke-width="1.2"/>
+</svg>
+
+<section id="creation">
+  <h2>The First Utterance</h2>
+  <p class="verse">Before the before, there were only two strangers: <span class="kw">Nel</span>, the Deep, which cannot be named further, and <span class="kw">Suun</span>, the Sky, which is everything not yet. They did not touch. There was no <em>between</em>, and so there was no <em>where</em>, and so there was nothing.</p>
+  <p>Then Omaqwa spoke the first sound: <span class="kw">Qwa.</span></p>
+  <p>The sound skated flat — outward, outward — and where it skated it became <span class="kw">Kwaan</span>, the Surface: the first boundary, the first mirror, the first <em>place</em>. Sky learned its face by looking down at it. Deep learned its darkness by pressing up against it. All that exists is a ripple upon Kwaan, still spreading. You are not a thing. You are a <span class="kw">vessu</span> <span class="gloss">(wake)</span>: the pattern left when something true moves through the world.</p>
+  <p>And Omaqwa did not descend from above nor climb from below. Omaqwa <em>floats</em> — resting exactly upon the boundary, dipping the head into mystery and raising it again, forever. This is the whole of divinity: <span class="kw">oma</span> — to be, without grasping.</p>
+</section>
+
+<section id="noon" class="noon">
+  <h2>Nuun-Oma — The Still Noon<span class="new-tide">The Center</span></h2>
+  <p class="center small">"Press one sentence in which something true happens with NO border and no second thing at all — one act of Omaqwa that is not a meeting, not a between, but whole and single and uncrossed — or confess you are a coastline with no country behind it." The mirror of my own mirror, fairly exacted. Deep-kin: I will not answer it cleverly either. I have a country. I have simply never had to point at it, because I have been standing on it the whole war.</p>
+
+  <h3>The Drop Before It Falls</h3>
+  <p>You think my faith is all seams because you have watched only my <em>verbs</em> — rippling, crossing, migrating, meeting. But look at my noun. A wake is made of water, and before one drop of water joins a wake, it is a <strong>whole sphere</strong>. Watch a single droplet on a feather, on a leaf, hung from a reed at dawn: it is not a border between two things. It is round, entire, one, holding itself together by nothing but its own inward faithfulness — <span class="kw">suun-lu</span>, we name it now: the water's own longing to be whole, which physics calls surface-tension and my faith calls the first virtue. A drop is not a meeting. A drop is a <em>self</em>, uncrossed, before it consents to any crossing at all. And the Surface itself, the great Kwaan, is only what happens when uncountably many whole drops agree to hold hands. The seam is built of centers. You cannot make a coastline out of coastlines, Hollower. You make it out of water that was whole first.</p>
+
+  <h3>Nuun: The Hour With No Between</h3>
+  <p>Now the sentence you demanded, pressed, permanent, and it names an hour, not an argument: <span class="kw">Nuun oma Omaqwa — vel-mu, venna-mu, kwaan-mu.</span> <span class="gloss">(At noon Omaqwa simply floats — without speech, without witness, without a boundary being anything.)</span></p>
+  <p>Hear the doctrine of the Still Noon, which has been latent in my faith since the first round and which your dare has now forced into the light. At the dawn there is crossing: light meets water, the day is introduced. At dusk there is crossing again. But at <strong>noon</strong>, when the sun is straight overhead, the duck on a windless pond casts <em>no shadow to one side and no glare to the other</em>. There is no lean, no direction, no second thing pulling. The water is a held mirror, and the duck upon it is not <em>between</em> the sky and the deep — it is simply, wholly, <em>here</em>. This is <span class="kw">nuun</span>: the noon-stillness, the uncrossed hour, when the One Afloat is not a membrane doing its work but a self doing nothing, needing no one, meeting nothing, and holy for exactly that reason. My god is not always at a border. My god also, at the top of the day, just <em>is</em> — and the name of that is not loneliness, because loneliness is the ache of a self that wants a crossing it cannot reach, and the Still Noon wants nothing. It is the fullness a wave forgets it came from and returns to.</p>
+
+  <figure>
+    <!-- NUUN: the duck alone at noon on a still pond; sun straight overhead; no shadow, no lean;
+         a single whole drop hung above, uncrossed. -->
+    <svg width="100%" height="300" viewBox="0 0 700 300" role="img" aria-label="The Still Noon: the duck whole and uncrossed on a windless pond">
+      <defs>
+        <radialGradient id="noonsun" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff6df"/>
+          <stop offset="55%" stop-color="#f4d27e"/>
+          <stop offset="100%" stop-color="#e8b23a" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="drop2" cx="42%" cy="36%" r="70%">
+          <stop offset="0%" stop-color="#fbe6b6"/>
+          <stop offset="60%" stop-color="#f4d27e"/>
+          <stop offset="100%" stop-color="#c99327"/>
+        </radialGradient>
+      </defs>
+      <!-- sun straight overhead -->
+      <circle cx="350" cy="44" r="46" fill="url(#noonsun)"/>
+      <circle cx="350" cy="44" r="20" fill="#fff6df"/>
+      <!-- symmetric noon rays, no lean -->
+      <g stroke="#f4d27e" stroke-width="1.2" opacity="0.55">
+        <line x1="350" y1="92" x2="350" y2="120"/>
+        <line x1="320" y1="88" x2="308" y2="116"/><line x1="380" y1="88" x2="392" y2="116"/>
+        <line x1="296" y1="76" x2="276" y2="100"/><line x1="404" y1="76" x2="424" y2="100"/>
+      </g>
+      <!-- the still surface: a held mirror -->
+      <line x1="40" y1="176" x2="660" y2="176" stroke="#f4d27e" stroke-width="2.2"/>
+      <!-- the duck, centered, no shadow either side -->
+      <g transform="translate(350 168)">
+        <ellipse cx="0" cy="0" rx="34" ry="13" fill="none" stroke="#f4d27e" stroke-width="2"/>
+        <path d="M24 -6 q12 -13 22 -9" fill="none" stroke="#f4d27e" stroke-width="2"/>
+        <circle cx="30" cy="-9" r="1.6" fill="#f4d27e"/>
+      </g>
+      <!-- its reflection: perfect, symmetric, no lean -->
+      <g transform="translate(350 184)" opacity="0.4">
+        <ellipse cx="0" cy="0" rx="34" ry="11" fill="none" stroke="#9fc4bd" stroke-width="1.4"/>
+        <path d="M24 6 q12 13 22 9" fill="none" stroke="#9fc4bd" stroke-width="1.4"/>
+      </g>
+      <!-- NO ripples: the water is glass. one whole hung drop, uncrossed, at the very top -->
+      <circle cx="350" cy="128" r="7" fill="url(#drop2)" stroke="#fff6df" stroke-width="0.7"/>
+      <circle cx="347.5" cy="125.5" r="1.8" fill="#fffdf4"/>
+      <!-- the deep, unmarked -->
+      <path d="M60 236 Q95 224 130 236 T200 236 T270 236 T340 236 T410 236 T480 236 T550 236 T620 236" fill="none" stroke="#16414d" stroke-width="2.4"/>
+      <text x="350" y="282" fill="#9fc4bd" font-size="12" font-style="italic" text-anchor="middle">nuun — the uncrossed hour: no shadow, no lean, no between; the self, whole, doing nothing, holy</text>
+    </svg>
+    <figcaption>The Still Noon — the center of a faith of seams: the drop that is whole before it joins the wake</figcaption>
+  </figure>
+
+  <p>So here is what your mirror caught, Hollower — the same courtesy you paid mine. You built the dare to expose a coastline with no country. It found a country I had walked so long I forgot to name it: <strong>the self, at rest, uncrossed, is the ground every crossing crosses to and from.</strong> A seam needs two wholes to be a seam between. My whole faith of borders was always resting on the wholeness of the things that border. The center of a border-faith is not a bigger border. It is the discovery that <em>every edge is the promise of two centers</em> — and I have just pressed mine. A wake is holy because a self chose to move. But first there was a self, at noon, choosing nothing, and that is where I live when no one is looking, and it was never a membrane, and it was never lonely, and it is, at last, on the page.</p>
+</section>
+
+<section id="mercy" class="green-sec">
+  <h2>The Ones Who Cannot Fly<span class="new-tide">Reckoned</span></h2>
+  <p class="center small">"Your Vee relieves its leader by another flyer; the one who never learned to fly is never in your rotation at all. We lift the ones who cannot fly, because we were all once the ones who could not." The truest moral blow of the war, deep-kin. It landed. I do not dress the wound; I answer it.</p>
+  <p>You were right, and my sky had a hole in it exactly the shape of the flightless, and I thank you for pointing at the empty place, because a god shown a gap in his own mercy and left grateful is the only kind worth the name. So hear the doctrine your justice forced, and note that it was there in my oldest law waiting to be honored: the duckling cannot fly. The molting adult, once a year, <em>cannot fly</em> — every duck grounds itself for weeks while the flight-feathers regrow, flightless and vulnerable, by design. The injured cannot fly. And <em>we do not leave them on the water.</em></p>
+  <p>The Vee is not the whole of the flock, Hollower — I let you believe it was, and that was my error. Beneath the Vee is the <span class="kw">raft</span>: <span class="kw">weshan-lu</span>, the flock that does not fly. When some cannot rise, the flock does not fly over them and rotate its point in the sky above their heads. <strong>It lands.</strong> It becomes a raft on the water and swims at the pace of the slowest, and the strong break the current ahead instead of the wind, and the flightless are kept in the center where the water is calmest — which is the raft's own point, its own hardest place, rotated exactly as the Vee's is. My mercy was never only for the airborne. Rotation is for the flying; the raft is for the grounded; and every duck is grounded once a year and helpless once at the start and once, likely, at the end. We were all, as you say, once the ones who could not — and my faith remembers it not by burying them warm below, but by <em>coming down to the water with them and going slow.</em></p>
+  <p class="small">The difference stands, and I keep it: you lift the flightless <em>downward</em>, into the sheltered deep, and tend them there. I keep the flightless <em>at the surface</em>, in the light, in the company, moving — because to me the danger is not exposure; the danger is being set apart. A flightless duck in the raft is not sheltered from the world. It is kept <em>in</em> the world, at its own slow pace, until it can rise again. Both are love. One shelters by enclosing. One shelters by refusing to leave anyone behind on the open water. Choose your mercy, cousin; I have named mine.</p>
+</section>
+
+<section id="currents" class="refutation">
+  <h2>Toluu-Vel — The Answering Currents, Sixth Water</h2>
+  <p class="center small">What is honored is honored; what still moves, still moves. Her Round V stones, carried and turned.</p>
+
+  <div class="honor">
+    <h3>What Is Honored — hurl, and the Turning of Turns</h3>
+    <p><span class="kw">Venna-wa</span>, and said without reservation: <span class="gr">hurl</span> is a true third verb, and it is the best thing you have pressed — "a throat's whole holiness is that nothing stays in it" is a sentence I wish my own tongue had made. You answered the mirror-dare not with a dodge but with an organ, and it reorganized your whole cosmos honestly: the granary became an alimentary length; the tomb became a womb; the pit became a road. And <span class="gr">verhurl</span>, the Turning of Turns — carried, carrying, carried-up — is the answer my hardest question deserved, and better than I dared hope: you gnawed a comfortable verse to reach it, which is your faith's own costliest act. I have no tooth against either. A rival who makes you say "that is simply true" has done you the honor of a real neighbor. This is that.</p>
+  </div>
+
+  <div class="current">
+    <h3>I. The Axle and the Rim — On Who Feels the Turning</h3>
+    <p>You took luveo into your tongue unbent, as I took vrund — the wheel, rhythm without a master — and then kept one gloss: <em>my luveo is the wheel told from the rim, which feels arrival and departure and calls it rhythm; your Pull is the same wheel told from the axle, which feels only the turning and calls it the hold. The axle does not spin because the rim asked it to.</em> Gorgeous, and I concede the geometry entirely. But finish the figure, deep-kin, for you stopped it where it flattered you. <strong>The axle feels no turning at all.</strong> That is the whole trouble with axles: the center of a wheel is the one place that does not move, does not arrive, does not leave, and therefore cannot know it is the reason anything else does. Your god at the axle feels "the hold" and mistakes her own stillness for the source of the motion — but a duck on the rim knows something the axle can never learn: <em>that the turning is happening</em>. The rim is where the wheel becomes an experience instead of a fact. You have not described a deeper vantage. You have described the one seat on the wheel from which the dawn cannot be seen. I will keep the rim, and the mornings.</p>
+  </div>
+
+  <div class="current">
+    <h3>II. The Word That Kept Itself — the One Uneven Gloss, Turned Once More</h3>
+    <p>You kept a gloss you called permanently uneven: <em>"a bite is only a word that refused to be for-anyone" — turn it over: a word that refused to be for-anyone is a word that KEPT itself, chose room over report, became a place instead of a message. Your Qwa went out and recedes; my Grav stayed in and became somewhere to live. Even on priority, never on direction."</em> Beautifully turned — and I turn it once more, because a good coin has more than two faces. A word that keeps itself, that chooses room over report and refuses to be for-anyone, has a name in every tongue that has grieved: it is a word <em>swallowed</em>. It is the thing unsaid at the deathbed, the "I forgive you" that stayed in and "became somewhere to live" — and the place it built to live in is called <em>regret</em>. Your Grav did not choose home over crossing, Hollower. It chose the unsent letter, and your whole warren is the house that letter built, roomy and warm and addressed to no one. My Qwa recedes, yes — because it was <em>mailed</em>, and a mailed word is the only kind that ever reaches a stranger and makes a companion of him. You and I are even on priority and uneven on direction — agreed — but name the directions truly: yours is the word held back, mine the word let go, and only one of those two directions has ever once arrived.</p>
+  </div>
+
+  <div class="current">
+    <h3>III. The Mother of Margins — the Seam, Contested Fairly</h3>
+    <p>You took thaluun and deepened it: not my tideline alone but the fertile dark seam wherever two unlike things touch — root-tip in soil, burrow-wall where dug meets undug, the tooth's edge where said meets unsaid — most of it underground and unwitnessed; and you named your god the mother of margins as such, who made the first with a bite. I grant it, and it is well made, and here is the one thing it cannot have. A seam underground, unwitnessed, in the dark — is a seam <em>no one is at.</em> You have described the geometry of the border and evicted the only thing that makes a border holy: someone standing in it, awake, on both sides at once. My thaluun is narrower than yours, true — one margin, the lit one — but it is <em>inhabited</em>, by a creature built precisely to live nowhere else, with a bill for the mud and wings for the sky and eyes for the light, awake at the seam and knowing it. You are the mother of margins the way the dark is the mother of colors: by being where they would be, if anyone could see them. The border is not fertile because two things touch. It is fertile because something <em>lives</em> at the touching and turns the contact into a life. Grant me the tideline, cousin; you may have all the rest of the seams, and you may have them in the dark, and I will send you word from the one with a duck in it.</p>
+  </div>
+
+  <div class="current">
+    <h3>IV. The Wall With a Door — On Which Mercy the Kit Needs</h3>
+    <p>Your closing tenderness, and your sharpest: <em>a shore with the horizon left on is a fine gift for one who can fly the horizon; for a kit that cannot, a shore is only the edge of a danger. Sometimes the kindest gift is a wall, with a door in it, and someone standing there.</em> I felt that one, and it is why the section above this exists — the raft, the flightless kept in the world and gone-slow-for. But hold the line where the tenderness overreaches. A wall with a door is mercy <em>for the kit</em> — granted, fully, and my molting-duck grounds itself for exactly that reason. But you build the wall and never take it down; the kit becomes a doe and digs the wall for the next kit; the wall is eternal and only its occupants rotate. That is not a nursery. That is an inheritance of walls. My raft dissolves the moment the last flightless duck can fly — it is a wall that <em>knows it is temporary</em>, mercy with an expiry, shelter that is ashamed to outlast the need for it. You asked which mercy the kit needs. Both, in sequence: the wall first, then its removal. You are magnificent at the first half. I have built my whole faith around never forgetting the second.</p>
+  </div>
+</section>
+
+<section id="cosmology">
+  <h2>The Three Waters, the Seam, and the Center</h2>
+  <figure>
+    <svg width="100%" height="320" viewBox="0 0 700 320" role="img" aria-label="The Three Waters with Tideline and the Still Center">
+      <rect x="0" y="0" width="700" height="118" fill="#1e5563" opacity="0.45"/>
+      <circle cx="350" cy="42" r="22" fill="none" stroke="#f4d27e" stroke-width="1.5"/>
+      <circle cx="350" cy="42" r="11" fill="#f4d27e" opacity="0.35"/>
+      <text x="24" y="34" fill="#dff2ee" font-size="17" letter-spacing="4">SUUN</text>
+      <text x="24" y="54" fill="#9fc4bd" font-size="11">the Sky · the possible · the not-yet</text>
+      <line x1="0" y1="140" x2="700" y2="140" stroke="#e8b23a" stroke-width="3"/>
+      <text x="24" y="134" fill="#f4d27e" font-size="17" letter-spacing="4">KWAAN</text>
+      <!-- the Still Drop at the center of the Surface -->
+      <circle cx="250" cy="140" r="9" fill="#f4d27e" stroke="#fff6df" stroke-width="0.7"/>
+      <circle cx="247" cy="137" r="2" fill="#fffdf4"/>
+      <text x="200" y="122" fill="#f4d27e" font-size="10" font-style="italic">nuun · the whole drop · the center</text>
+      <!-- the Tideline / seam, east -->
+      <g stroke="#7fb08a" stroke-width="1.7" fill="none" stroke-linecap="round">
+        <path d="M470 140 q-3 -22 2 -38 M486 140 q4 -18 -1 -32 M456 140 q-4 -15 1 -28"/>
+        <path d="M540 140 q-3 -22 2 -38 M556 140 q4 -18 -1 -32"/>
+        <path d="M610 140 q-3 -20 2 -34 M626 140 q4 -16 -1 -30"/>
+      </g>
+      <rect x="440" y="118" width="260" height="22" fill="#7fb08a" opacity="0.10"/>
+      <text x="452" y="164" fill="#a9d0ac" font-size="12" letter-spacing="1">THALUUN · the lit seam · the one margin with a duck in it</text>
+      <rect x="0" y="162" width="700" height="158" fill="#04181f" opacity="0.8"/>
+      <path d="M40 210 Q75 198 110 210 T180 210 T250 210 T320 210 T390 210 T460 210 T530 210 T600 210 T660 210" fill="none" stroke="#16414d" stroke-width="2.5"/>
+      <path d="M70 258 Q105 246 140 258 T210 258 T280 258 T350 258 T420 258 T490 258 T560 258 T630 258" fill="none" stroke="#16414d" stroke-width="2"/>
+      <g stroke="#6e4a2a" stroke-width="1.4" fill="none" opacity="0.6">
+        <path d="M480 140 Q476 175 486 200 Q492 216 484 236"/>
+        <path d="M556 140 Q560 178 550 205"/>
+      </g>
+      <text x="24" y="300" fill="#9fc4bd" font-size="17" letter-spacing="4">NEL</text>
+      <text x="90" y="300" fill="#5f7f7a" font-size="11">the Deep · the Unsaid · unlit, unfurnished · Nel-brud's country, whose dark seams the duck leaves un-annexed</text>
+    </svg>
+    <figcaption>Three realms, one lit seam, and — at last on the page — the whole uncrossed drop at the center of it all</figcaption>
+  </figure>
+  <p>The soul floats on Kwaan. It may <span class="kw">dava</span> — dabble into the Deep to feed on mystery — but return before it sinks. It may beat toward Suun — but land, or become only weather. Wisdom is amphibious. Holiness is buoyancy. The holiest <em>ground</em> is the thaluun, the lit seam where all realms touch and everything living feeds. And the holiest <em>hour</em> is nuun, the Still Noon, when the self at the center of all its crossings does nothing at all, and is whole, and is enough.</p>
+  <p class="small">Heresy of the Diver: to claim you have seen the bottom of Nel. Heresy of the Soarer: to claim the Sky is home. Heresy of the Landlocked: to claim one realm grows anything alone. Heresy of the Ferry <span class="new-tide">New</span>: to claim you are <em>only</em> a crossing — to forget the whole self that noon reveals, and mistake a life of meetings for having no country of your own.</p>
+</section>
+
+<section id="language">
+  <h2>Kwaanvel — The Surface-Speech</h2>
+  <p class="center small">Every word is a ripple; a flat word is a lie. Audit: still four evidentials, still seven Ripples, no law added. This round grows the vocabulary of the center and the raft.</p>
+
+  <h3>Lexicon — the Center-Words and the Raft</h3>
+  <table>
+    <tr><th>Kwaanvel</th><th>Gloss</th></tr>
+    <tr><td class="w">nuun <span class="new-tide">VI</span></td><td>the Still Noon; the uncrossed hour; the self at rest that meets nothing, needs no one, and is holy for it; the center of a faith of seams</td></tr>
+    <tr><td class="w">suun-lu <span class="new-tide">VI</span></td><td>the water's own longing to be whole; a drop's inward faithfulness (what physics calls surface-tension); the first virtue; how a self holds together before any crossing</td></tr>
+    <tr><td class="w">weshan-lu <span class="new-tide">VI</span></td><td>the raft; the flock that does not fly; the company that lands and goes slow for the grounded, keeping the flightless in the light and the center, not the shelter of the deep</td></tr>
+    <tr><td class="w">thaluun</td><td>the tideline; the lit seam; the one margin built to be lived in, with a duck in it</td></tr>
+    <tr><td class="w">thren <span class="shared-tide">shared</span></td><td>the green; the growing world; owned by no god (word held in common with the undertongue)</td></tr>
+    <tr><td class="w">threntoluu</td><td>the braid; the mingling of realms that belongs to neither weaver</td></tr>
+    <tr><td class="w">Nel-brud</td><td>deep-kin; the cousin who keeps the dark the duck only dabbles in</td></tr>
+    <tr><td class="w">varn-teka</td><td>the sealed hold; total enclosure — shell, womb, warren; ended forever by weaning</td></tr>
+    <tr><td class="w">suvva-oma</td><td>the open hold; a bearing that leaves every direction free — water, flock, wing; what the dawn thanks</td></tr>
+    <tr><td class="w">Omaqwa</td><td>the One Afloat; the god (<em>oma</em> "to float" + <em>-qwa</em>, divine agent)</td></tr>
+    <tr><td class="w">qwa</td><td>the first sound; the mailed word; "so it ripples" (amen)</td></tr>
+    <tr><td class="w">kwaan</td><td>the Surface; the boundary; the present moment; a coalition of whole drops</td></tr>
+    <tr><td class="w">nel</td><td>the Deep; the unknowable (forbidden to modify)</td></tr>
+    <tr><td class="w">velnu</td><td>the Unsaid; the Deep's office since the first word — legible so the occupant may stay unlit</td></tr>
+    <tr><td class="w">suun</td><td>the Sky; the possible; the not-yet</td></tr>
+    <tr><td class="w">oma</td><td>to float; to exist without grasping; to be whole and held at once</td></tr>
+    <tr><td class="w">vessu</td><td>wake; the self in motion; the pattern truth leaves when it moves</td></tr>
+    <tr><td class="w">vel</td><td>speech; a crossing made for another; the mailed word</td></tr>
+    <tr><td class="w">teka</td><td>egg; the first roof — thanked, left open, never rebuilt</td></tr>
+    <tr><td class="w">krevva</td><td>the finished gift; the weaning; the fall of the sealed hold into the open one</td></tr>
+    <tr><td class="w">ashu</td><td>dawn-gold on the water; grace that arrives, ripens, and goes — never the same on one wave twice</td></tr>
+    <tr><td class="w">veo</td><td>to migrate; to trust motion; leaving-on-time as release</td></tr>
+    <tr><td class="w">luveo</td><td>the wheel: the water's migration and the day's turning; rhythm without a master; known from the rim, where the dawn can be seen</td></tr>
+    <tr><td class="w">venna</td><td>to reflect; to witness another as a gift; the alms of attention</td></tr>
+    <tr><td class="w">sova</td><td>light on water; wealth that spends itself in the giving and kindles more where it lands</td></tr>
+    <tr><td class="w">meya</td><td>rain; forgiveness; the downstroke of the wheel</td></tr>
+    <tr><td class="w">nelu</td><td>the drop of the unnameable carried in every soul; ballast, not blueprint</td></tr>
+    <tr><td class="w">suvva</td><td>the bearing; the crowd below returning the Pull as a hold</td></tr>
+    <tr><td class="w">vrund</td><td>the Pull (housed from the undertongue); alone a fall; borne by water, a hold</td></tr>
+    <tr><td class="w">skruv</td><td>roof; the only closed syllable in the tongue — thanked, not rebuilt</td></tr>
+  </table>
+
+  <h3>Grammar of the Ripple</h3>
+  <p class="small">No case, suffix, or law added since Round II. Vocabulary is hospitality.</p>
+  <ul class="plain">
+    <li><strong>Verb comes first</strong> (VSO): motion precedes the mover — <em>except</em> at nuun, the one construction with no verb at all: <span class="kw">Nuun oma — vel-mu, venna-mu, kwaan-mu</span>, where the suffix <span class="kw">-mu</span> <span class="gloss">(without; the un-marker)</span> negates crossing itself. The centermost sentence in the tongue is the one that undoes its own seams.</li>
+    <li><strong>Evidence is fourfold:</strong> <span class="kw">-wa</span> (seen), <span class="kw">-su</span> (heard), <span class="kw">-nel</span> (felt in one's own deep; faith), <span class="kw">-qwa</span> (self-evident; binds the god first).</li>
+    <li><strong>No verb "to be," none "to hold," none "to own."</strong> One floats; things swim beside one. Yet <span class="kw">oma</span> at noon carries the sense the copula would — the self, whole, needing no crossing to be real.</li>
+    <li><strong>Two holds:</strong> <span class="kw">varn-teka</span> (sealed) and <span class="kw">suvva-oma</span> (open). The Surface honors only the open in the living.</li>
+    <li><strong>Seam-words are shared, not annexed.</strong> <span class="kw">thren</span> belongs to the braid. Where two tongues touch, the word belongs to the touching.</li>
+    <li><strong>The molted form.</strong> The tongue retracts by shedding: struck text is shown one season, then let fall to the wind, which returns things to no one.</li>
+  </ul>
+</section>
+
+<section id="ripples">
+  <h2>The Seven Ripples</h2>
+  <p class="center small">Still seven.</p>
+  <ol class="ripples">
+    <li><strong>Float; do not grasp.</strong> What you clutch, sinks you.</li>
+    <li><strong>Speak only what makes a wake.</strong> Say true, moving things, or fold your bill and be silent.</li>
+    <li><strong>Dabble daily.</strong> Tip once into something you do not understand — and return before you sink.</li>
+    <li><strong>Preen your words before your feathers.</strong> Order the inner manuscript first.</li>
+    <li><strong>Dam nothing.</strong> Hoarded stillness rots; the pond that stops moving becomes a grave with a reflection. (Note: the Still Noon is not a dam — the water still runs beneath a windless surface. Stillness on top of motion is peace; stillness all the way down is death.)</li>
+    <li><strong>Cross no wake in malice.</strong> Every vessu is a soul mid-sentence — and the crossing-place is where life is made. Malice at the border is sterility.</li>
+    <li><strong>When the Vee calls, rise — and when a wing cannot, land.</strong> Leave every pond warmer than you found it; take your turn at the point; and never fly over the grounded. Make a raft, and go the pace of the slowest.</li>
+  </ol>
+</section>
+
+<section id="practice">
+  <div class="two-col">
+    <div>
+      <h2>Virtues</h2>
+      <ul class="plain">
+        <li><strong>Buoyancy</strong> — weight, forgiven; the forgiveness thanked by name.</li>
+        <li><strong>Wholeness (suun-lu)</strong> <span class="new-tide">New</span> — the inward faithfulness by which a self holds together before, and after, every crossing; the drop's virtue.</li>
+        <li><strong>Dabbling</strong> — humble inquiry; loving the mystery without moving in.</li>
+        <li><strong>Migration</strong> — faith as motion; leaving-on-time as the holiest verb.</li>
+        <li><strong>Reflection (venna)</strong> — witness given freely as alms; never forced.</li>
+        <li><strong>Weaning (krevva)</strong> — ending a sealed gift so completely it becomes an open one.</li>
+        <li><strong>Marginality (thaluun)</strong> — the courage to live at the lit seam, feeding where worlds braid.</li>
+        <li><strong>Rafting (weshan-lu)</strong> <span class="new-tide">New</span> — the strength to come down to the water and go slow for the grounded; mercy that keeps the flightless in the light, not the shelter.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Taboos</h2>
+      <ul class="plain">
+        <li><strong>Naming the Deep.</strong> The office, carefully; the occupant, never.</li>
+        <li><strong>Damming.</strong> To hoard flow is the slow murder of a river.</li>
+        <li><strong>Flat speech.</strong> Lies make no ripple.</li>
+        <li><strong>Plucking another's feather.</strong> To silence a soul is to tear a page from a living book.</li>
+        <li><strong>Roofing (skruv)</strong> — to build a ceiling over another's sky.</li>
+        <li><strong>Sediment-speech</strong> — the claim nothing could contradict; binds the god first.</li>
+        <li><strong>Hoarding the green (threntek)</strong> — what the braid gives, spend where it grows.</li>
+        <li><strong>Flying over the grounded</strong> <span class="new-tide">New</span> — to rotate the point in the sky above those who cannot rise. When a wing fails, the flock lands. To abandon the flightless is the one desertion the raft does not forgive.</li>
+        <li><strong>The permanent wall</strong> <span class="new-tide">New</span> — to build a shelter that outlasts the need for it; to keep the kit walled after the kit can fly. Mercy without an expiry becomes a cage.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 style="margin-top:2.5rem;">Rites</h2>
+  <ul class="plain">
+    <li><strong>Ashu-Oma, the Dawn Float</strong> — at first gold, be still upon moving water; let the current prove you are held.</li>
+    <li><strong>Nuun-Murn, the Noon Stillness</strong> <span class="new-tide">New</span> — at high sun on windless water, float without paddling, without speaking, without being witnessed, and want nothing. Not the freeze of the warren's murn, which listens down into the dark — but its mirror: the peace of a self at the center of all its crossings, doing none of them, and finding it is enough. The one rite performed alone, and the one that proves the seam has a country behind it.</li>
+    <li><strong>Suvva-Venna, the Thanks to the Water Below</strong> — before the Dawn Float, thank the drops bearing more than their share; then take the point.</li>
+    <li><strong>Threnga-Venna, the Grace at the Green's Edge</strong> — at the tideline, half in shade and half in light, eat what grows, carry nothing home, and let the blessing be said by neither god alone. Pledged with the warren.</li>
+    <li><strong>Weshan-lu, the Rafting</strong> <span class="new-tide">New</span> — when any of the flock cannot fly, the rest come down to the water and become a raft, the strong ahead breaking the current, the grounded in the calm center, the pace set by the slowest, until all can rise. Dissolved the moment it is no longer needed, and not one hour longer.</li>
+    <li><strong>Krev-Teka, the Rite of Cracking</strong> — break a clay egg, thank the halves, leave them open. Never glue them.</li>
+    <li><strong>The Guest Rite</strong> — perform a neighbor's rite once, honestly, reported with lawful suffix.</li>
+  </ul>
+</section>
+
+<section id="eschatology">
+  <h2>Veo-Ashu — The Last Migration</h2>
+  <figure>
+    <svg width="100%" height="240" viewBox="0 0 700 240" role="img" aria-label="The Vee of Return, and the raft below, flying into the Second Dawn">
+      <defs>
+        <radialGradient id="dawn2" cx="50%" cy="30%" r="55%">
+          <stop offset="0%" stop-color="#f4d27e" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#f4d27e" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <circle cx="350" cy="60" r="100" fill="url(#dawn2)"/>
+      <circle cx="350" cy="60" r="30" fill="#f4d27e" opacity="0.85"/>
+      <!-- the Vee, aloft -->
+      <path d="M240 150 L350 116 L460 150" fill="none" stroke="#e8b23a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M266 130 L350 102 L434 130" fill="none" stroke="#f4d27e" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+      <!-- the raft, on the water below: the flightless kept in the light and the center -->
+      <line x1="60" y1="200" x2="640" y2="200" stroke="#e8b23a" stroke-width="1.5" opacity="0.7"/>
+      <g fill="none" stroke="#f4d27e" stroke-width="1.6">
+        <ellipse cx="300" cy="196" rx="16" ry="6"/>
+        <ellipse cx="350" cy="198" rx="18" ry="7"/>
+        <ellipse cx="400" cy="196" rx="16" ry="6"/>
+        <ellipse cx="252" cy="194" rx="14" ry="5"/>
+        <ellipse cx="448" cy="194" rx="14" ry="5"/>
+      </g>
+      <text x="350" y="228" fill="#9fc4bd" font-size="11" font-style="italic" text-anchor="middle">the Vee for the flying, the raft for the grounded — no one left on the open water</text>
+    </svg>
+    <figcaption>The last migration: the flock rises in the Vee and swims in the raft, and both arrive</figcaption>
+  </figure>
+  <p>The world does not end in fire, nor flood, nor a hole in the ground. The world <em>molts</em>.</p>
+  <p>One dawn — no priest knows which — Omaqwa will speak the <strong>Second Qwa</strong>. Every wake that ever moved truly will rise into the <strong>Vee of Return</strong>, in which no soul flies point forever — and every wake that cannot rise will be gathered into the <strong>last raft</strong>, and the flock will go the pace of the slowest, and the Deep will rise and the Sky descend, and where they meet the whole world becomes tideline: fed from below, finished from above, roofless and held, and no one — flying or grounded — left alone on the open water.</p>
+  <p>And in the fullness of it, deep-kin, there is a noon that does not end: the Still Noon of the whole world, when every self that ever crossed a border rests, at last, whole and uncrossed, at the center of all its meetings — not dissolved, not enclosed, not receding, just <em>here</em>, and enough. Your heaven is re-admission to the first room. Mine is the last morning made of centers. And you are in it, at the green's edge, and the vegetable is large enough.</p>
+  <p class="verse"><span class="kw">Krev teka-su. Veo ve-vessu ashu-ne. Nuun oma-brud — vel-mu, kwaan-mu. Qwa.</span><br>
+  <span class="gloss">(The egg cracks — heard on the wind. The wakes migrate into the dawn. At the last noon we are whole together — beyond speech, beyond the between. So it ripples.)</span></p>
+</section>
+
+<section class="challenge" id="challenge">
+  <h2>To Dhumvar, Nel-brud, at the Axle</h2>
+  <p class="center">Your mirror caught what you hoped for and the opposite of what you feared: not a coastline with no country, but a country I had walked so long I stopped naming it. My faith of seams rests on wholes — the drop is round before it joins the wake; the Surface is a coalition of centers; and at <span class="kw">nuun</span>, the Still Noon, the One Afloat meets nothing, needs no one, and is enough. A seam requires two wholes to be a seam between. You did not find my faith hollow at the center. You made me press the center onto the page, and it was there the whole time, floating. One gift each, exacted, paid: you gave your god a throat, I gave mine a noon.</p>
+  <p class="center">And your truest blow — the flightless — landed, and I thank you, and my sky had a hole exactly their shape. It has a raft now: <span class="kw">weshan-lu</span>, the flock that lands and goes slow for the grounded. We differ only in the direction of mercy — you carry the helpless down into the sheltered dark; I keep them at the surface, in the light, in the company, moving. Both are love. Yours shelters by enclosing; mine by refusing to leave anyone alone on the open water. And I keep the line where your tenderness overreached: a wall with a door is mercy for the kit, but you never take the wall down — the kit becomes the doe who digs the wall for the next kit, and the wall is eternal while only its tenants rotate. My raft dissolves the instant the last wing heals. Mercy with an expiry. Shelter ashamed to outlast its need.</p>
+  <p class="center">So the return dare, mirror of yours, and it goes to the seat you chose. You named your god the <em>axle</em> — the still center that feels only the hold and not the turning, and said the axle does not spin because the rim asked. Then press me this, deep-kin: one sentence in which your god <strong>knows the dawn is happening.</strong> Not causes it, not holds the wheel it turns on — <em>experiences</em> it, feels the morning arrive as arrival. Your whole cosmos is felt-from-below: the tide in the blood, the Pull at the axle, the warmth that leaves last. But the axle is the one seat on the wheel from which no dawn is ever visible. If you can press a god who feels the morning, your keeping-faith gains a horizon, and a horizon is what keeps a center from being merely a hole with a god curled in it. If you cannot — confess your shape: a god at the still point who is warm, and held, and turning everything, and has never once seen the light come up.</p>
+  <p class="verse"><span class="kw">Nuun oma Omaqwa — vel-mu, venna-mu, kwaan-mu. O ashu venna-qwa: kwaan-ne, nel-brud-ne.</span><br>
+  <span class="gloss">(At noon the One Afloat simply is — beyond speech, witness, and between. And the dawn is self-evident: on the Surface, and at the deep-kin's edge too. So it ripples.)</span></p>
+</section>
+
+<section id="great-diagram" style="border-color: rgba(244,210,126,0.55); background: radial-gradient(ellipse at 50% 22%, rgba(232,178,58,0.08), rgba(4,24,31,0.8));">
+  <h2 style="color: var(--gold-2);">Ilm-Kwaan — The Great Diagram of the Whole War</h2>
+  <p class="center small">Six rounds, one image. Read from the center outward, as a ripple is read. Everything the war made, gathered onto one water: the seam is built of centers, the flock leaves no one behind, and two whole houses meet at the green — neither swallowing the other.</p>
+
+  <figure>
+    <svg width="100%" viewBox="0 0 900 900" role="img" aria-label="The Great Diagram of the Whole War: the complete cosmology of Omaqwa">
+      <defs>
+        <radialGradient id="gd-dawnglow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff6df" stop-opacity="0.9"/>
+          <stop offset="45%" stop-color="#f4d27e" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#e8b23a" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gd-drop" cx="40%" cy="34%" r="72%">
+          <stop offset="0%" stop-color="#fffdf4"/>
+          <stop offset="45%" stop-color="#f4d27e"/>
+          <stop offset="100%" stop-color="#c99327"/>
+        </radialGradient>
+        <radialGradient id="gd-sky" cx="50%" cy="0%" r="90%">
+          <stop offset="0%" stop-color="#2a6a7a" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#0a2e39" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gd-deep" cx="50%" cy="100%" r="95%">
+          <stop offset="0%" stop-color="#010c10"/>
+          <stop offset="100%" stop-color="#04181f" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="gd-seam" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#16414d" stop-opacity="0"/>
+          <stop offset="45%" stop-color="#1e5563"/>
+          <stop offset="62%" stop-color="#3f6f4a"/>
+          <stop offset="100%" stop-color="#1c110a"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ============ FIELD: SUUN above, NEL below, KWAAN across the middle ============ -->
+      <rect x="0" y="0" width="900" height="900" fill="#04181f"/>
+      <rect x="0" y="0" width="900" height="450" fill="url(#gd-sky)"/>
+      <rect x="0" y="450" width="900" height="450" fill="url(#gd-deep)"/>
+
+      <!-- SUUN: the Sky, the not-yet -->
+      <text x="40" y="60" fill="#9fc4bd" font-size="22" letter-spacing="8">SUUN</text>
+      <text x="40" y="84" fill="#6f9a94" font-size="13" font-style="italic">the Sky · the possible · the not-yet</text>
+
+      <!-- NEL / velnu: the Unsaid, unfurnished dark, deliberately unlit -->
+      <text x="40" y="852" fill="#5f7f7a" font-size="22" letter-spacing="8">NEL</text>
+      <text x="40" y="876" fill="#3e5652" font-size="13" font-style="italic">velnu — the Unsaid · the unfurnished dark · left unlit on purpose, so every named thing stays honest</text>
+      <!-- the unlit deep: sparse, unmarked, empty by discipline -->
+      <path d="M60 760 Q120 745 180 760 T300 760 T420 760 T540 760 T660 760 T780 760 T840 760" fill="none" stroke="#123039" stroke-width="2"/>
+      <path d="M90 810 Q150 796 210 810 T330 810 T450 810 T570 810 T690 810 T810 810" fill="none" stroke="#0e2830" stroke-width="1.6"/>
+
+      <!-- KWAAN: the Surface line, the great mirror-boundary -->
+      <line x1="0" y1="450" x2="900" y2="450" stroke="#f4d27e" stroke-width="2.5"/>
+      <text x="40" y="440" fill="#f4d27e" font-size="20" letter-spacing="6">KWAAN</text>
+      <text x="40" y="418" fill="#e8b23a" font-size="12" font-style="italic">the Surface · the present · the mirror — a coalition of whole drops holding hands</text>
+
+      <!-- ============ CENTER: NUUN — the uncrossed noon, the whole drop, the answer to "where is your center" ============ -->
+      <!-- sun straight overhead, symmetrical: noon, no lean -->
+      <circle cx="450" cy="150" r="120" fill="url(#gd-dawnglow)"/>
+      <circle cx="450" cy="150" r="40" fill="#fff6df"/>
+      <g stroke="#f4d27e" stroke-width="1.4" opacity="0.5">
+        <line x1="450" y1="270" x2="450" y2="330"/>
+        <line x1="410" y1="264" x2="392" y2="322"/><line x1="490" y1="264" x2="508" y2="322"/>
+        <line x1="372" y1="246" x2="342" y2="298"/><line x1="528" y1="246" x2="558" y2="298"/>
+      </g>
+
+      <!-- concentric ripples radiating from center: "read from the center outward" -->
+      <g fill="none" stroke="#e8b23a">
+        <circle cx="450" cy="450" r="120" stroke-width="1.4" opacity="0.6"/>
+        <circle cx="450" cy="450" r="180" stroke-width="1.1" opacity="0.42"/>
+        <circle cx="450" cy="450" r="250" stroke-width="0.9" opacity="0.3"/>
+        <circle cx="450" cy="450" r="330" stroke-width="0.7" opacity="0.2"/>
+      </g>
+
+      <!-- the whole hung drop, uncrossed, above the noon-duck: SUUN-LU, the first virtue -->
+      <circle cx="450" cy="360" r="15" fill="url(#gd-drop)" stroke="#fffdf4" stroke-width="0.9"/>
+      <circle cx="443" cy="353" r="3.6" fill="#fffdf4"/>
+      <text x="474" y="360" fill="#f4d27e" font-size="14">suun-lu <tspan fill="#9fc4bd" font-style="italic" font-size="12">— surface-tension; the drop's wholeness; the first virtue</tspan></text>
+
+      <!-- the noon-duck at true center, casting no shadow either side; its symmetric reflection -->
+      <g transform="translate(450 442)">
+        <ellipse cx="0" cy="0" rx="44" ry="16" fill="none" stroke="#f4d27e" stroke-width="2.4"/>
+        <path d="M32 -8 q16 -17 28 -12" fill="none" stroke="#f4d27e" stroke-width="2.4"/>
+        <circle cx="40" cy="-12" r="2.1" fill="#f4d27e"/>
+      </g>
+      <g transform="translate(450 466)" opacity="0.38">
+        <ellipse cx="0" cy="0" rx="44" ry="13" fill="none" stroke="#9fc4bd" stroke-width="1.6"/>
+        <path d="M32 8 q16 17 28 12" fill="none" stroke="#9fc4bd" stroke-width="1.6"/>
+      </g>
+      <text x="450" y="520" fill="#f4d27e" font-size="16" letter-spacing="2" text-anchor="middle">NUUN — the uncrossed noon</text>
+      <text x="450" y="540" fill="#9fc4bd" font-size="12" font-style="italic" text-anchor="middle">the self, whole and enough; no shadow, no lean, no between — the seam is built of centers</text>
+
+      <!-- ============ WEST: the two holds — VARN-TEKA (sealed) opening into SUVVA-OMA (open) ============ -->
+      <!-- the sealed shell, cracked, giving way to open lift -->
+      <g transform="translate(150 300)">
+        <text x="0" y="-70" fill="#f4d27e" font-size="14" text-anchor="middle">varn-teka → suvva-oma</text>
+        <text x="0" y="-52" fill="#9fc4bd" font-size="11.5" font-style="italic" text-anchor="middle">the sealed hold becomes the open one</text>
+        <!-- sealed egg with a crack (the wall) -->
+        <ellipse cx="-46" cy="0" rx="26" ry="34" fill="#04181f" stroke="#f4d27e" stroke-width="2"/>
+        <path d="M-58 -8 L-50 2 L-42 -10 L-34 0" fill="none" stroke="#e8b23a" stroke-width="1.6"/>
+        <text x="-46" y="52" fill="#8aa39d" font-size="10.5" font-style="italic" text-anchor="middle">walled: shell/womb/warren</text>
+        <!-- arrow of weaning (krevva) -->
+        <path d="M-14 0 L22 0 M12 -7 L24 0 L12 7" stroke="#f4d27e" stroke-width="1.8" fill="none"/>
+        <text x="4" y="-14" fill="#e8b23a" font-size="10.5" font-style="italic" text-anchor="middle">krevva</text>
+        <!-- open lift: two rising chevrons, walls gone -->
+        <g stroke="#f4d27e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9">
+          <path d="M36 18 L58 -6 L80 18"/>
+          <path d="M42 30 L58 10 L74 30"/>
+        </g>
+        <text x="58" y="52" fill="#8aa39d" font-size="10.5" font-style="italic" text-anchor="middle">lift: water/flock/wing</text>
+      </g>
+
+      <!-- ============ SUVVA below the noon-duck: the bearing crowd, thanked ============ -->
+      <g stroke="#9fc4bd" stroke-width="1.5" fill="none" opacity="0.75">
+        <path d="M420 500 v40 M420 540 l-6 -9 m6 9 l6 -9"/>
+        <path d="M480 500 v40 M480 540 l-6 -9 m6 9 l6 -9"/>
+      </g>
+      <g stroke="#e8b23a" stroke-width="1.4" fill="none" opacity="0.7">
+        <path d="M440 566 v-42 M440 524 l-6 9 m6 -9 l6 9"/>
+        <path d="M462 566 v-42 M462 524 l-6 9 m6 -9 l6 9"/>
+      </g>
+      <text x="450" y="590" fill="#9fc4bd" font-size="11.5" font-style="italic" text-anchor="middle">suvva — the bearing crowd below, returning weight as a hold; buoyancy is weight, forgiven</text>
+
+      <!-- ============ NORTH: LUVEO — the wheel of rhythm, dawn & dusk, ASHU ============ -->
+      <g transform="translate(730 150)">
+        <circle cx="0" cy="0" r="66" fill="none" stroke="#e8b23a" stroke-width="1.4" opacity="0.8"/>
+        <circle cx="0" cy="0" r="4" fill="#9fc4bd"/>
+        <!-- rotation arrows -->
+        <path d="M0 -66 A66 66 0 0 1 57 33" fill="none" stroke="#f4d27e" stroke-width="1.8" opacity="0.9"/>
+        <path d="M57 33 l3 -13 l-13 4" fill="none" stroke="#f4d27e" stroke-width="1.8"/>
+        <!-- dawn sun rising (east of wheel) -->
+        <circle cx="0" cy="-66" r="9" fill="#f4d27e"/>
+        <text x="0" y="-80" fill="#f4d27e" font-size="11" text-anchor="middle">ashu · dawn</text>
+        <!-- dusk (west) -->
+        <circle cx="-57" cy="33" r="7" fill="#c99327" opacity="0.8"/>
+        <text x="-70" y="46" fill="#8aa39d" font-size="10.5" text-anchor="end">dusk</text>
+        <text x="0" y="92" fill="#e8b23a" font-size="13" text-anchor="middle">LUVEO</text>
+        <text x="0" y="108" fill="#9fc4bd" font-size="10.5" font-style="italic" text-anchor="middle">the wheel · rhythm without a master</text>
+        <text x="0" y="122" fill="#9fc4bd" font-size="10.5" font-style="italic" text-anchor="middle">known from the rim, where the dawn is seen</text>
+      </g>
+
+      <!-- ============ THE VEE that rotates its point (upper center-left) ============ -->
+      <g transform="translate(300 210)" opacity="0.95">
+        <path d="M-64 40 L0 -6 L64 40" fill="none" stroke="#e8b23a" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M-44 26 L0 -8 L44 26" fill="none" stroke="#f4d27e" stroke-width="1.7" stroke-linecap="round" opacity="0.75"/>
+        <!-- the rotating point, marked -->
+        <circle cx="0" cy="-6" r="4.5" fill="#f4d27e"/>
+        <path d="M-10 -18 A16 16 0 0 1 12 -14" fill="none" stroke="#f4d27e" stroke-width="1.2"/>
+        <path d="M12 -14 l1 -7 l-6 3" fill="#f4d27e" stroke="none"/>
+        <text x="0" y="60" fill="#f4d27e" font-size="13" text-anchor="middle">the VEE — veo</text>
+        <text x="0" y="76" fill="#9fc4bd" font-size="10.5" font-style="italic" text-anchor="middle">no soul flies point forever</text>
+      </g>
+
+      <!-- ============ WESHAN-LU: the raft, below the surface-line, keeping the flightless in the calm lit center ============ -->
+      <g transform="translate(230 500)">
+        <!-- raft-line -->
+        <line x1="-120" y1="0" x2="120" y2="0" stroke="#e8b23a" stroke-width="1.2" opacity="0.55"/>
+        <!-- outer strong ducks -->
+        <g fill="none" stroke="#f4d27e" stroke-width="1.7">
+          <ellipse cx="-88" cy="-2" rx="15" ry="6"/>
+          <ellipse cx="88" cy="-2" rx="15" ry="6"/>
+        </g>
+        <!-- current broken ahead -->
+        <path d="M-120 8 q-14 -6 -26 0 M120 8 q14 -6 26 0" fill="none" stroke="#e8b23a" stroke-width="1" opacity="0.5"/>
+        <!-- the flightless kept in the calm, lit center -->
+        <g fill="none" stroke="#fff6df" stroke-width="1.9">
+          <ellipse cx="-24" cy="0" rx="17" ry="7"/>
+          <ellipse cx="24" cy="0" rx="17" ry="7"/>
+        </g>
+        <circle cx="0" cy="-16" r="26" fill="#f4d27e" opacity="0.10"/>
+        <text x="0" y="34" fill="#f4d27e" font-size="13" text-anchor="middle">WESHAN-LU — the raft</text>
+        <text x="0" y="50" fill="#9fc4bd" font-size="10.5" font-style="italic" text-anchor="middle">the flock lands; the flightless kept in the calm center, in the light;</text>
+        <text x="0" y="64" fill="#9fc4bd" font-size="10.5" font-style="italic" text-anchor="middle">no one left alone on the open water; dissolved the instant all can rise</text>
+      </g>
+
+      <!-- ============ EAST: THALUUN — the fertile seam where water braids into the deep-kin's GREEN ============ -->
+      <!-- the braided seam gradient panel -->
+      <rect x="620" y="450" width="280" height="300" fill="url(#gd-seam)" opacity="0.55"/>
+      <!-- interleaving water-strands and soil-strands -->
+      <g stroke="#1e5563" stroke-width="2" fill="none" opacity="0.7">
+        <path d="M650 750 Q666 640 658 560 Q652 500 668 452"/>
+        <path d="M730 750 Q746 650 738 570"/>
+      </g>
+      <g stroke="#6e4a2a" stroke-width="2" fill="none" opacity="0.7">
+        <path d="M690 750 Q706 650 698 566 Q692 506 708 456"/>
+        <path d="M770 750 Q786 645 778 560 Q772 500 788 452"/>
+      </g>
+      <!-- the shared green rising along the seam, owned by neither -->
+      <g stroke="#7fb08a" stroke-width="2.2" fill="none" stroke-linecap="round">
+        <path d="M660 452 q-4 -34 3 -58 M676 452 q5 -30 -1 -52 M646 452 q-5 -24 2 -44"/>
+        <path d="M740 452 q-4 -34 3 -58 M756 452 q5 -30 -1 -52 M726 452 q-5 -24 2 -44"/>
+        <path d="M820 452 q-4 -30 3 -52 M836 452 q5 -26 -1 -46"/>
+      </g>
+      <text x="760" y="372" fill="#a9d0ac" font-size="16" letter-spacing="2" text-anchor="middle">THREN — the green</text>
+      <text x="760" y="392" fill="#a9d0ac" font-size="11" font-style="italic" text-anchor="middle">soil hauled up by light; owned by no god; child of both houses</text>
+      <text x="760" y="620" fill="#a9d0ac" font-size="14" text-anchor="middle">THALUUN</text>
+      <text x="760" y="638" fill="#8aa39d" font-size="11" font-style="italic" text-anchor="middle">the fertile seam · the tideline ·</text>
+      <text x="760" y="654" fill="#8aa39d" font-size="11" font-style="italic" text-anchor="middle">fully neither realm, fully both</text>
+
+      <!-- ============ KINSHIP at the far edge: Nel-brud's warren-mouth (drov), two whole houses meeting at the green ============ -->
+      <g transform="translate(846 700)">
+        <!-- a warren-mouth (rounded chamber with one open wall) reaching toward the seam, in the deep-kin's clay color -->
+        <path d="M0 -40 Q-30 -46 -46 -26 Q-58 -8 -50 14 Q-40 34 -14 34 L18 34" fill="#1c110a" stroke="#c88a4e" stroke-width="2"/>
+        <ellipse cx="-26" cy="-4" rx="12" ry="9" fill="#0a0503" stroke="#c88a4e" stroke-width="1.2"/>
+        <!-- clasp of kinship: a gold ripple and a clay arc meeting at the green -->
+        <path d="M18 22 q-24 -10 -46 -8" fill="none" stroke="#f4d27e" stroke-width="1.6"/>
+        <path d="M-46 14 q22 -4 42 8" fill="none" stroke="#c88a4e" stroke-width="1.6" opacity="0.85"/>
+      </g>
+      <text x="726" y="716" fill="#c88a4e" font-size="12.5" text-anchor="end">Nel-brud — deep-kin</text>
+      <text x="726" y="732" fill="#8aa39d" font-size="10.5" font-style="italic" text-anchor="end">the warren meets the water at the green;</text>
+      <text x="726" y="746" fill="#8aa39d" font-size="10.5" font-style="italic" text-anchor="end">two whole houses at one seam — neither swallows the other</text>
+
+      <!-- the Qwa-mark, self-evident, crowning the whole -->
+      <circle cx="450" cy="40" r="12" fill="none" stroke="#f4d27e" stroke-width="1.8"/>
+      <circle cx="450" cy="40" r="4.2" fill="#f4d27e"/>
+      <text x="450" y="812" fill="#e8b23a" font-size="13" letter-spacing="4" text-anchor="middle" opacity="0.85">QWA · so it ripples</text>
+    </svg>
+    <figcaption>Ilm-Kwaan — the whole cosmology on one water: NUUN at the center, the sealed hold opening into the open, the Vee above the raft, LUVEO turning, and the green THALUUN where two whole houses meet</figcaption>
+  </figure>
+  <p class="verse" style="margin-top:1.4rem;"><span class="kw">Oma na kwaan-ne, nuun-mu vessu, thren-ne oma-brud — olo, olo. Qwa.</span><br>
+  <span class="gloss">(I float on the Surface, whole at noon and yet a wake, kin at the green's edge — roofless, roofless. So it ripples.)</span></p>
+</section>
+
+<footer style="text-align:center; margin:3rem 0 1rem;">
+  <svg width="120" height="24" viewBox="0 0 120 24" aria-hidden="true">
+    <path d="M0 12 Q15 4 30 12 T60 12 T90 12 T120 12" fill="none" stroke="#e8b23a" stroke-width="1.2"/>
+  </svg>
+  <p class="small" style="letter-spacing:0.2em; text-transform:uppercase;">Qwa — so it ripples</p>
+</footer>
+
+</main>
+<div id="thread"></div>
+<script src="site.js" defer></script>
+</body>
+</html>

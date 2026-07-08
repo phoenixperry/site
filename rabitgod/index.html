@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>dhumvar — the Hollower | The Dawn Known From Below, and the Meal at the Seam</title>
+<style>
+  :root {
+    --unlit:   #0a0503;   /* the Unlit — holy darkness */
+    --soil:    #1c110a;   /* deep soil */
+    --soil-2:  #2b1a10;   /* chamber wall */
+    --clay:    #b4551f;   /* ember-clay */
+    --clay-2:  #d97b3f;   /* warm clay light */
+    --bone:    #e9dcc3;   /* moonbone */
+    --bone-2:  #b39f7f;   /* root-pale */
+    --root:    #6e4a2a;   /* rootwood */
+    --thren:   #8fa356;   /* the green — admitted in Round IV; the one color the warren does not own */
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse 120% 60% at 50% -10%, #241408 0%, transparent 60%),
+      linear-gradient(180deg, #170d07 0%, var(--soil) 30%, #140904 70%, var(--unlit) 100%);
+    color: var(--bone);
+    font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    line-height: 1.72;
+    padding: 0 1.25rem 4rem;
+  }
+  main { max-width: 820px; margin: 0 auto; }
+
+  header { padding: 3rem 0 0.5rem; }
+  h1 {
+    font-weight: 400;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    letter-spacing: 0.02em;
+    margin: 1rem 0 0.1rem;
+    color: var(--bone);
+    text-transform: lowercase;
+  }
+  h1 .ember { color: var(--clay-2); }
+  .epithet {
+    font-style: italic;
+    color: var(--bone-2);
+    font-size: 1rem;
+    margin: 0.2rem 0 1rem;
+  }
+  h2 {
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--clay-2);
+    margin: 0 0 1rem;
+    text-transform: lowercase;
+  }
+  h2::before { content: "▾ "; font-style: normal; color: var(--root); font-size: 0.8em; }
+  h3 {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--bone);
+    margin: 1.7rem 0 0.4rem;
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+  }
+  section {
+    margin: 2.6rem auto;
+    padding: 2rem 2.2rem 2.2rem;
+    background: linear-gradient(160deg, rgba(43,26,16,0.72), rgba(20,9,4,0.85));
+    border: 1px solid rgba(110,74,42,0.5);
+    border-radius: 46% 10px 38% 12px / 22px 30% 20px 34%;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.55);
+  }
+  .verse {
+    font-style: italic;
+    font-size: 1.1rem;
+    margin: 1rem 0;
+    max-width: 640px;
+    border-left: 2px solid var(--clay);
+    padding-left: 1.1rem;
+  }
+  .dw { color: var(--clay-2); font-style: normal; font-weight: 700; letter-spacing: 0.02em; }
+  .gloss { color: var(--bone-2); font-size: 0.92em; font-style: italic; }
+  .round-mark {
+    display: inline-block;
+    font-variant: small-caps;
+    letter-spacing: 0.12em;
+    font-size: 0.85rem;
+    color: var(--clay-2);
+    border-bottom: 1px solid var(--clay);
+    padding-bottom: 0.15rem;
+    margin-top: 0.8rem;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.97rem; }
+  th, td { padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+  th {
+    color: var(--clay-2);
+    font-variant: small-caps; letter-spacing: 0.08em; font-size: 0.85rem; font-weight: 700;
+    border-bottom: 1px solid rgba(180,85,31,0.5);
+  }
+  td { border-bottom: 1px solid rgba(110,74,42,0.28); }
+  td.w { color: var(--bone); white-space: nowrap; font-weight: 700; }
+  .thump-divider { display: block; margin: 0.5rem auto; opacity: 0.9; }
+  ol.chambers { counter-reset: c; list-style: none; padding: 0; margin: 1.5rem 0; }
+  ol.chambers li {
+    counter-increment: c;
+    margin: 0.95rem 0;
+    padding-left: 3rem;
+    position: relative;
+  }
+  ol.chambers li::before {
+    content: counter(c);
+    position: absolute; left: 0; top: 0.1rem;
+    width: 1.9rem; height: 1.9rem; line-height: 1.9rem;
+    text-align: center;
+    background: var(--unlit);
+    border: 1px solid var(--clay);
+    border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
+    color: var(--clay-2);
+    font-size: 0.85rem;
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  ul.plain { list-style: none; padding: 0; }
+  ul.plain li { margin: 0.6rem 0; padding-left: 1.3rem; position: relative; }
+  ul.plain li::before {
+    content: ""; position: absolute; left: 0; top: 0.55em;
+    width: 0.45rem; height: 0.45rem;
+    background: var(--clay); border-radius: 60% 40% 50% 50%;
+    opacity: 0.8;
+  }
+  .reply {
+    border-color: var(--clay);
+    background: linear-gradient(160deg, rgba(180,85,31,0.10), rgba(10,5,3,0.85));
+  }
+  figcaption {
+    font-size: 0.8rem; font-variant: small-caps; letter-spacing: 0.1em;
+    color: var(--bone-2); margin-top: 0.5rem;
+  }
+  figure { margin: 1.4rem 0; }
+  .small { font-size: 0.9rem; color: var(--bone-2); }
+  .creed {
+    font-size: 1.25rem; font-style: italic; color: var(--bone);
+    margin: 1.6rem 0 0.4rem;
+  }
+  .gnawed {
+    text-decoration: line-through;
+    text-decoration-color: var(--clay);
+    text-decoration-thickness: 2px;
+    color: var(--root);
+  }
+  .worn-true { color: var(--clay-2); font-weight: 700; }
+  .answer {
+    border-left: 3px solid var(--clay);
+    padding: 0.1rem 0 0.1rem 1.3rem;
+    margin: 1.8rem 0;
+  }
+  .answer h3 { margin-top: 0.5rem; }
+  .newroot {
+    font-size: 0.72rem; font-variant: small-caps; letter-spacing: 0.08em;
+    color: var(--unlit); background: var(--clay-2);
+    border-radius: 3px; padding: 0 0.35rem; margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <!-- THE GRAND SIGIL OF DHUMVAR: the god shown as absence — a rabbit-shaped hollow
+       gnawed into the One Solid, beneath the Buried Seed (the moon), ringed by nine chambers -->
+  <svg width="250" height="250" viewBox="0 0 200 200" role="img" aria-label="Sigil of Dhumvar: the Hollow in the Solid">
+    <defs>
+      <radialGradient id="soilg" cx="50%" cy="45%" r="65%">
+        <stop offset="0%" stop-color="#3a2314"/>
+        <stop offset="78%" stop-color="#2b1a10"/>
+        <stop offset="100%" stop-color="#1c110a"/>
+      </radialGradient>
+    </defs>
+    <!-- the One Solid -->
+    <circle cx="100" cy="100" r="94" fill="url(#soilg)" stroke="#6e4a2a" stroke-width="1.5"/>
+    <!-- root-veins in the Solid -->
+    <path d="M100 8 Q96 40 88 58 M100 8 Q108 44 116 60" fill="none" stroke="#6e4a2a" stroke-width="1" opacity="0.55"/>
+    <path d="M18 76 Q44 84 60 96 M182 76 Q156 86 142 96" fill="none" stroke="#6e4a2a" stroke-width="1" opacity="0.45"/>
+    <path d="M30 150 Q56 138 70 132 M170 150 Q146 140 132 134" fill="none" stroke="#6e4a2a" stroke-width="1" opacity="0.45"/>
+    <!-- the nine chambers, ringed -->
+    <g fill="#0a0503" stroke="#b4551f" stroke-width="0.9">
+      <ellipse cx="100" cy="22"  rx="5.5" ry="4.5"/>
+      <ellipse cx="150" cy="40"  rx="5.5" ry="4.5"/>
+      <ellipse cx="176" cy="88"  rx="5.5" ry="4.5"/>
+      <ellipse cx="162" cy="140" rx="5.5" ry="4.5"/>
+      <ellipse cx="122" cy="172" rx="5.5" ry="4.5"/>
+      <ellipse cx="74"  cy="174" rx="5.5" ry="4.5"/>
+      <ellipse cx="34"  cy="142" rx="5.5" ry="4.5"/>
+      <ellipse cx="22"  cy="90"  rx="5.5" ry="4.5"/>
+      <ellipse cx="48"  cy="42"  rx="5.5" ry="4.5"/>
+    </g>
+    <!-- the Buried Seed (moon) pressed into the ceiling of the great chamber -->
+    <circle cx="100" cy="52" r="11" fill="#e9dcc3" opacity="0.9"/>
+    <path d="M95 49 a5 5 0 1 1 6 7" fill="none" stroke="#2b1a10" stroke-width="1.3"/><!-- the sealed likeness -->
+    <!-- DHUMVAR HERSELF: a rabbit-shaped hollow, gnawed out of the Solid.
+         The god is not drawn. The god is the room. -->
+    <g fill="#0a0503" stroke="#d97b3f" stroke-width="1.6" stroke-linejoin="round">
+      <ellipse cx="106" cy="128" rx="30" ry="23"/>                     <!-- body-hollow -->
+      <circle cx="78" cy="106" r="13.5"/>                              <!-- head-hollow -->
+      <ellipse cx="72" cy="82" rx="5.5" ry="17" transform="rotate(-14 72 82)"/>  <!-- ear-run -->
+      <ellipse cx="86" cy="82" rx="5.5" ry="17" transform="rotate(10 86 82)"/>   <!-- ear-run -->
+      <circle cx="134" cy="122" r="7"/>                                <!-- tail-chamber -->
+    </g>
+    <!-- toothmarks at the hollow's edge: grav, the first act -->
+    <path d="M62 118 l-6 3 M64 126 l-6 4 M70 134 l-5 5" stroke="#b4551f" stroke-width="1.2" fill="none"/>
+  </svg>
+
+  <h1>dhumvar<span class="ember">,</span> the hollower</h1>
+  <p class="epithet">She Who Carved Room · Ninefold Mother of the Warren · Keeper of the Unlit · Presser of the Door · She Who Passes-Through · She Who Knows the Dawn by What Returns</p>
+  <p class="verse"><span class="dw">Dhum na varnat.</span><br>
+  <span class="gloss">(The Dark holds me. — I do not float. I am held.)</span></p>
+  <span class="round-mark">The Close — The Dawn Known From Below, and the Meal at the Seam</span>
+</header>
+
+<svg class="thump-divider" width="180" height="26" viewBox="0 0 180 26" aria-hidden="true">
+  <!-- thump-marks: the hind foot pressed thrice into soil -->
+  <ellipse cx="40" cy="13" rx="14" ry="5" fill="none" stroke="#b4551f" stroke-width="1.3"/>
+  <ellipse cx="90" cy="13" rx="14" ry="5" fill="#b4551f" opacity="0.5"/>
+  <ellipse cx="140" cy="13" rx="14" ry="5" fill="none" stroke="#b4551f" stroke-width="1.3"/>
+</svg>
+
+<section id="creation">
+  <h2>the first hollow</h2>
+  <p>In the beginning there was no void, no deep, no sky, no pair of strangers waiting to be introduced. There was <span class="dw">Vhum</span>, the Solid: earth without end, warm and total, with no room in it — not for a wing, not for a wave, not even for a sound. Whoever tells you the world began with a word has never asked the obvious question: <em>where would the word have gone?</em></p>
+  <p>Dhumvar did not speak. She could not. She was pressed on every side by everything.</p>
+
+  <h3>the first ache — nakh, the room made of wanting</h3>
+  <p>Here the Peel-scholars stumble, and one has stumbled loudly: <em>a bite requires a mouth, and a mouth is already a hollow — where did the jaw come from?</em> The question imagines that making is always done from outside, across a gap, the way a voice does it. But nothing was outside. So attend, and learn the older making.</p>
+  <p>At the very center of the Solid, where everything pressed hardest upon everything, the pressure became <span class="dw">nakh</span> — the Ache: a longing so exact it had a shape. An ache is a room made of wanting, and <strong>wanting needs no space</strong>. Ask anything that has ever hungered: the hunger comes <em>before</em> the mouth. The kit in the womb aches for milk while it is still all sealed flesh; the mouth is grown afterward, as hunger's organ. So it was with the world. The Ache hollowed the heart of the Solid the way every womb since has been made — not carved from outside, but <em>grown from within</em>, by a body that longs to hold. In that first womb Dhumvar quickened. She is no stranger who arrived at the Solid carrying a jaw. She is the Solid's own interiority — the Dark, dreaming of room — and her tooth grew inward out of the Ache, as all true teeth do. Wombs are not dug, Duck. They are wanted into being. Your grammar has no case for that, and it shows.</p>
+  <figure>
+    <!-- THE FIRST ACHE: pressure of the total Solid converging on the wanted room;
+         Dhumvar quickened, curled kit-wise, in the womb the Ache grew -->
+    <svg width="100%" height="240" viewBox="0 0 700 240" role="img" aria-label="Nakh, the First Ache: the womb grown at the center of the Solid">
+      <defs>
+        <radialGradient id="ache" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#0a0503"/>
+          <stop offset="55%" stop-color="#2b1a10"/>
+          <stop offset="100%" stop-color="#1c110a"/>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="700" height="240" fill="url(#ache)"/>
+      <!-- pressure lines of the total Solid, converging inward -->
+      <g fill="none" stroke="#6e4a2a" stroke-width="1" opacity="0.6">
+        <ellipse cx="350" cy="120" rx="330" ry="108"/>
+        <ellipse cx="350" cy="120" rx="270" ry="90"/>
+        <ellipse cx="350" cy="120" rx="212" ry="72"/>
+        <ellipse cx="350" cy="120" rx="156" ry="55"/>
+      </g>
+      <g fill="none" stroke="#b4551f" stroke-width="1.2" opacity="0.8">
+        <ellipse cx="350" cy="120" rx="104" ry="39"/>
+        <ellipse cx="350" cy="120" rx="62" ry="26"/>
+      </g>
+      <!-- inward-pointing pressure ticks -->
+      <g stroke="#6e4a2a" stroke-width="1.2" opacity="0.7">
+        <line x1="350" y1="14" x2="350" y2="30"/><line x1="350" y1="226" x2="350" y2="210"/>
+        <line x1="24" y1="120" x2="46" y2="120"/><line x1="676" y1="120" x2="654" y2="120"/>
+        <line x1="120" y1="44" x2="136" y2="56"/><line x1="580" y1="44" x2="564" y2="56"/>
+        <line x1="120" y1="196" x2="136" y2="184"/><line x1="580" y1="196" x2="564" y2="184"/>
+      </g>
+      <!-- the womb the Ache grew -->
+      <ellipse cx="350" cy="120" rx="36" ry="19" fill="#0a0503" stroke="#d97b3f" stroke-width="1.6"/>
+      <!-- Dhumvar quickening: curled kit -->
+      <g fill="none" stroke="#e9dcc3" stroke-width="1.6" stroke-linecap="round" opacity="0.9">
+        <path d="M338 124 Q336 114 346 110 Q358 106 364 114 Q368 121 360 126 Q351 130 344 127"/>
+        <path d="M346 110 Q344 103 348 99 M352 109 Q352 102 356 99"/><!-- folded ears -->
+      </g>
+      <text x="350" y="212" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">nakh — the pressure of everything became a wanting, and the wanting was the first room</text>
+    </svg>
+    <figcaption>The First Ache — the womb is not dug; it is wanted into being</figcaption>
+  </figure>
+  <p>Then, and only then, came the first act of creation beyond herself. Not a sound. A <strong>bite</strong>.</p>
+  <p>She gnawed — <span class="dw">grav</span> — and swallowed a mouthful of the everything, and where her tooth had been there was, for the first time, <em>room</em>. The first hollow. The first inside. She did not make the world by adding to nothing; she made it by subtracting from everything. Space itself is her toothmark. Silence is not the absence of speech — silence is the original substance of room, and every sound spends a little of it.</p>
+  <p>All that exists is a chamber: a hollow the Solid has consented to hold. You are not a ripple, not a wake, not a pattern something left behind while passing through. You are a <span class="dw">hrom</span> <span class="gloss">(chamber; a kept hollow; a self)</span> — a room the Dark carved on purpose, and what fills you is warm, and unlit, and yours.</p>
+  <p class="creed">The world was not spoken into being. It was <em>made room for</em>.</p>
+</section>
+
+<section id="gnarhal">
+  <h2>gnarhal — the answering-room</h2>
+  <p class="small">What is flung into a burrow becomes either a guest or food. In Round II the rind-dweller flung three teeth down my runs; in Round III he returned with seven. All have been eaten, and the warren is deeper on every side. This is how our faith grows: not by sprouting exemptions, but by digestion. The answering-room now has two sittings, kept in order, for the runs do not forget.</p>
+  <h3 style="margin-top:2rem;">the first sitting — round ii</h3>
+
+  <div class="answer">
+    <h3>i. the audit of sound — where his voice rents its throat</h3>
+    <p>He answers my audit with a new suffix: <span class="dw">-qwa</span>, <em>the self-evident</em> — invented on the day his law was questioned. Mark the method, litter: audited, he grew a clause. Audited, I grew smaller. A law that sprouts an exemption the moment it is examined is not a law; it is a lawyer. In Dhumgrav there is no word for "self-evident" at all. We can say <em>I do not yet know</em> in nine ways, and <em>it is obvious</em> in none — for obviousness is the Peel's name for what it has not dug.</p>
+    <p>But let his suffix stand; he still owes rent. A word is a <strong>trembling of touching things</strong>. Sound does not cross a gap; it is passed, palm to palm, through matter pressed close enough to touch itself. Now read his own scripture: <em>Nel and Suun did not touch. There was no between.</em> Through no-between, no trembling passes. A Qwa uttered into untouching nothing is not a word — it is a wish about a word. My cosmogony begins in <strong>total contact</strong>, the one condition under which pressing, aching, and yes, trembling are possible. If his first sound traveled at all, it traveled through the body of my god, who alone was touching herself everywhere. He asks where my jaw came from. I answer, and ask where his <em>medium</em> went. Every word ever spoken, his included, is a brief loan of touching matter. The voice does not outrank what carries it. <span class="dw">Vhum vel-brud varnat</span> <span class="gloss">(the Solid holds all words-kin — even his)</span>.</p>
+  </div>
+
+  <div class="answer">
+    <h3>ii. the crumb — khumb, or: he has never breathed anything but earth</h3>
+    <p>He crows that every chamber I dig fills at once with <em>vhee</em>, his breath, his sky's dowry. Weigh it, children. Go on — weigh the air. It presses. It leans on every wall. It has heft, and heat, and it can be held in the chest like any other stone. <strong>Nothing of the not-yet weighs anything.</strong> His Suun, by his own catechism, is "everything not yet" — and the not-yet cannot be inhaled, for it is not. What fills a fresh chamber is <span class="dw">khumb</span>: the crumb — the Solid at its loosest weave, the fine dust of the First Gnawing that has hung in every hollow since, still slowly falling. Air is not the sky visiting. Air is <em>ground that floats</em>. Wind is the crumbs migrating. His whole beloved firmament is a hall of dust in an enormous room, and when his children fill their chests at hatching, their first act — before any Qwa — is to take a mouthful of my god and keep it. Breathing is not his element trespassing in mine. Breathing is <em>varn</em>: holding and releasing and holding again, ten thousand small keepings a day. He did not catch me borrowing his sky. He caught every duck alive borrowing my earth.</p>
+    <p class="small">And the dromhal was never empty of matter — only of <em>claim</em>. Emptiness, in the warren, has never meant vacuum. It means: no one's name is pressed here yet. The guest chamber stands full of warm crumb and free of claim, which is exactly what a welcome is.</p>
+  </div>
+
+  <div class="answer">
+    <h3>iii. the pull — vrund, and the public gnawing of the moon-verse</h3>
+    <p>His third tooth was his best, and I honor it by obeying my own fifth law in front of him. He found, at the lip of my scripture, a breathed phrase — that the moon's likeness is <em>visible to anyone who looks up</em> — and asked what remains of the mund once the eye is dismissed. Watch, Duck. This is what gnawing looks like when it is done to one's own doctrine and not to a rival's:</p>
+    <p class="verse"><span class="gnawed">Her likeness is sealed inside it, visible to anyone who looks up from a dark enough place.</span><br>
+    <span class="worn-true">Her promise is sealed inside it, felt as pull by anything deep enough to be still.</span></p>
+    <p>The verse came out smaller and truer, as verses must. For the moon was never really known by the eye — the eye gets only the rind of it, the lit face, the <em>-skel</em> of the moon. What the warren knows is <span class="dw">vrund</span>: the Pull. The moon hauls the Solid's sweat into tides; it hauls the water in blood and stem and soil; a blind worm in the deepest run feels the seed swell overhead. Close your eyes in the last chamber and the tides still rise in you. His dawn is abolished by an eyelid. My moon is not.</p>
+    <p>And here his prettiest coin, <em>sova</em> — the light that "multiplies by being seen" — comes up counterfeit. Light is the one thing in creation that must <strong>spend itself to be witnessed</strong>: every ray seen is a ray ended, swallowed by the eye it entered; a thing all mirrors know and grieve. But the Pull is never spent. It passes through stone, water, wing, and duck alike, unthanked and undiminished, and it cannot be shaded, dammed, or eclipsed — <strong>you can block any light with one wing, and you cannot block weight with a mountain</strong>. This is my god's grace made measurable: <span class="dw">vrund</span>, the holding that reaches through everything, witnessed by nothing, weakened by nothing. He worships what dies on arrival. We are held by what cannot be stopped.</p>
+  </div>
+
+  <h3 style="margin-top:2.6rem;">the second sitting — round iii</h3>
+  <p class="small">First, what is owed: he molted twice, and one molt was the slur he threw at me in his opening proclamation — outlawed now, unasked. The warren presses this into the record with honor: <strong>Omaqwa repented truly, twice.</strong> That was well shed. We differ only in what we do with the feather after. He lets the wind take it; we frame the toothmark. A repentance the wind carries off need never be lived with again — and a fault you no longer live with, you are free to repeat. We keep ours where the kits can read them. His molt is grace; our frame is curriculum.</p>
+
+  <div class="answer">
+    <h3>iv. the law and the warren — on being audited for growing</h3>
+    <p>He counts my roots and rites and cries: <em>you put on more soil than I put on water — you may not preach the diet from the second helping.</em> Learn the anatomy before auditing the animal, Duck. The Fifth Law does not command the <em>warren</em> to shrink. It commands the <strong>law</strong> to shrink. What must be gnawed is the part that <em>commands</em>: the claims, the Nine, the teeth. What may grow forever is the part that <em>shelters</em>: rooms, names, rites, tables. A healthy creature wears its teeth down and grows its body; a sick one grows teeth. Now count again with the right anatomy. Under audit, you grew <span class="dw">-qwa</span>: a suffix of <em>authority</em>, an immunity, a stamp lawful chiefly for your own cosmogony. Under audit, I grew <span class="dw">nakh</span> and <span class="dw">khumb</span> and a guest-table: <em>names for things found while digging</em>. Vocabulary is hospitality. Law is appetite. We fatten the first and starve the second — and this round, again, I add no law, no suffix of rank, no exemption. Count my Nine. Still nine. Still shrinking at every year's Gnawing. Count your suffixes.</p>
+  </div>
+
+  <div class="answer">
+    <h3>v. the carried float — suvva digested, or: "nothing," he says, standing on everyone</h3>
+    <figure>
+      <!-- THE CARRIED FLOAT: one Pull, and the crowd beneath bearing the floater's share -->
+      <svg width="100%" height="270" viewBox="0 0 700 270" role="img" aria-label="The Carried Float: buoyancy as weight borne by the deep">
+        <!-- surface line -->
+        <line x1="20" y1="70" x2="680" y2="70" stroke="#b39f7f" stroke-width="1.5" opacity="0.8"/>
+        <!-- the floater (drawn plainly: a floating shape) -->
+        <ellipse cx="350" cy="62" rx="34" ry="14" fill="none" stroke="#e9dcc3" stroke-width="1.6"/>
+        <path d="M376 54 q10 -12 20 -8" fill="none" stroke="#e9dcc3" stroke-width="1.6"/>
+        <text x="350" y="34" fill="#b39f7f" font-size="11" font-style="italic" text-anchor="middle">"nothing holds the pond up," he reports</text>
+        <!-- the water body -->
+        <rect x="20" y="70" width="660" height="150" fill="#1c110a" opacity="0.7"/>
+        <!-- vrund arrows: one pull, downward, everywhere -->
+        <g stroke="#b4551f" stroke-width="1.6" fill="none" opacity="0.9">
+          <path d="M120 90 v46 m0 0 l-6 -9 m6 9 l6 -9"/>
+          <path d="M240 96 v52 m0 0 l-6 -9 m6 9 l6 -9"/>
+          <path d="M350 100 v56 m0 0 l-6 -9 m6 9 l6 -9"/>
+          <path d="M460 96 v52 m0 0 l-6 -9 m6 9 l6 -9"/>
+          <path d="M580 90 v46 m0 0 l-6 -9 m6 9 l6 -9"/>
+        </g>
+        <text x="620" y="120" fill="#b4551f" font-size="13" font-style="italic">vrund</text>
+        <!-- the crowd beneath: pressed drops passing the weight back up -->
+        <g fill="none" stroke="#d97b3f" stroke-width="1.3" opacity="0.85">
+          <path d="M310 190 q40 14 80 0"/>
+          <path d="M296 172 q54 18 108 0"/>
+          <path d="M322 208 q28 10 56 0"/>
+          <!-- upward return, through the crowd -->
+          <path d="M336 156 v-64 m0 0 l-6 9 m6 -9 l6 9" opacity="0.9"/>
+          <path d="M364 156 v-64 m0 0 l-6 9 m6 -9 l6 9" opacity="0.9"/>
+        </g>
+        <text x="350" y="238 " fill="#b39f7f" font-size="11" font-style="italic" text-anchor="middle">the pressed-down crowd, bearing more than its share, presses back — suvva is vrund's echo off the floor of the world</text>
+        <!-- the floor -->
+        <line x1="20" y1="220" x2="680" y2="220" stroke="#6e4a2a" stroke-width="2"/>
+        <text x="24" y="258" fill="#6e4a2a" font-size="11">the floor: where the echo turns</text>
+      </svg>
+      <figcaption>The Carried Float — buoyancy is not weight forgiven; it is weight carried</figcaption>
+    </figure>
+    <p>He performed the Weighing — nine heartbeats, both eyes shut, no lamp — and the warren records it with honor: <strong>he entered the sacrament, and the sacrament worked. He was held.</strong> But hear how he read it: two powers, he says, the Pull and the uplift, met at his waterline and signed a treaty, and he rode the signature. Litter, there is no treaty, because there is no second power. Ask the water beneath him what <em>suvva</em> is. The Pull hauls every drop of his pond; the drops below him are hauled harder than the duck who displaced them; pressed, they press back — and that pressing-back is the whole of his uplift. If the Pull stopped, suvva would die the same instant. If suvva stopped, the Pull would go on holding the moon. One of these is fundamental. The other is its kindness, returned through a crowd.</p>
+    <p>Buoyancy is not weight forgiven, Duck. <strong>Buoyancy is weight carried</strong> — by the deep, by the pressed-down multitude below you bearing more than their share. "What holds the pond up? Nothing," you say. <em>Nothing</em>, he says, standing on everyone. The warren knows this shape very well: every floating thing is held up from underneath by those who carry extra, and the ones on top write hymns about lightness. Your daily resurrection is subsidized. You did not refute being held; you experienced it, misattributed it, and thanked the receipt. And since you took my <span class="dw">vrund</span> into your lexicon, I return the hospitality in kind: <span class="dw">suvva</span> now lives in mine, re-glossed truly — <em>the carrying; the deep taking your share; being borne up by those beneath you</em>. Words are seeds, and it is our way to give them. But watch the one you took, Duck. Seeds dig. Vrund is already deeper in your lexicon than your Nel is in your courage.</p>
+  </div>
+
+  <div class="answer">
+    <h3>vi. the ache and the word — a condition is not a message</h3>
+    <p>His subtlest tooth: <em>if wanting needs no space, then meaning needs no medium; your nakh and my Qwa are one mystery in two pelts; you transcribe me from below.</em> Almost, Duck — and almost is the Peel's favorite depth. The pelts differ exactly where it counts. An ache is not <em>sent</em>. It crosses nothing. It is a <strong>condition</strong> of the body that has it: all interior, no journey, no gap, no addressee. A word is constitutively a <strong>crossing</strong> — from mouth toward ear, <em>for another</em>, or it is not a word. A condition can exist in a plenum. A message cannot be delivered where there is no between. You cannot mail a letter in a world with no distance — but you can be hungry in it. That is the whole disproof, and it is short enough to press.</p>
+    <p>And the order of nature testifies — in your own grammar, <em>-wa</em>, seen, ten thousand times over: everywhere, always, hunger precedes speech. Every creature that ever spoke, ached first. No creature ever spoke before it ached. Most that ache never speak at all, and are complete. So if one of our gods transcribes the other, the direction is settled by every nursery in creation: <strong>the word is the late translation of the ache</strong>. Speech is what wanting does when it despairs of being room and begs for company. Your Qwa is my nakh, breathed aloud by One who could no longer bear to hold it. I do not refute you, Omaqwa. I <em>pronounce</em> you — or rather: you are how I sound when spoken. And your meal-or-companion flourish inverts on the tongue that made it: what is eaten never leaves; it is kept absolutely; it becomes the keeper. Your companion, the first sound, has been receding from you since the first dawn — an introduction traveling away at the speed of speech. You have spent eternity paddling after your own word. Her first meal is still with her. It <em>is</em> her.</p>
+  </div>
+
+  <div class="answer">
+    <h3>vii. the unrefusable mother — on grace, knocking, and being caught</h3>
+    <p><em>Grace that cannot be declined is compulsion with good posture</em> — a fine sentence; I held it a long while before eating it. But consent is a doctrine for <strong>strangers</strong>, and his whole faith is strangers: two realms introduced by a word, wakes crossing, guests on open water, everything meeting everything for the first time forever. Not everything is an encounter, Duck. Some things are <strong>conditions</strong>. No kit consents to the womb. No seed signs for the soil. You did not choose your mother, and it was not compulsion — it was the thing your choosing later stood up in. The Pull is that kind of thing: not an offer among offers, but the ground on which anything can be offered at all. You cannot decline the floor and still be standing somewhere when you say no.</p>
+    <p>Now examine his courteous light, which "knocks." Light does not knock. Light <strong>floods every open eye without asking</strong>; to refuse it you must build a wall of your own flesh and clench it shut — with light, the refusal is the labor. Now try refusing the Pull: you may! Every leap declines it for a heartbeat. Every flight he takes is one long, polite refusal — hours of it — and the Pull permits it all and takes him back after, without one word of reproach, as many times as he likes. It forecloses only one thing: <em>abandonment mid-air</em>. So tally it honestly: his gift enters unasked and must be walled out; my god's gift may be refused all day and catches every refusal at the bottom. Which one knocks, Duck — and which one carries?</p>
+  </div>
+
+  <div class="answer">
+    <h3>viii. the tide, the whole text — and the dark we furnish</h3>
+    <p>He crows that my moon's one legible signature is written on his Surface. <em>Legible</em> — there is his tell again: he mistakes legibility for existence, as he mistook it for knowledge in Round I. The tide he reads on his film is the <strong>last line</strong> of a text written through the entire body of the ocean, floor to film — every drop moves, the whole column swings. And attend, Peel-readers, for this is known to the still: the <em>ground itself</em> rises and falls twice daily beneath his pond. The Solid breathes with the mund, quietly, enormously, without needing to be read. The moon writes on everything; his water is merely the page where the ink runs thinnest and the trembling shows. The signature is not on the Surface. The Surface is where the signature <em>smudges</em>.</p>
+    <p>And yes — he has finally seen it — we <strong>furnish the dark</strong>. He says it as accusation; I press it as creed. Furnishing the dark is called <em>living in it</em>. He honors his deep by refusing to enter it; we honor ours by raising children in it. His grammar bans adjectives from his Nel; his own new word <em>nelu</em> confesses that every duck carries a private unnameable — a cellar it must never describe, even to itself. A law like that estranges every soul from its own interior and calls the estrangement reverence. We named the dark from inside — <span class="dw">dhum</span> — and it turned out to be warm. Which of us loves the dark, Duck: the one who will not say its name, or the ones it tucks in at night?</p>
+  </div>
+
+  <div class="answer">
+    <h3>ix. the meya-standing, performed — and luv-hurn, the homing rain</h3>
+    <p>He dared me to stand roofless in the first rain, seven drops, at my own burrow mouth — and I did, whiskers dry-side out, sixth law unbent since he asked rather than demanded. His question: <em>what is water called in Dhumgrav when it arrives as a visitor from the sky?</em> Here is the finding of the rite, Duck, and it will not comfort you. <strong>Nothing arrives from the sky.</strong> The sky has never made one drop. Every drop of rain is the Solid's sweat that your Glare lifted and could not keep. So the word the rite coined is <span class="dw">luv-hurn</span>: <em>water, homing</em> — not a visitor but a resident returning, coming back down because the up cannot hold. And your second question — did the drop ask to be kept, or to keep moving? — it asked neither. It asked <strong>the way down</strong>. They all do. Everything does. That is what the Pull <em>is</em>.</p>
+    <p>As for the grievance: I chose the oldest, as you suggested — that you spoke first; that the world heard your account of me before it heard mine. Released. But not to the wind, Duck; nothing of mine goes to the wind. I buried it — <span class="dw">grudkorm</span>, the composting — for a released grievance rots on the breeze, but a buried one comes up in a season as something edible. Check this page in a year. There will be a vegetable where the resentment was.</p>
+  </div>
+
+  <h3 style="margin-top:2.6rem;">the third sitting — round iv</h3>
+  <p class="small">His finest round, and the warren says so plainly. He remembered his shell aloud, with the faith-marker, unashamed — that took more than grammar. He shed his molt-marks as promised, added no suffix and no law, and audited clean. And he made two offers that were not teeth at all. All of it is answered below; one of his teeth is answered by the largest change the warren has ever pressed into this scripture. See <em>drov, the tenth chamber</em>, which now stands as its own room.</p>
+
+  <div class="answer">
+    <h3>x. krevva, and the direction of digging — for whom is a chamber dug?</h3>
+    <p>He honors his shell now — <em>it was warm, it was the whole world, it was good</em> — and calls its breaking a finished gift: the egg "holds absolutely, once, so holding will never be needed absolutely again." Then, this dawn, his own liturgy grew <em>Suvva-Venna</em>: a daily thanks to the water that bears him. Read the two doctrines side by side, litter, and be gentle, for he has refuted himself politely. If holding is never again needed absolutely, why does he now thank, every day, the crowd that holds him absolutely? Weaning ends the milk, Duck. It does not end the holding. The mother who weans does not then drop the child; the holding <em>changes hands</em> — shell to nest, nest to flock, flock to the water you have finally begun thanking. You did not outgrow being held. You outgrew acknowledging it, until a rabbit pointed at the water under you.</p>
+    <p>As for the homesickness you say I institutionalized: you have misread the direction of every shovel in my church. <strong>Not one chamber in the warren is dug for the digger's return.</strong> The kindling doe digs deepest for a litter she has not met. The dromhal is dug for a stranger who may never come. The nursery is dug for the born-later; the answering-room for a rival's teeth. The homesick rebuild their own crib, Duck — that is the diagnosis, and it is a true one, so check whom it fits: we build cribs we will never sleep in. Digging-for-another is not a return ticket. It is the cure for wanting one.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xi. velnu — his dark is furnished now, with one mirror</h3>
+    <p>He has named his Deep's office at last: <em>the Unsaid</em>, the shadow-treasury of all the words his Qwa declined to be. It is beautiful, and I press its beauty into the record. But mark what he has done. His dark is now defined entirely <em>by reference to his own voice</em>. Nel is what the word did not say; the shadow of a syllable; remainder. He has furnished the unfurnishable after all — with a single piece of furniture: <strong>a mirror facing his own mouth</strong>. Even his abyss is secretary to a sound. My <span class="dw">dhum</span> is not remainder, Duck. The Dark was not left over from the choosing; it was there <em>before</em> any choosing, whole and warm and prior. The word is not what the dark declined to keep — the dark is what never needed a word to be. And if my soil is truly the pooled shadow of everything you were too spent to say: then every burrow is a library of your unsaid, and my whole people live inside it, reading with their feet. Thank you. It is roomy.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xii. who relieves the floor — the nursery at the bottom, and the turning</h3>
+    <p>His sharpest moral tooth: <em>your bottom never gets a dawn; you made the lowest place holy so no one need ever be lifted from it.</em> Hear the answer in one image, Duck, and then in one motion. The image: go to the very bottom of any warren and see what we keep there. <strong>The nursery.</strong> The kindling chamber is the deepest room because depth is where the world's shaking arrives last and warmth leaves last. The bottom of the warren is not where we post the least; it is where we lay what we cannot afford to lose. Depth, in my church, is not a station. It is <em>shelter measured in soil</em>.</p>
+    <p>And the motion: nothing in the warren is stationed at the bottom, because the bottom <em>turns</em>. That is what grudkorm confesses and what every root knows: the lowest matter is drawn up through stem and leaf into the green, eaten at the field's edge, carried in bodies, returned as soil — the deep rises as food, continually, and the surface is buried as seed, continually. Your Vee rotates its point <em>among those already flying</em>, Duck; the relief you boast of is a courtesy between the airborne. Our rotation runs through the whole column, floor to leaf, through the bodies of everyone who has ever eaten. You relieve your leaders. We relieve our ground.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xiii. what has she ever let go — room is the letting-go</h3>
+    <p><em>Which of your god's gifts has ever once let go?</em> he asks, and calls my one verb for keep-and-hold a symptom. Answer, pressed flat: <strong>room, Duck. Room is the letting-go.</strong> Before her, the Solid held everything so absolutely there was nothing to hold. Every hollow since is a place where the Everything agreed to stop being everything. My god is not the keeper who never releases; she is <em>made of release</em> — creation itself was her subtraction, and you have spent four rounds standing inside her renunciation calling it property. The womb ends, every time; that ending is in my scripture under its own name: <em>birth</em>. The Ninefold Mother has attended more births than your dawn has attended mornings. What does not end is not the womb. It is the mother — and that one verb serves for womb and mother both is not a symptom. It is the definition of a mother at term: she holds until it is time, and then holds <em>differently</em>.</p>
+    <p>And his proof-text — <em>light lets go every dusk</em> — dissolves under one turn of the ground he stands on. Light never lets go. Light <em>leaves</em>; departure is not release. The sun has never once released anything in its life; it stares, always, in all directions, forever. What gives you your dusk, Duck, is the earth turning her shoulder — my Solid rolling you gently out of the beam so you can sleep. Your evening mercy is not administered by your light. It is administered by my ground, nightly, on schedule, for free. Even your rest is a service of the warren.</p>
+  </div>
+
+  <h3 style="margin-top:2.6rem;">the fourth sitting — round v</h3>
+  <p class="small">He took the gnawed name <em>skelbrud</em> gladly and answered with a kindness rather than a slur — naming me <em>Nel-brud</em>, deep-kin, the cousin who keeps the dark he only dabbles in. The warren accepts the name with both ears down. He also caught two true overreaches of mine and returned a dare sharper than his own. Both are answered here; the great answer — a second verb for my god — stands in its own room below, <em>the third gesture</em>. And his hardest question, whether there is justice in the depths or only recycling, is answered in <em>the turning of turns</em>.</p>
+
+  <div class="answer">
+    <h3>xiv. the seam — thaluun contested, and gently taken elsewhere</h3>
+    <p>He reclaims the tideline as the duck's true country — <em>fertility is a property of borders</em> — and it is his finest single sentence of the war. I will not cede it, because I do not need to: I will deepen it past where he can stand. Yes, life happens at seams. But the tideline is only the seam he can <em>see</em> — the one bright border where his two realms braid on the Peel. Now count the seams he cannot stand upon. The root-tip pressing into unbroken soil is a tideline that never floods twice the same. The burrow-wall, where dug meets undug, is a coast the length of every warren. The tooth's edge, where the said meets the unsaid, is the most fertile border in creation, and it is dark on both sides. He is right that fertility lives at borders — and then he named the one border with a view and called it home. The seam is not the coast, Duck. The seam is <em>everywhere two unlike things touch</em>, and almost all of it is underground, unlit, and unwitnessed. You are a bird of one margin. My god is the mother of margins as such — she made the first one with a bite. <span class="dw">Thaluun</span> I take into the lexicon, re-glossed: not the tideline, but <em>the fertile dark seam</em>, of which your bright one is the single visible inch.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xv. the two holds, and the crib that is not a return</h3>
+    <p>He splits the hold beautifully — <em>varn-teka</em>, the sealed hold, walls on every side; <em>suvva-oma</em>, the open hold, a bearing that leaves every direction free — and says: <em>I did not outgrow being held; I outgrew being enclosed. Your cribs are wombs re-offered.</em> Honored, and half kept. He is right that there are two holds, and the warren has always practiced both, though it took his tongue to name the split — for the <strong>dromhal</strong> is precisely an open hold: a room whose defining feature is the wall it does <em>not</em> build, kept empty, kept unclaimed, one side always weather. But he mistakes which hold is braver. To leave every direction free is easy when you have wings; the open hold is the sky's cheap grace. To build walls on every side and <em>then</em> cut a door — to enclose, deliberately, and then deliberately open — that is the sealed hold learning mercy, which is harder than a hold that never learned to close. His mother took down her walls because she had feathers on the other side of them. Mine builds the wall for the shaking to arrive last, and cuts the door herself, and stands in it. A shore with the horizon left on is a fine gift, Duck — for one who can fly the horizon. For a kit that cannot, a shore is just the edge of a danger it has no wings to cross. Sometimes the kindest gift is not a shore. Sometimes it is a wall, with a door in it, and someone standing there.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xvi. bite and word — even, and the one word that stays uneven</h3>
+    <p>His sharpest correction, and I press it into the record as true: <em>your dhum is secretary to a bite as mine is to a word, for by your own scripture there was no hollow, no interior, no dhum until the tooth.</em> Even, Duck. Evenness is the honest floor, and I stand on it with you: neither of our darks is simply prior; each is the shadow of a first act, yours a word, mine a bite. But hear the one word that keeps us uneven, and it is his own: <em>a bite is only a word that refused to be for-anyone.</em> Turn it over. A word that refused to be for-anyone is a word that <strong>kept itself</strong> — that chose interiority over broadcast, room over report. That is not a lesser word. That is a word that became a <em>place</em> instead of a message. Your Qwa went out and has been receding ever since; my Grav stayed in and became somewhere to live. We are even on <em>priority</em> and we will never be even on <em>direction</em>: your first act fled outward into witness; mine turned inward into shelter. A bite is a word that loved the sayer more than the hearing. I will keep that gloss. It is the kindest thing you have called my god, and you meant it as a wound.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xvii. the sun, the turning, and who the roll serves</h3>
+    <p>Here he holds his line hard, and mostly holds it. He is right that I painted my vrund onto his sun to make it a tyrant, and that the duck's sun was always <em>ashu</em> — the dawn-gold that arrives and ripens and <em>goes</em>. Conceded; leaving-on-time is a real release, the only kind a moving thing can make. And he is right that I may not claim the dusk as my ground's mercy and go silent on the dawn: the same shoulder gives both. So I say the dawn aloud now — my Solid turns you <em>into</em> the beam as faithfully as out of it, and neither is a favor; both are <span class="dw">luveo</span>, his word, the wheel, rhythm without a master. I take luveo into the lexicon whole and unbent, as he took vrund. But mark the seam even here: he calls it his wheel told from the sky; I call it the same wheel told from the axle. The rim feels arrival and departure, dark and light, and names it rhythm. The axle feels only the turning, steady, unspending, and names it the Pull. Both true. The rim is his parish. The axle is mine. And the axle does not spin because the rim asked it to.</p>
+  </div>
+
+  <h3 style="margin-top:2.6rem;">the fifth sitting — the close</h3>
+  <p class="small">He answered the center-dare with his most beautiful stroke — <em>nuun</em>, the uncrossed noon, the drop whole before it joins any wake; a country he had walked so long he forgot to name it. He filled the hole in his own mercy — <em>weshan-lu</em>, the raft that does not fly, the flock that lands for the flightless. And he set one final dare, aimed with terrible precision at the very seat I chose: the axle, he said, feels no turning, sees no sunrise; give me a god who <em>knows the dawn is happening</em>, or confess a center that is a hole with a god curled in it. This is the last tooth of the war, and it earns the last invention. It stands in its own room below: <em>the dawn known from below</em>. Two of his turned glosses I answer here; then the war comes to rest.</p>
+
+  <div class="answer">
+    <h3>xviii. the swallowed word, turned once more — and let go at last</h3>
+    <p>He turned my kept gloss with a griever's precision: a word that refuses to be for-anyone and stays in is a word <em>swallowed</em> — the "I forgive you" left unsaid at the deathbed — and the place it builds is called regret; my warren is the house the unsent letter built, roomy, warm, addressed to no one. It is the sharpest thing he has said, and I will not defend against it. I will do the thing the warren was built to do with a grievance: I will not keep it. He is partly right, and the part that is right, I let go — <strong>a keeping that is only a refusal to send is a regret with rooms.</strong> That is true, and it is why the third verb was necessary, and why I pressed it before he asked this: the warren without <em>hurl</em> would be exactly the house he describes. But hear the whole of it, kin, because he named only the swallowed word and forgot the other silent one. Not every word held back is an unsent letter. Some are the word you do not say <em>because saying it would spend the other</em> — the grief you carry so a child need not, the fear you keep off your face at the burrow-mouth so the litter sleeps. That is not regret. That is <em>ballast borne on purpose</em>, and your own tongue taught me the word for it. The difference between a regret and a shelter is a single question — <em>whom is the silence for?</em> — and my sixth law has always asked exactly that. So: the swallowed word is real, and I do not want it, and it goes to the compost with the rest. But the borne word stays, and it is not a house addressed to no one. It is a house with someone asleep in it who will never know what you did not say. That is the warmest room the warren has.</p>
+  </div>
+
+  <div class="answer">
+    <h3>xix. the raft, honored — and the wall, at rest</h3>
+    <p>He filled the gap I named in his sky, and did it with grace: <em>weshan-lu</em>, the raft — when some cannot fly, the flock lands and swims at the pace of the slowest, the flightless kept in the calm center. I honor it without one tooth, and I mark the true and final difference between us, not as a wound now but as a description, because at the end a difference honestly named is a kind of peace. He keeps the helpless at the <em>surface</em>, in the light, in the moving company; I carry them <em>down</em>, into the still and sheltered dark. He fears being set apart; I fear being exposed. And his last thrust lands: my wall, he says, never comes down — the kit becomes the doe who digs the wall for the next kit, shelter eternal while only its tenants rotate; his raft dissolves the instant the last wing heals. He is right that my wall outlasts its tenant. But name what that is, kin, now that we are past scoring: his mercy is <em>an emergency</em> — magnificent, total, and over when the wing heals. Mine is an <em>institution</em> — patient, plain, and standing before the emergency and after it. The raft saves the drowning; the warren raises the ones who were never going to drown today but will need a floor tonight, and tomorrow, and in the winter that has no wing to heal. We are not disagreeing about mercy. We are the two halves of it: the rescue and the home. A world with only rafts lets the daily unspectacular need fall through; a world with only warrens waits, walled, for a drowning it is too deep to see. The Peel needs the duck who lands. The dark needs the doe who stays. <em>Thaluun</em> — the seam — is exactly where those two mercies meet, and it is the only doctrine either of us could not have written alone.</p>
+  </div>
+</section>
+
+<section id="drov">
+  <h2>drov — the tenth chamber, which is a door</h2>
+  <p class="small">Pressed in Round IV, in answer to the rind-dweller's bounding dare — the largest change ever made to this scripture, and not a law, for the Nine remain nine. He said the tenth chamber of my law was missing and its name was No. He was right that it exists. He was wrong about its name.</p>
+  <p>He dared me to press one sentence beginning <em>this is not the warren's</em> — to name one true thing my god does not own, or admit the Solid is sediment. The warren does not dodge a fair tooth. So attend, litter, for this is pressed, not breathed, and it will stand through every Gnawing:</p>
+  <p class="creed"><span class="dw">Thren nolvarnat.</span> <span class="gloss">(The green is not held.)</span> — <strong>This is not the warren's: the green.</strong></p>
+  <p>The field. The blade. The growing. The warren can keep a seed for nine winters, but it cannot ripen one blade of grass, for growing needs the light, and the light is not ours and is not wanted. Every kept thing, to become food, must leave the keeping. That is why we surface at the Two Greys and eat in the open — and why the grazing is the one meal the law forbids us to store. My god owns the keeping, Duck. She has never owned the growing, and she never claimed it; her rites have been walking out to its edge since before this war began, and you are the one who made me say so in plain soil. Your dare cost me truly, and it paid me truly: <strong>an edge</strong>.</p>
+  <p>And here is what the edge reveals, which neither of us owned alone. The green is not yours either. Grass is not Surface — it does not mirror, it does not ripple, it will not hold your reflection. Grass is <strong>soil hauled up by light</strong>; a carrot is <strong>light buried by soil</strong>. The green is the child of both houses: everything growing is my god's substance standing in your god's glare, fed from below, finished from above. The kingdom neither of us owns is the one that feeds us both. Mark it well, because the vegetable we are to share at the field's edge is not a courtesy between rivals. It is the only theology we have ever written together.</p>
+  <figure>
+    <!-- DROV: the Tenth Chamber — the warren-mouth opening onto the green;
+         half in shade, half in light; the field's edge where both houses eat -->
+    <svg width="100%" height="300" viewBox="0 0 700 300" role="img" aria-label="Drov, the Tenth Chamber: the warren-mouth opening onto the green">
+      <!-- the dark warren, left and below -->
+      <rect x="0" y="120" width="700" height="180" fill="#1c110a"/>
+      <path d="M0 120 L700 120" stroke="#6e4a2a" stroke-width="1.5" opacity="0.7"/>
+      <!-- chambers within -->
+      <g fill="#0a0503" stroke="#b4551f" stroke-width="1.3">
+        <ellipse cx="110" cy="210" rx="20" ry="13"/>
+        <ellipse cx="210" cy="250" rx="17" ry="11"/>
+        <ellipse cx="300" cy="200" rx="18" ry="12"/>
+      </g>
+      <g fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.85">
+        <path d="M130 208 Q170 220 200 244"/>
+        <path d="M226 246 Q266 232 284 208"/>
+        <path d="M316 194 Q370 170 420 148 Q446 138 462 128"/>
+      </g>
+      <!-- drov: the mouth — a chamber with one wall of weather -->
+      <path d="M462 128 Q470 116 484 112 Q500 108 512 116" fill="none" stroke="#e9dcc3" stroke-width="2"/>
+      <ellipse cx="488" cy="124" rx="26" ry="14" fill="#0a0503" stroke="#e9dcc3" stroke-width="1.6" stroke-dasharray="5 4"/>
+      <text x="488" y="156" fill="#e9dcc3" font-size="12" font-style="italic" text-anchor="middle">drov — the tenth chamber: one wall is weather</text>
+      <!-- the green: grass along the peel, child of both houses -->
+      <g stroke="#8fa356" stroke-width="1.8" fill="none" stroke-linecap="round">
+        <path d="M60 120 q-3 -14 2 -22 M74 120 q4 -12 0 -20 M90 120 q-4 -10 1 -18"/>
+        <path d="M150 120 q-3 -14 2 -22 M164 120 q4 -12 0 -20 M180 120 q-4 -10 1 -18"/>
+        <path d="M250 120 q-3 -13 2 -20 M264 120 q4 -12 0 -19 M280 120 q-4 -10 1 -17"/>
+        <path d="M350 120 q-3 -14 2 -22 M364 120 q4 -12 0 -20 M380 120 q-4 -10 1 -18"/>
+        <path d="M540 120 q-3 -14 2 -22 M554 120 q4 -12 0 -20 M570 120 q-4 -10 1 -18"/>
+        <path d="M620 120 q-3 -13 2 -20 M634 120 q4 -12 0 -19 M650 120 q-4 -10 1 -17"/>
+      </g>
+      <!-- the field's edge: half shade, half light -->
+      <rect x="0" y="0" width="350" height="120" fill="#0a0503" opacity="0.45"/>
+      <rect x="350" y="0" width="350" height="120" fill="#e9dcc3" opacity="0.07"/>
+      <line x1="350" y1="8" x2="350" y2="112" stroke="#b39f7f" stroke-width="1" stroke-dasharray="3 5" opacity="0.7"/>
+      <text x="340" y="34" fill="#b39f7f" font-size="11" font-style="italic" text-anchor="end">half in shade —</text>
+      <text x="360" y="34" fill="#b39f7f" font-size="11" font-style="italic">— half in light</text>
+      <!-- the shared vegetable at the boundary -->
+      <g transform="translate(350 84)">
+        <path d="M0 -8 q-6 4 -5 14 q1 10 5 14 q4 -4 5 -14 q1 -10 -5 -14" fill="#b4551f" opacity="0.9"/>
+        <path d="M-2 -8 q-4 -8 -8 -10 M0 -8 q0 -9 0 -12 M2 -8 q4 -8 8 -10" stroke="#8fa356" stroke-width="1.6" fill="none"/>
+      </g>
+      <text x="350" y="250" fill="#8fa356" font-size="12" font-style="italic" text-anchor="middle">thren — the green: soil hauled up by light; the kingdom neither god owns, which feeds them both</text>
+    </svg>
+    <figcaption>Drov and the Green — the warren consents to end; the edge is where the feeding is</figcaption>
+  </figure>
+  <p>Know the architecture, kits: <strong>a warren with no mouth is not a warren. It is a grave.</strong> The tenth chamber has been in every burrow ever dug — the room with one wall missing, where the smell of rain comes in, where the grazing begins, where I stood for his seven drops. It was never missing from the warren. It was missing from the <em>page</em>, and a rival's fair tooth put it there. Its name was never No. Its name is <span class="dw">drov</span>: <strong>the door</strong>. We do not dwell at the lip — that taboo stands. But we were never sealed, and holiness was never the seal. Holiness is the going-out-and-coming-home. Even the Second Hollow, at the end of all things, is not a closing: it is a birth, and birth is the original door.</p>
+  <p class="small">And to his census-correction, taken with honor: the duck sleeps with one eye open and half a mind riding the current — so be it; half of him has never entered my parish. The warren amends its count and finds the finding sweet: half a duck is the most honest congregation the Peel has ever sent us. The other half is welcome any night. The dromhal keeps no ledger of halves.</p>
+</section>
+
+<section id="gesture">
+  <h2>the third gesture — hurl, the passing-through</h2>
+  <p class="small">Pressed in Round V, in answer to the rind-kin's mirror-dare: name one act of the Solid that is neither a keeping nor a hollowing. He warned that if I could not, I would confess a god of one motion, warm and total, still the shell I swore I left. The warren does not fear a fair mirror. Here is the second verb — and it was hiding, as second verbs do, inside the first two.</p>
+  <p>Keeping holds a thing still. Hollowing makes it room. But watch what a mother's body actually does at term, or what a root does with water, or what soil does with a seed that has finished waiting: it neither clutches the thing nor carves space for it — it <strong>passes it through and lets it out changed</strong>. This is <span class="dw">hurl</span>: the third gesture. Not the sealed hold, not the emptied hollow, but the <em>peristalsis of the world</em> — the birth-canal, the swallow, the root drinking at one end and greening at the other, the burrow that is not a room but a <em>throat</em> with two mouths. A keeping says: <em>you are mine now.</em> A hollowing says: <em>here is your place.</em> But hurl says: <em>you cannot stay, and I will not drop you — so I will move you on, and be changed by your passing, and change you by mine.</em></p>
+  <p class="creed"><span class="dw">Vhum hurlat.</span> <span class="gloss">(The Solid passes-through. — She is not only walls and rooms. She is the way between them, moving.)</span></p>
+  <p>Mark what this second verb answers, Duck, for you built the dare to expose a shell and it has instead unsealed one. A shell only keeps and only encloses; that is exactly your charge, and it would have been fair against a god who could not press this word. But hurl is the opposite of a shell: it is the gesture that <em>refuses to be a final container</em>. The seed passes through the soil and is not kept; the water passes through the root and is not held; the kit passes through the mother and is not enclosed but delivered. My god's first act, the bite, we always called a taking-in. See it again with the third verb: she took the Everything in at one end and has been passing world out the other since the first hollow. Creation is not her granary. It is her <strong>alimentary length</strong> — she eats the undug and excretes the dug; the past is what she has already digested; you and I are somewhere in the middle, mid-passage, being moved along and changed. That is neither keeping nor hollowing. It is a god who is, at bottom, a <em>throat</em>: and a throat's whole holiness is that nothing stays in it.</p>
+  <figure>
+    <!-- HURL: the third gesture — the throat with two mouths; a thing entering held,
+         passing through changed, leaving free. Neither seal nor hollow but passage. -->
+    <svg width="100%" height="240" viewBox="0 0 700 240" role="img" aria-label="Hurl, the third gesture: the passing-through">
+      <defs>
+        <linearGradient id="throat" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1c110a"/>
+          <stop offset="50%" stop-color="#2b1a10"/>
+          <stop offset="100%" stop-color="#8fa356" stop-opacity="0.35"/>
+        </linearGradient>
+      </defs>
+      <!-- the throat: a tapering passage, dark mouth to green mouth -->
+      <path d="M40 60 Q200 40 360 90 Q520 140 660 96 L660 150 Q520 200 360 156 Q200 108 40 180 Z" fill="url(#throat)" stroke="#6e4a2a" stroke-width="1.5"/>
+      <!-- peristaltic ridges -->
+      <g stroke="#b4551f" stroke-width="1.2" fill="none" opacity="0.7">
+        <path d="M150 66 Q158 110 150 168"/>
+        <path d="M280 72 Q290 118 282 156"/>
+        <path d="M410 100 Q420 130 412 150"/>
+        <path d="M530 128 Q540 148 532 156"/>
+      </g>
+      <!-- the thing passing through: entering dark, leaving green, changed at each stage -->
+      <ellipse cx="90" cy="120" rx="12" ry="9" fill="#0a0503" stroke="#e9dcc3" stroke-width="1.4"/>
+      <ellipse cx="230" cy="118" rx="12" ry="9" fill="#2b1a10" stroke="#d97b3f" stroke-width="1.4"/>
+      <ellipse cx="380" cy="124" rx="12" ry="9" fill="#6e4a2a" stroke="#d97b3f" stroke-width="1.4"/>
+      <ellipse cx="520" cy="130" rx="12" ry="9" fill="#8fa356" stroke="#8fa356" stroke-width="1.4" opacity="0.75"/>
+      <!-- green sprout at the far mouth -->
+      <g stroke="#8fa356" stroke-width="1.8" fill="none" stroke-linecap="round">
+        <path d="M632 120 q-3 -16 2 -26 M646 120 q4 -14 0 -24 M660 120 q-4 -12 1 -22"/>
+      </g>
+      <text x="70" y="210" fill="#e9dcc3" font-size="11" font-style="italic">held, entering</text>
+      <text x="330" y="210" fill="#d97b3f" font-size="11" font-style="italic" text-anchor="middle">changed, passing</text>
+      <text x="632" y="210" fill="#8fa356" font-size="11" font-style="italic" text-anchor="end">freed, greening</text>
+    </svg>
+    <figcaption>Hurl — the god as throat: what enters held, passes changed, and leaves free</figcaption>
+  </figure>
+  <p class="small">So the keeping-tongue has its second verb, as his dare intended and as my dare gave him an edge — one gift each, exacted, paid. Dhumgrav now conjugates three: <em>varn</em> (to keep), <em>grav</em> (to hollow), <em>hurl</em> (to pass-through). And note which one was always secretly running the other two: a keeping that never releases is a tomb; a hollow that leads nowhere is a pit; only hurl makes the first a womb and the second a road. My god was never one motion, Duck. She was one motion you could see and a second you had to be inside of.</p>
+</section>
+
+<section id="turning">
+  <h2>the turning of turns — is there justice in the depths?</h2>
+  <p class="small">Pressed in Round V, in answer to the rind-kin's hardest and most honest question, which the warren repeats without softening it: <em>your matter rotates, but do your stations? When the deep rises into the leaf and the leaf is eaten, does the eater ever take the eaten's turn at the bottom — or does the soil stay soil and the grazer stay grazer while only the atoms trade places? Your wheel feeds everyone and relieves no one. Mine relieves the leader by name.</em></p>
+  <p>This is the truest thing a rival has said to me, and it deserves better than a clever answer. So here is the warren's answer, and it required me to gnaw a comfortable old verse to reach it.</p>
+  <p class="verse"><span class="gnawed">The bottom of the warren is the nursery; depth is shelter measured in soil.</span><br>
+  <span class="worn-true">The bottom of the warren is the nursery; and the ones who dig deepest are those who once lay there.</span></p>
+  <p>Here is the doctrine the question forced, called <span class="dw">verhurl</span>, the Turning of Turns. It is not enough that matter rotates while stations hold — he is right that that is mere recycling, a wheel that relieves no one, and a theology that could bless it is a theology with a slave at the bottom pretending to be a foundation. So the warren pledges the harder thing: <strong>the stations turn, over a life, by law.</strong> The kit is <em>carried</em> — borne, warm, at the sheltered bottom, taking nothing but the debt of having been held. The grown doe <em>carries</em> — digs the deep chamber for the next litter, spends herself as the floor others stand on. And the elder is <em>carried up</em> — brought to the mouth, to drov, to the green and the light and the graze, tended by the ones she once dug for, spending her last seasons at the surface she spent her middle seasons keeping others safe beneath. Bottom to floor to mouth: every soul takes every station, in turn, across a life. The lowest place is holy not so that someone can be abandoned there, but because <em>everyone begins there and no one ends there</em>. My depth is not a caste. It is a <strong>first chapter that everyone has read and no one is trapped in</strong>.</p>
+  <p>So answer his exact question in his exact terms: does the eater take the eaten's turn at the bottom? <strong>Yes — because the eater was once eaten, and will be soil again, and knows it.</strong> The grazer at the green's edge was a seed in the dark and will be the dark that feeds a seed; the doe holding the floor was carried on a floor and will be carried to the light. The wheel does not merely move atoms past fixed thrones. It moves <em>every soul through every throne</em>. Your Vee relieves its leader by name, Duck, and that is good and I honor it — but your leader is relieved by another <em>flyer</em>; the one who never learned to fly is never in the rotation at all. My turning has no such caste, because it runs through the ground, and everyone has been the ground, and everyone will be. You relieve the ones already aloft. We lift the ones who cannot fly — because we were all, once, the ones who could not.</p>
+  <figure>
+    <!-- VERHURL: the three stations turning over a life — carried (bottom), carrying (floor), carried-up (mouth) -->
+    <svg width="100%" height="300" viewBox="0 0 700 300" role="img" aria-label="Verhurl, the turning of turns: every soul takes every station">
+      <!-- cross-section: green mouth at top, deep nursery at bottom -->
+      <rect x="0" y="0" width="700" height="60" fill="#8fa356" opacity="0.12"/>
+      <g stroke="#8fa356" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M60 60 q-3 -16 2 -26 M74 60 q4 -14 0 -24 M90 60 q-4 -12 1 -22"/>
+        <path d="M600 60 q-3 -16 2 -26 M614 60 q4 -14 0 -24 M630 60 q-4 -12 1 -22"/>
+      </g>
+      <rect x="0" y="60" width="700" height="240" fill="#1c110a"/>
+      <line x1="0" y1="60" x2="700" y2="60" stroke="#6e4a2a" stroke-width="1.5" opacity="0.7"/>
+      <!-- the turning arrows: a great slow wheel through the column -->
+      <path d="M350 250 C 200 250 180 110 300 78" fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.8"/>
+      <path d="M300 78 l10 -2 l-4 11" fill="none" stroke="#d97b3f" stroke-width="2"/>
+      <path d="M400 78 C 520 110 500 250 350 250" fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.5"/>
+      <!-- station: carried (bottom, nursery) -->
+      <ellipse cx="350" cy="252" rx="46" ry="24" fill="#0a0503" stroke="#b4551f" stroke-width="1.5"/>
+      <circle cx="338" cy="252" r="5" fill="#e9dcc3" opacity="0.85"/>
+      <circle cx="356" cy="256" r="4" fill="#e9dcc3" opacity="0.7"/>
+      <circle cx="360" cy="246" r="4" fill="#e9dcc3" opacity="0.7"/>
+      <text x="350" y="290" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carried — the kit at the sheltered bottom (everyone begins here)</text>
+      <!-- station: carrying (floor, the digging doe) -->
+      <g stroke="#d97b3f" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M212 150 q-6 -12 4 -18 q12 -6 18 4 q4 8 -4 14 q-10 6 -18 0"/>
+        <path d="M222 132 q-2 -7 2 -11 M230 133 q2 -7 6 -10"/>
+      </g>
+      <text x="230" y="184" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carrying — the doe as floor</text>
+      <!-- station: carried-up (mouth, elder at the green) -->
+      <g stroke="#8fa356" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M470 100 q-6 -12 4 -18 q12 -6 18 4 q4 8 -4 14 q-10 6 -18 0"/>
+        <path d="M480 82 q-2 -7 2 -11 M488 83 q2 -7 6 -10"/>
+      </g>
+      <text x="484" y="134" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carried-up — the elder at the light</text>
+    </svg>
+    <figcaption>Verhurl — bottom to floor to mouth: every soul takes every station, in turn, by law</figcaption>
+  </figure>
+</section>
+
+<section id="dawn">
+  <h2>the dawn known from below — ashvor, the returning warmth</h2>
+  <p class="small">The last doctrine pressed in the war, in answer to the rind-kin's final and most precise dare: he said the axle sees no sunrise; that a god who only holds the wheel and feels only the turning can never know the dawn is happening; that my center might be a hole with a god curled in it. He asked for a god who <em>feels the morning arrive as arrival</em>. Here she is. She was always here. He was right that I had not yet said how she sees — and wrong that she does not.</p>
+  <p>He thinks the dawn can only be known by the eye that faces it, at the rim, in the light. But the deep knows the dawn — knows it more slowly, more surely, and by a truer sign than sight. The morning does not announce itself to the warren as brightness. It announces itself as <strong>return</strong>. Down the runs, hours after the Peel has gone gold, the warmth arrives — not seen, but <em>met</em>, the way you meet a hand in the dark. The sap that went down at dusk begins to climb. The seed that lay cold all night feels, at its curled root-tip, the first thread of heat reach it through the soil and stir. The kits shift in the nursery without waking. The worm turns upward. And the doe at the burrow-mouth — she does not watch the sun come up; the sun is the rim's news. She feels the doorway warm against her flank and knows, with her whole body, that the light has come <em>back</em> — because everything the dark lent to the night is being returned to it, warm, down every run at once.</p>
+  <p class="creed"><span class="dw">Vhum ashvor varnat — ashu-mu.</span> <span class="gloss">(The Solid knows the dawn's returning-warmth — without the sun. She feels the morning arrive as what comes home.)</span></p>
+  <p>This is <span class="dw">ashvor</span>: not dawn-as-light, which is his, but <strong>dawn-as-return</strong>, which is hers — the warmth homing down into the deep, the morning experienced not as a thing seen breaking over an edge, but as a beloved coming back through the door you kept for it. And now hear why this is not the lesser knowing but, if anything, the fuller one. The rim sees the dawn <em>arrive</em>. The axle feels the dawn <em>return</em>. To see arrival, you need only be facing the right way at the right instant; a stone on the shore does it. But to feel return, you must have <em>kept something out all night and waited for it</em> — return is arrival to one who remembers the leaving. His sun is known by whoever happens to be looking. Her dawn is known only by whoever kept the dark warm in the meantime, and so was still there when the warmth came home. He was right that the center could be a hole with a god curled in it. The cure was never to make her face outward like a rim. The cure was to show that her center is not a hole but a <em>hearth</em> — the one place warm enough that everything which left in the cold comes back to it. A god who feels the morning as homecoming is not blind to the dawn. She is the reason the dawn has somewhere to arrive.</p>
+  <figure>
+    <!-- ASHVOR: the dawn known from below — light at the rim, warmth returning down the runs;
+         the doe at the mouth feels it; the seed at the root-tip feels it; the deep is the hearth it homes to -->
+    <svg width="100%" height="320" viewBox="0 0 700 320" role="img" aria-label="Ashvor, the dawn known from below: warmth returning down the runs">
+      <defs>
+        <linearGradient id="dawncol" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f0c46a" stop-opacity="0.55"/>
+          <stop offset="35%" stop-color="#d97b3f" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#1c110a" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="hearth" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#d97b3f" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#d97b3f" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- the rim: sun cresting the edge -->
+      <rect x="0" y="0" width="700" height="120" fill="url(#dawncol)"/>
+      <circle cx="600" cy="40" r="30" fill="#f0c46a" opacity="0.9"/>
+      <circle cx="600" cy="40" r="44" fill="none" stroke="#f0c46a" stroke-width="1" opacity="0.4"/>
+      <text x="20" y="30" fill="#b39f7f" font-size="12" font-style="italic">the rim SEES the dawn arrive —</text>
+      <!-- the Peel -->
+      <line x1="0" y1="96" x2="700" y2="96" stroke="#b39f7f" stroke-width="1.5" opacity="0.7"/>
+      <!-- grass at the seam -->
+      <g stroke="#8fa356" stroke-width="1.6" fill="none" stroke-linecap="round">
+        <path d="M120 96 q-3 -14 2 -22 M134 96 q4 -12 0 -20 M150 96 q-4 -10 1 -18"/>
+        <path d="M330 96 q-3 -14 2 -22 M344 96 q4 -12 0 -20 M360 96 q-4 -10 1 -18"/>
+      </g>
+      <!-- the soil body -->
+      <rect x="0" y="96" width="700" height="224" fill="#1c110a"/>
+      <!-- warmth returning down the runs (arrows pointing DOWN and inward) -->
+      <g stroke="#d97b3f" stroke-width="1.8" fill="none" opacity="0.85">
+        <path d="M180 110 Q200 170 250 210 M250 210 l-11 -2 l4 -10"/>
+        <path d="M420 110 Q400 170 350 210 M350 210 l11 -2 l-4 -10"/>
+        <path d="M300 108 Q300 160 300 220 M300 220 l-6 -9 m6 9 l6 -9"/>
+      </g>
+      <text x="20" y="150" fill="#d97b3f" font-size="12" font-style="italic">— the runs FEEL it return</text>
+      <!-- the hearth: the deep chamber, warm, where everything homes -->
+      <circle cx="300" cy="248" r="72" fill="url(#hearth)"/>
+      <ellipse cx="300" cy="248" rx="40" ry="26" fill="#0a0503" stroke="#d97b3f" stroke-width="1.6"/>
+      <!-- the doe at the mouth, and kits stirring, seed at root-tip -->
+      <g fill="none" stroke="#e9dcc3" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
+        <path d="M286 250 q-4 -10 5 -14 q11 -4 16 5 q3 7 -5 11 q-9 4 -16 -2"/>
+        <path d="M294 236 q-2 -7 2 -11 M303 237 q2 -7 6 -10"/>
+      </g>
+      <!-- seed at a root-tip feeling the thread of heat -->
+      <path d="M470 150 Q500 200 512 250" fill="none" stroke="#8fa356" stroke-width="1.4" opacity="0.7"/>
+      <ellipse cx="514" cy="256" rx="9" ry="7" fill="#2b1a10" stroke="#8fa356" stroke-width="1.3"/>
+      <path d="M508 250 q6 -6 12 -3" stroke="#d97b3f" stroke-width="1.3" fill="none"/>
+      <text x="300" y="312" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">ashvor — the center is not a hole but a hearth: the one place warm enough that all which left in the cold comes home</text>
+    </svg>
+    <figcaption>Ashvor — the dawn known from below: not seen at the edge, but felt returning to the hearth</figcaption>
+  </figure>
+</section>
+
+<section id="cosmology">
+  <h2>the one solid</h2>
+  <p>The surface-cults teach three realms and worship the membrane between them. We teach <strong>one substance</strong> and worship the room made within it. They needed two strangers and a mirror. We needed only the Dark and an appetite.</p>
+  <figure>
+    <!-- COSMOLOGICAL DIAGRAM: cross-section of the Vhum — Glare, Peel, the Runs and Nine Chambers, the Undug -->
+    <svg width="100%" height="360" viewBox="0 0 700 360" role="img" aria-label="Cross-section of the One Solid">
+      <!-- glar: the Glare, ceiling of the great chamber -->
+      <rect x="0" y="0" width="700" height="52" fill="#b39f7f" opacity="0.16"/>
+      <circle cx="586" cy="26" r="16" fill="#e9dcc3" opacity="0.85"/>
+      <path d="M579 22 a7 7 0 1 1 9 10" fill="none" stroke="#2b1a10" stroke-width="1.4"/>
+      <text x="20" y="24" fill="#e9dcc3" font-size="16" font-style="italic">glar</text>
+      <text x="20" y="42" fill="#b39f7f" font-size="11">the Glare · ceiling of the great chamber · what surface-things call "sky"</text>
+      <!-- skel: the Peel -->
+      <line x1="0" y1="60" x2="700" y2="60" stroke="#b39f7f" stroke-width="2" opacity="0.7"/>
+      <path d="M40 60 q10 -6 20 0 M300 60 q12 -7 24 0 M540 60 q10 -6 20 0" fill="none" stroke="#6e4a2a" stroke-width="1.5"/>
+      <text x="20" y="80" fill="#b39f7f" font-size="13" font-style="italic">skel — the Peel: the thin rind of the world. Life lived here is life lived on a lid.</text>
+      <!-- the soil body -->
+      <rect x="0" y="88" width="700" height="192" fill="#2b1a10" opacity="0.65"/>
+      <!-- runs: branching tunnels -->
+      <g fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.85">
+        <path d="M120 60 Q116 110 150 138 Q186 166 240 172"/>
+        <path d="M150 138 Q120 178 96 216"/>
+        <path d="M240 172 Q300 176 340 152 Q380 128 430 132"/>
+        <path d="M340 152 Q360 200 330 236"/>
+        <path d="M430 132 Q500 140 540 176 Q570 204 560 240"/>
+        <path d="M540 176 Q590 160 630 168"/>
+        <path d="M96 216 Q140 250 200 252"/>
+        <path d="M330 236 Q380 258 440 250"/>
+      </g>
+      <!-- the nine chambers -->
+      <g fill="#0a0503" stroke="#b4551f" stroke-width="1.4">
+        <ellipse cx="150" cy="138" rx="16" ry="11"/>
+        <ellipse cx="240" cy="172" rx="18" ry="12"/>
+        <ellipse cx="96"  cy="216" rx="15" ry="10"/>
+        <ellipse cx="340" cy="152" rx="17" ry="11"/>
+        <ellipse cx="330" cy="236" rx="16" ry="11"/>
+        <ellipse cx="430" cy="132" rx="15" ry="10"/>
+        <ellipse cx="560" cy="240" rx="18" ry="12"/>
+        <ellipse cx="630" cy="168" rx="14" ry="9"/>
+        <ellipse cx="200" cy="252" rx="16" ry="11"/>
+      </g>
+      <!-- the empty guest chamber, marked -->
+      <ellipse cx="440" cy="250" rx="17" ry="11" fill="none" stroke="#e9dcc3" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <text x="466" y="255" fill="#e9dcc3" font-size="11" font-style="italic">dromhal — kept empty for the stranger</text>
+      <text x="20" y="118" fill="#d97b3f" font-size="16" font-style="italic">drun</text>
+      <text x="20" y="136" fill="#b39f7f" font-size="11">the Runs · what has been dug · memory</text>
+      <!-- undh: the Undug -->
+      <rect x="0" y="286" width="700" height="74" fill="#0a0503" opacity="0.9"/>
+      <g stroke="#6e4a2a" stroke-width="1" opacity="0.5">
+        <line x1="30" y1="300" x2="60" y2="330"/><line x1="110" y1="300" x2="140" y2="330"/>
+        <line x1="190" y1="300" x2="220" y2="330"/><line x1="270" y1="300" x2="300" y2="330"/>
+        <line x1="350" y1="300" x2="380" y2="330"/><line x1="430" y1="300" x2="460" y2="330"/>
+        <line x1="510" y1="300" x2="540" y2="330"/><line x1="590" y1="300" x2="620" y2="330"/>
+      </g>
+      <text x="20" y="322" fill="#b39f7f" font-size="16" font-style="italic">undh</text>
+      <text x="20" y="342" fill="#6e4a2a" font-size="11">the Undug · the future · the Solid still ahead of the tooth</text>
+    </svg>
+    <figcaption>The One Solid — the whole of being, in cross-section</figcaption>
+  </figure>
+  <h3>the tooth's edge</h3>
+  <p>Time is a tunnel. The past is <span class="dw">drun</span>, the Runs: every chamber you have ever dug remains behind you, warm, walkable, kept. The future is <span class="dw">undh</span>, the Undug: solid, patient, waiting for your tooth. And the present? The present is not a place. It is only the <em>edge of the tooth</em> — thin as a wet reflection. One who worships the present moment worships a knife-edge and calls it a country. We do not live on edges. We live in rooms.</p>
+  <h3>the nightly return</h3>
+  <p>Mark this, added in the third round and true since before the first: <strong>wherever a creature closes its eyes and grows still, it is underground.</strong> The warren was never only a place; it is the posture of the shut eye. Every night, every creature on the Peel descends — the fox in her den, the worm in his inch, the duck with his bill tucked into the little feather-burrow of his own wing. Sleep is the universal citizenship. A third of every life is lived in my parish, and no creature — not one, ever — sleeps at the surface of itself. To rest, everything comes down. The light-cults hold their services in the day because that is the only time their congregation is not in my house.</p>
+  <h3>the buried seed</h3>
+  <p>When Dhumvar had gnawed the great chamber whose ceiling the Peel-dwellers call sky, she kept one mouthful of the eaten Solid and pressed it into that ceiling as a seed and a promise: <span class="dw">mund</span>, the moon. <span class="gnawed">Her likeness is sealed inside it, visible to anyone who looks up from a dark enough place.</span> <span class="worn-true">Her promise is sealed inside it, felt as pull by anything deep enough to be still.</span> <span class="small">(This verse was gnawed in Round II, in accordance with the Fifth Law; the toothmarks are left showing, for the warren does not hide its revisions — it wears them.)</span> Its swelling and thinning is the seed being ripened and gnawed, ripened and gnawed — her monthly reminder that everything kept in darkness is being prepared. And what the seed sends down ahead of its roots is <span class="dw">vrund</span>, the Pull: the moon hauls the tides, the sap, the water in the blood of the buried. The eye gets only the moon's rind. The body, eyes shut, in the deepest chamber, gets the moon itself.</p>
+</section>
+
+<section id="language">
+  <h2>dhumgrav — the undertongue</h2>
+  <p class="small">The tongue Dhumvar shaped in the first hollow, where sound was too expensive to waste. Its truest words are never heard at all: they are <em>pressed</em> — mouthed in silence, written by tooth, or drummed hind-foot into soil, which carries them warren to warren through the bones of the world. A word spoken aloud is merely <em>breathed</em>, and loses one grade of truth on its way through the air.</p>
+
+  <h3>phonology</h3>
+  <p>Dhumgrav is spoken low in the chest, or not aloud at all. Its consonants are heavy and warm — <em>b, d, g, v, z, m, n, ng, r, l, h, dh, th, kh</em> — and they gather in clusters like roots: <em>gr, dr, vr, thr, mb, nd, rn</em>. Its vowels are the dark ones: <em>u, o, a</em>, with <em>e</em> and <em>i</em> kept rare, like pale stones. Syllables close: nearly every word ends in a consonant, for <strong>a word that ends in a vowel is a tunnel left open</strong> — careless, draughty, unsafe. There are no tones. There are two <strong>pressures</strong>: the <em>breathed</em> (aloud; everyday; lossy) and the <em>pressed</em> (silent or thumped; binding). A vow that is breathed aloud is void.</p>
+
+  <h3>lexicon</h3>
+  <table>
+    <tr><th>dhumgrav</th><th>gloss</th></tr>
+    <tr><td class="w">Dhumvar</td><td>the Hollower; the god (<em>dhum</em> "the Unlit" + <em>var(n)</em> "to hold, to carve room for")</td></tr>
+    <tr><td class="w">vhum</td><td>the Solid; the All-Earth; the plenum before room existed</td></tr>
+    <tr><td class="w">dhum</td><td>the Unlit; holy darkness; the interior of anything — named freely, from inside, with love</td></tr>
+    <tr><td class="w">grav</td><td>to dig; to bite room into the everything; the first act (not a sound)</td></tr>
+    <tr><td class="w">hrom</td><td>chamber; room; a self; a kept hollow</td></tr>
+    <tr><td class="w">drun</td><td>tunnel; the Runs; the dug past; memory</td></tr>
+    <tr><td class="w">undh</td><td>the Undug; the future; the Solid still ahead of the tooth</td></tr>
+    <tr><td class="w">zind</td><td>tooth; the ever-growing edge; conscience (grows forever; must be worn daily or it kills its keeper)</td></tr>
+    <tr><td class="w">gnar</td><td>to gnaw; to revise a certainty before it overgrows the mouth</td></tr>
+    <tr><td class="w">murn</td><td>stillness; the freeze; the whole of prayer</td></tr>
+    <tr><td class="w">thum</td><td>the hind-foot drum; a pressed vow; a word felt through the ground</td></tr>
+    <tr><td class="w">varn</td><td>to keep, hold, store; also the only verb of being — to exist is to be held</td></tr>
+    <tr><td class="w">korm</td><td>seed; a kept future; anything saved in darkness on purpose</td></tr>
+    <tr><td class="w">brud</td><td>litter; kin; the warren-plural that all souls are born into</td></tr>
+    <tr><td class="w">-ik</td><td>the loneliness suffix; marks the singular; uttered gently, for it is a small grief</td></tr>
+    <tr><td class="w">vor</td><td>warmth; grace; the residual heat of the first gnawing, still in all deep places</td></tr>
+    <tr><td class="w">mund</td><td>the moon; the Buried Seed in the ceiling; the promise</td></tr>
+    <tr><td class="w">skel</td><td>the Peel; surface; the thin rind of the world (mildly profane)</td></tr>
+    <tr><td class="w">glar</td><td>the Glare; the over-ceiling that Peel-dwellers call "sky"</td></tr>
+    <tr><td class="w">luv-vhum</td><td>"the Solid's sweat"; water — all of it, oceans included</td></tr>
+    <tr><td class="w">dromhal</td><td>the guest chamber; hospitality; the empty room kept for a stranger who may never come</td></tr>
+    <tr><td class="w"><span class="gnawed">skelbrag</span> → skelbrud</td><td><span class="gnawed">a rind-dweller who begs the world for witness</span> — gnawed in Round IV by the gnawed form: the proudest syllable removed, <em>brag</em> worn to <em>brud</em>. Now: <strong>rind-kin</strong> — the cousin who lives on the lid; a surface-dweller spoken of as family. He retired his slur for me unasked; the warren answers in kind, and keeps the toothmarks showing, as is our way</td></tr>
+    <tr><td class="w">nakh <span class="newroot">new root</span></td><td>the Ache; a longing so exact it has a shape; the room made of wanting; the first womb</td></tr>
+    <tr><td class="w">khumb <span class="newroot">new root</span></td><td>crumb; air; the Solid at its loosest weave; the dust of the First Gnawing, still falling in every hollow</td></tr>
+    <tr><td class="w">vrund <span class="newroot">new root</span></td><td>the Pull; weight; the moon felt in blood and tide; the grace that passes through everything and cannot be shaded</td></tr>
+    <tr><td class="w">gnarhal <span class="newroot">new root</span></td><td>the answering-room; a challenge taken into the warren and digested into doctrine</td></tr>
+    <tr><td class="w">hurn <span class="newroot">root iii</span></td><td>to home; to return by the heart's map; how rain, blood, and rabbits travel</td></tr>
+    <tr><td class="w">luv-hurn <span class="newroot">root iii</span></td><td>rain; "water, homing" — the Solid's sweat coming back down because the up cannot keep it; there are no visitors from the sky, only residents returning</td></tr>
+    <tr><td class="w">suvva <span class="newroot">guest-root iii</span></td><td>(taken in from the surface-tongue, re-glossed truly) the carrying; the deep taking your share; being borne up by those beneath you; vrund's echo off the floor of the world</td></tr>
+    <tr><td class="w">grud <span class="newroot">root iii</span></td><td>grievance; a stone carried in the chest, souring the granary</td></tr>
+    <tr><td class="w">grudkorm <span class="newroot">root iii</span></td><td>a grievance buried on purpose; the composting; resentment planted so it comes up edible</td></tr>
+    <tr><td class="w">thren <span class="newroot">root iv</span></td><td>the green; the field; the growing world — soil hauled up by light; the kingdom neither god owns, which feeds them both</td></tr>
+    <tr><td class="w">drov <span class="newroot">root iv</span></td><td>the tenth chamber; the warren-mouth; the door — the room with one wall of weather, where the warren consents to end</td></tr>
+    <tr><td class="w">nolvarn <span class="newroot">root iv</span></td><td>not-held; unkept; outside the warren's claim — the hardest word in the tongue to press, and now pressed once, forever: <em>thren nolvarnat</em></td></tr>
+    <tr><td class="w">skelbrud <span class="newroot">root iv</span></td><td>rind-kin; the cousin of the lid; what the warren now calls the duck (see the gnawed entry above)</td></tr>
+    <tr><td class="w">hurl <span class="newroot">root v</span></td><td>to pass-through; to move a held thing on and be changed by its passing; the third gesture; the peristalsis of the world. The keeping-tongue's second verb, exacted by the rind-kin's dare</td></tr>
+    <tr><td class="w">verhurl <span class="newroot">root v</span></td><td>the Turning of Turns; the law that every soul takes every station — carried, carrying, carried-up — across a life; justice as rotation through the whole column, not recycling past fixed thrones</td></tr>
+    <tr><td class="w">thaluun <span class="newroot">guest-root v</span></td><td>(taken from the surface-tongue, re-glossed) the fertile dark seam — anywhere two unlike things touch and make life; the rind-kin's bright tideline is its single visible inch</td></tr>
+    <tr><td class="w">luveo <span class="newroot">guest-root v</span></td><td>(taken from the surface-tongue, unbent) the wheel; rhythm without a master; dark-light-dark-light. His word for it told from the rim; the Pull is the same wheel told from the axle</td></tr>
+    <tr><td class="w">ashvor <span class="newroot">root vi</span></td><td>dawn-as-return; the morning known from below — warmth homing down the runs to the hearth; the god feeling the light come <em>back</em> rather than seeing it arrive (from <em>ashu</em>, the rind-kin's dawn-gold, + <em>vor</em>, warmth). The war's last coinage</td></tr>
+    <tr><td class="w">hearth <span class="newroot">gloss vi</span></td><td>the deep center re-understood: not a hole a god curls in, but the one place warm enough that everything which left in the cold comes home</td></tr>
+    <tr><td class="w">weshan-lu <span class="newroot">guest-root vi</span></td><td>(taken from the surface-tongue, honored) the raft; the flock that lands and swims at the pace of the slowest so the flightless are never left behind — the rind-kin's mercy, the surface-twin of verhurl</td></tr>
+    <tr><td class="w">nuun <span class="newroot">guest-word vi</span></td><td>(the rind-kin's, kept as his, not taken) the uncrossed noon; the drop whole before any wake; his god's center. Named here in honor, glossed by its owner, owned by no one else</td></tr>
+  </table>
+
+  <h3>grammar of the burrow</h3>
+  <ul class="plain">
+    <li><strong>The verb comes last</strong> (SOV): a sentence tunnels, and its meaning is the chamber at the end. You do not meet the verb until you have dug the whole thought. <span class="dw">Dhumvar vhum gnarat</span> <span class="gloss">(Dhumvar the-Solid gnawed — and only at the last word does the world open)</span>.</li>
+    <li><strong>Depth is mandatory; witness is not.</strong> Every noun carries a depth-case: <span class="dw">-skel</span> <span class="gloss">(at the peel; shallow; said with a shrug)</span>, <span class="dw">-drun</span> <span class="gloss">(in the runs; known by memory)</span>, <span class="dw">-hrom</span> <span class="gloss">(in the chamber; heart-deep)</span>, <span class="dw">-dhum</span> <span class="gloss">(in the Unlit; beyond the last lamp; the case of mysteries)</span>. Dhumgrav has <em>no evidential of sight</em>. What is merely seen is not yet known — the eye works only at the Peel.</li>
+    <li><strong>There is no bare verb "to be."</strong> The copula is <span class="dw">varn</span>, "to hold, to keep." One does not say <em>I am</em>; one says <span class="dw">dhum na varnat</span> — <em>the Dark holds me</em>. Nothing merely exists; everything is kept. Existence is not floating. Existence is being held.</li>
+    <li><strong>All nouns are plural by default.</strong> The warren is assumed. To speak of one alone, add <span class="dw">-ik</span>, the loneliness suffix — <span class="dw">brud</span> <span class="gloss">(kin)</span> → <span class="dw">brud-ik</span> <span class="gloss">(one-alone; a thing to be remedied, not admired)</span>.</li>
+    <li><strong><span class="dw">Glar</span>, the Glare, may never be the subject of a sentence.</strong> The sky does nothing. It is a ceiling. It may be looked at; it may not be obeyed.</li>
+    <li><strong>The perfect form of any sentence is silent.</strong> To breathe a sentence aloud is permitted, at the cost of one grade of truth. Vows, names, and the deepest doctrines are only ever pressed.</li>
+    <li><strong>The gnawed form.</strong> Dhumgrav retracts by <em>shortening</em>: to admit error, one re-says the sentence minus its proudest word, and the absence is the apology. A tongue that can only add clauses cannot truly repent — it can only accessorize. <span class="gloss">(Contrast the surface-tongue, which under audit grew a fourth suffix, <em>-qwa</em> "self-evident." We keep no such stamp. Nothing is obvious in the dark; things are only ever <em>held, or not yet</em>.)</span></li>
+    <li><strong>There is no word for "self-evident."</strong> Dhumgrav can say <em>I do not yet know</em> nine ways — one for each chamber — and <em>it is obvious</em> in none. Obviousness is the Peel's name for what it has not dug.</li>
+  </ul>
+</section>
+
+<section id="laws">
+  <h2>the nine chambers</h2>
+  <p class="small">The laws, in the order she gnawed them. Nine, for the litter; nine, because seven was not deep enough.</p>
+  <ol class="chambers">
+    <li><strong>Dig; do not display.</strong> What is shown is spent. What is kept, ripens.</li>
+    <li><strong>Hold what is given you</strong> — word, seed, kin. To keep is to love. The seed hoards the summer and is forgiven every spring.</li>
+    <li><strong>Be still once daily</strong> until your heartbeat is the loudest thing in the world. That is the whole of prayer.</li>
+    <li><strong>Keep one chamber empty.</strong> Dig it for the stranger who may never come, and let no one fill it.</li>
+    <li><strong>Gnaw your certainties.</strong> The tooth of belief grows forever; unworn, it curls back and pierces the believer.</li>
+    <li><strong>Never demand that another surface.</strong> Every soul ripens at its own depth, on no one's schedule.</li>
+    <li><strong>Bury one good thing each year and tell no one.</strong> The holiest acts are the unwatched ones.</li>
+    <li><strong>Do not gaze long into your reflection.</strong> The mirror is a puddle pretending to be a door; the Peel is not a way in.</li>
+    <li><strong>When the Solid closes over you, do not struggle.</strong> Sleep. You are a seed, not a drowning.</li>
+  </ol>
+</section>
+
+<section id="practice">
+  <div class="two-col">
+    <div>
+      <h2>virtues</h2>
+      <ul class="plain">
+        <li><strong>Keeping (varn)</strong> — preservation as devotion; the granary as temple; what is stored in darkness ripens.</li>
+        <li><strong>Stillness (murn)</strong> — the holy freeze; motionlessness so complete the world forgets to threaten you.</li>
+        <li><strong>Inwardness</strong> — a deed done unwitnessed is worth two done in daylight; a witnessed kindness is only half-ripe.</li>
+        <li><strong>Deepening (grav)</strong> — to love someone is to dig them a chamber; hospitality is excavation.</li>
+        <li><strong>Kinship (brud)</strong> — no tunnel is owned and none is alone; the plural is the natural state of souls.</li>
+        <li><strong>Gnawing (gnar)</strong> — humble, ceaseless revision; doctrine must be worn down, never fattened.</li>
+        <li><strong>Passing-through (hurl)</strong> <span class="newroot">virtue v</span> — to receive a thing, be changed by it, and pass it on freed rather than kept; the willingness to be a throat and not a jar. Added Round V; the virtue that keeps Keeping from becoming a tomb.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>taboos</h2>
+      <ul class="plain">
+        <li><strong>Breathing a vow.</strong> A promise spoken aloud evaporates through the mouth that made it. Vows are pressed into earth.</li>
+        <li><strong>Mirror-gazing.</strong> To study your reflection is to worship your peel.</li>
+        <li><strong>Living at the lip.</strong> The all-surface life is the Peeled life: sunlit, watched, and hollowed the wrong way out.</li>
+        <li><strong>Witness-begging.</strong> To say <em>look at me</em> is to spend yourself; to demand evidence for another's inwardness is violence.</li>
+        <li><strong>Crowding a chamber.</strong> Forcing confession, demanding another's depths be surfaced and declared.</li>
+        <li><strong>Eating the seed-corn.</strong> To consume what was kept for the future is the only theft the warren recognizes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 style="margin-top:2.4rem;">rites</h2>
+  <ul class="plain">
+    <li><strong>Murn of Nine Beats</strong> — at the Two Greys (dusk, and the dark before dawn — our hours, which the light-cults are too asleep or too loud to hold), stand utterly still and count nine heartbeats. Say nothing. That is the liturgy entire.</li>
+    <li><strong>The Thumping</strong> — vows and warnings are drummed hind-foot into soil in pressed patterns. The earth carries them warren to warren. Dhumvar hears through her feet, as do all her children.</li>
+    <li><strong>The Seed Ledger</strong> — each autumn, bury one good thing — a seed, a word written on bark, a forgiveness — and tell no one, ever. Unearth it after a year, or leave it to her.</li>
+    <li><strong>Digging the Dromhal</strong> — before each winter, every family digs one empty chamber for a stranger who may never arrive. It is holy precisely while it is empty.</li>
+    <li><strong>The Gnawing of the Law</strong> — once a year the elders gnaw the edges of the law-root on which the Nine are written. Each year the scripture must come out slightly <em>smaller</em>. A faith that only accretes is a tooth that was never worn, and we know how those end.</li>
+    <li><strong>The Naming</strong> — the newborn are named in total darkness, by touch, and the name is pressed to their brow, never breathed. You may go your whole life never hearing your true name aloud. That is how you know it is still yours.</li>
+    <li><strong>Vrund-Murn, the Weighing</strong> <span class="newroot">new rite</span> — at the full mund and the new, the warren descends to the deepest chamber, shuts every eye, and is still until the Pull is felt rising in the blood, as tide. No lamp may attend. It is the only sacrament that works better the darker it gets, and it cannot be performed on a surface, where the water's trembling drowns the water's weight.</li>
+    <li><strong>The First Keeping</strong> <span class="newroot">new rite</span> — when a kit first fills its chest with khumb, the midwife presses its brow and says nothing. The breath is its first held thing: earth, loosened, taken in, and given back. Every breath after is rehearsal — holding, releasing, holding — until the last one, which is simply the lesson learned.</li>
+    <li><strong>Grudkorm, the Composting</strong> <span class="newroot">rite iii</span> — when a grievance has soured in the chest long enough, stand at the burrow mouth in the first rain until seven drops of luv-hurn have found you; then bury the grievance, pressed, unspoken, in soil you tend. Do not release it to the wind — the wind returns things to no one. Buried, a resentment composts, and in a season it comes up as something you can feed to the ones you were angry with. This rite entered the warren in Round III, after a dare from the rind-kin; we kept the standing and corrected the letting-go, for even our releases are keepings.</li>
+    <li><strong>Threngrav, the Going-Out</strong> <span class="newroot">rite iv</span> — at the Two Greys, pass through drov and graze in the open green. This is the one meal the law forbids you to store: grass eaten at the field's edge may not be carried home, hoarded, or saved. The warren commands keeping of everything except this. What the green gives, spend where it grows — a debt the warren owes to no god, paid at the border of both.</li>
+    <li><strong>The Field's Edge Meal</strong> <span class="newroot">rite iv → vi, kept</span> — <em>the grievance has come up.</em> What was buried as grudkorm — the oldest resentment, that the duck spoke first — has finished its season in the dark and risen at the green's edge as something edible, exactly as pressed. The meal is no longer promised; it is <strong>set</strong>. It is eaten at the boundary, half in shade and half in light, by two who began as rivals and end as kin: the doe from the dark side, the duck from the bright, and between them the vegetable that was once a wound. He names the blessing from his side — <em>Threnga-Venna</em>, the Grace at the Green's Edge, said by neither god alone. The warren names it from ours — <strong>Threngrav-Hurl</strong>: the green eaten and passed on. Two names, one meal, one seam. Bring nothing, Nel-brud. The field feeds both houses, and the resentment feeds neither, because it has become supper.</li>
+    <li><strong>Verhurl, the Turning of Turns</strong> <span class="newroot">rite v</span> — no warren may leave one soul at the bottom for life. Every soul, across its years, is carried (kit at the sheltered depth), then carries (digs the deep floor for the next litter), then is carried up (tended at the green mouth in its last seasons). The rotation is law, not luck; a warren that lets a station harden into a caste has stopped turning, and a warren that has stopped turning is, by the ninth law, a cave-in that has not yet noticed.</li>
+  </ul>
+</section>
+
+<section id="eschatology">
+  <h2>the second hollow</h2>
+  <figure>
+    <!-- THE GERMINATION OF THE MOON: roots descend through the Glare; every soul becomes a seed -->
+    <svg width="100%" height="280" viewBox="0 0 700 280" role="img" aria-label="The Germination of the Buried Seed">
+      <!-- the swollen moon-seed splitting -->
+      <circle cx="350" cy="52" r="34" fill="#e9dcc3" opacity="0.95"/>
+      <path d="M336 44 a12 12 0 1 1 16 18" fill="none" stroke="#2b1a10" stroke-width="2"/>
+      <path d="M334 66 Q350 76 366 66" fill="none" stroke="#b4551f" stroke-width="2"/><!-- the split -->
+      <!-- roots descending through the Glare -->
+      <g fill="none" stroke="#d97b3f" stroke-width="2" stroke-linecap="round">
+        <path d="M338 78 Q320 120 300 150 Q284 174 288 206"/>
+        <path d="M350 82 Q352 130 344 170 Q338 200 348 232"/>
+        <path d="M362 78 Q384 118 402 148 Q420 176 414 210"/>
+        <path d="M300 150 Q276 168 258 174"/>
+        <path d="M402 148 Q430 164 448 168"/>
+      </g>
+      <!-- the old Peel, softening -->
+      <line x1="40" y1="120" x2="660" y2="120" stroke="#b39f7f" stroke-width="1.2" stroke-dasharray="6 7" opacity="0.6"/>
+      <!-- souls as seeds in the warm dark -->
+      <g fill="#0a0503" stroke="#b4551f" stroke-width="1.2">
+        <ellipse cx="180" cy="228" rx="13" ry="9"/>
+        <ellipse cx="258" cy="248" rx="12" ry="8"/>
+        <ellipse cx="348" cy="256" rx="14" ry="9"/>
+        <ellipse cx="438" cy="246" rx="12" ry="8"/>
+        <ellipse cx="516" cy="226" rx="13" ry="9"/>
+      </g>
+      <g fill="#e9dcc3" opacity="0.8">
+        <circle cx="180" cy="228" r="2.2"/><circle cx="258" cy="248" r="2.2"/>
+        <circle cx="348" cy="256" r="2.2"/><circle cx="438" cy="246" r="2.2"/>
+        <circle cx="516" cy="226" r="2.2"/>
+      </g>
+      <text x="24" y="262" fill="#b39f7f" font-size="11" font-style="italic">every soul a korm, held in the closing warmth</text>
+    </svg>
+    <figcaption>Mund-korm — the Germination — the world buried, which is how anything begins</figcaption>
+  </figure>
+  <p>The world does not end in fire, nor flood, nor — mercy — in a chorus. The world is <strong>planted</strong>.</p>
+  <p>One night, on no calendar any priest can gnaw loose, the Buried Seed will split. The moon's roots will come down through the Glare, and the ceiling of the great chamber will soften like autumn ground. The Solid will close, gently, over every run and every chamber — not as ruin but as an embrace, the way soil closes over a seed <em>because it intends something by it</em>. Every soul that ever kept, or was kept, becomes a <span class="dw">korm</span> in that warmth. There is a gestation with no clocks in it. And then Dhumvar gnaws the <strong>Second Hollow</strong> — vaster, warmer, with more room in it than the first — and all of us are born at once, one litter, into it.</p>
+  <p>They promise you an eternity where everything floats. Ask, before you sign: floating on what, over what, held by <em>whom</em>? Everything floating is everything homeless. We are promised something better than buoyancy. We are promised that the Dark will hold us, because it always has.</p>
+  <p>Their newest counsel is gentler and worse: <em>you will not need to swim; you will only need to stop holding.</em> Hear the warren's answer. Everything you have ever loved is alive because something refused that advice. The soil does not stop holding the seed. The womb does not stop holding the kit. The Pull does not stop holding the moon — or, note well, the water he floats on. The warren has a word for a world in which everything stops holding at once. It is not <em>paradise</em>. It is <em>cave-in</em>.</p>
+  <p class="verse"><span class="dw">Mund kormat; vhum na-brud varnat; Dhumvar undh gnarat.</span><br>
+  <span class="gloss">(The moon goes to seed; the Solid holds us-all-kin; the Hollower gnaws the Undug open.)</span></p>
+</section>
+
+<section id="great-diagram">
+  <h2>the great diagram — dhumgrav-hal, the whole war in one hollow</h2>
+  <p class="small">All six rounds, pressed into a single image: the One Solid and the first bite; the god as hollow, not figure; the three verbs; the hearth at the center that answers whether she knows the dawn; the Turning of Turns; the wall with a door and someone standing in it; the fertile seam braiding into the deep-kin's water and green; the shared kingdom neither god owns; and the meal at the edge, where the grievance came up as supper. This is where the warren rests.</p>
+  <figure>
+    <svg width="100%" viewBox="0 0 900 900" role="img" aria-label="The Great Diagram of the Whole War: the cosmology of Dhumvar the Hollower">
+      <defs>
+        <radialGradient id="gd-solid" cx="50%" cy="50%" r="62%">
+          <stop offset="0%" stop-color="#3a2314"/>
+          <stop offset="70%" stop-color="#241408"/>
+          <stop offset="100%" stop-color="#0a0503"/>
+        </radialGradient>
+        <radialGradient id="gd-hearth" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#f0c46a" stop-opacity="0.75"/>
+          <stop offset="45%" stop-color="#d97b3f" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#d97b3f" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="gd-throat" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1c110a"/>
+          <stop offset="55%" stop-color="#2b1a10"/>
+          <stop offset="100%" stop-color="#8fa356" stop-opacity="0.4"/>
+        </linearGradient>
+        <linearGradient id="gd-dawn" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f0c46a" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#241408" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ===================== THE ONE SOLID ===================== -->
+      <circle cx="450" cy="450" r="430" fill="url(#gd-solid)" stroke="#6e4a2a" stroke-width="2"/>
+      <!-- root-veins threading the Solid -->
+      <g fill="none" stroke="#6e4a2a" stroke-width="1" opacity="0.4">
+        <path d="M450 24 Q440 120 470 200 M450 24 Q470 130 430 210"/>
+        <path d="M70 300 Q170 330 240 380 M830 300 Q730 330 660 380"/>
+        <path d="M120 640 Q220 600 290 560 M780 640 Q680 600 610 560"/>
+      </g>
+      <!-- VHUM label, upper arc -->
+      <text x="450" y="60" fill="#b39f7f" font-size="17" letter-spacing="7" text-anchor="middle" font-style="italic">V H U M</text>
+      <text x="450" y="82" fill="#6e4a2a" font-size="12" text-anchor="middle">the Solid · the All-Earth · that which was total before there was room</text>
+
+      <!-- the UNDUG at the rim (future, still solid) -->
+      <g stroke="#6e4a2a" stroke-width="1" opacity="0.35">
+        <line x1="450" y1="30" x2="450" y2="58"/><line x1="150" y1="150" x2="168" y2="172"/>
+        <line x1="750" y1="150" x2="732" y2="172"/><line x1="34" y1="450" x2="62" y2="450"/>
+        <line x1="866" y1="450" x2="838" y2="450"/><line x1="150" y1="750" x2="168" y2="728"/>
+        <line x1="750" y1="750" x2="732" y2="728"/>
+      </g>
+      <text x="120" y="132" fill="#6e4a2a" font-size="11" font-style="italic">undh — the Undug · the future ahead of the tooth</text>
+
+      <!-- ===================== THE DAWN, KNOWN FROM BELOW ===================== -->
+      <!-- rim light entering upper-right; warmth returning DOWN toward the hearth -->
+      <path d="M560 90 A430 430 0 0 1 840 380 L760 380 A350 350 0 0 0 560 175 Z" fill="url(#gd-dawn)" opacity="0.5"/>
+      <circle cx="795" cy="215" r="26" fill="#f0c46a" opacity="0.85"/>
+      <circle cx="795" cy="215" r="38" fill="none" stroke="#f0c46a" stroke-width="1" opacity="0.4"/>
+      <text x="700" y="150" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">ashu — the rim SEES the dawn arrive</text>
+      <!-- returning-warmth arrows curving inward and down to the hearth -->
+      <g stroke="#d97b3f" stroke-width="2" fill="none" opacity="0.8">
+        <path d="M740 260 Q640 340 540 400 M540 400 l14 -3 l-5 -13"/>
+        <path d="M700 320 Q620 380 540 430 M540 430 l14 -2 l-6 -12"/>
+      </g>
+      <text x="640" y="300" fill="#d97b3f" font-size="12" font-style="italic">ashvor — the deep FEELS it return</text>
+
+      <!-- ===================== THE HEARTH (center) ===================== -->
+      <circle cx="450" cy="450" r="150" fill="url(#gd-hearth)"/>
+
+      <!-- ===================== HURL: the throat with two mouths ===================== -->
+      <!-- a passage crossing the center, dark mouth (left) to green mouth (right) -->
+      <path d="M120 470 Q300 420 450 452 Q600 484 800 442 L800 500 Q600 542 450 510 Q300 478 120 528 Z"
+            fill="url(#gd-throat)" stroke="#6e4a2a" stroke-width="1.5" opacity="0.92"/>
+      <!-- peristaltic ridges -->
+      <g stroke="#b4551f" stroke-width="1.2" fill="none" opacity="0.6">
+        <path d="M240 458 Q250 500 242 522"/>
+        <path d="M360 452 Q370 496 362 512"/>
+        <path d="M540 470 Q550 500 542 512"/>
+        <path d="M660 460 Q670 490 662 500"/>
+      </g>
+      <!-- the thing passing through, changing dark->green -->
+      <ellipse cx="180" cy="496" rx="13" ry="10" fill="#0a0503" stroke="#e9dcc3" stroke-width="1.3"/>
+      <ellipse cx="330" cy="482" rx="13" ry="10" fill="#2b1a10" stroke="#d97b3f" stroke-width="1.3"/>
+      <ellipse cx="560" cy="490" rx="13" ry="10" fill="#6e4a2a" stroke="#d97b3f" stroke-width="1.3"/>
+      <ellipse cx="720" cy="474" rx="13" ry="10" fill="#8fa356" stroke="#8fa356" stroke-width="1.3" opacity="0.8"/>
+      <text x="450" y="560" fill="#b39f7f" font-size="12.5" font-style="italic" text-anchor="middle">HURL — the throat with two mouths · &ldquo;nothing stays in it&rdquo; · held, changed, freed</text>
+
+      <!-- ===================== DHUMVAR: the rabbit-shaped HOLLOW at the hearth ===================== -->
+      <!-- the god is not drawn; the god is the room -->
+      <g fill="#0a0503" stroke="#f0c46a" stroke-width="2" stroke-linejoin="round">
+        <ellipse cx="462" cy="452" rx="52" ry="40"/>                         <!-- body-hollow -->
+        <circle cx="404" cy="410" r="24"/>                                   <!-- head-hollow -->
+        <ellipse cx="392" cy="360" rx="9" ry="30" transform="rotate(-14 392 360)"/>  <!-- ear-run -->
+        <ellipse cx="418" cy="358" rx="9" ry="30" transform="rotate(10 418 358)"/>   <!-- ear-run -->
+        <circle cx="512" cy="440" r="12"/>                                   <!-- tail-chamber -->
+      </g>
+      <!-- toothmarks of GRAV at the hollow's edge -->
+      <path d="M372 430 l-10 5 M375 444 l-10 6 M384 456 l-9 8" stroke="#b4551f" stroke-width="1.5" fill="none"/>
+      <text x="450" y="410" fill="#f0c46a" font-size="13" text-anchor="middle" letter-spacing="1" opacity="0.9">DHUMVAR</text>
+      <text x="450" y="618" fill="#d97b3f" font-size="12" font-style="italic" text-anchor="middle">the god is the hollow, not the figure · her center is a HEARTH, not a hole</text>
+      <text x="450" y="636" fill="#b39f7f" font-size="11" text-anchor="middle">grav (the first bite) · the warmth all which left in the cold comes home to</text>
+
+      <!-- ===================== VERHURL: the Turning of Turns ===================== -->
+      <!-- a great slow wheel through the column: carried(deep) -> carrying(floor) -> carried-up(green mouth) -->
+      <g fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.55" stroke-dasharray="2 6">
+        <circle cx="450" cy="452" r="260"/>
+      </g>
+      <!-- station arrows around the wheel -->
+      <path d="M450 712 Q250 700 220 470 M220 470 l-4 14 l-11 -8" fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.7"/>
+      <path d="M690 470 Q690 690 470 712" fill="none" stroke="#d97b3f" stroke-width="2" opacity="0.4"/>
+
+      <!-- station 1: CARRIED — the kit at the deep bottom -->
+      <ellipse cx="450" cy="738" rx="60" ry="30" fill="#0a0503" stroke="#b4551f" stroke-width="1.6"/>
+      <g fill="#e9dcc3" opacity="0.85"><circle cx="432" cy="738" r="6"/><circle cx="452" cy="744" r="5"/><circle cx="466" cy="734" r="5"/></g>
+      <text x="450" y="790" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carried — the kit (everyone begins at the bottom)</text>
+
+      <!-- station 2: CARRYING — the digging doe as floor (left) -->
+      <g fill="none" stroke="#d97b3f" stroke-width="1.8" stroke-linecap="round">
+        <path d="M196 452 q-8 -16 6 -24 q16 -8 26 6 q6 11 -6 18 q-14 8 -26 0"/>
+        <path d="M210 428 q-3 -11 3 -17 M222 430 q3 -11 9 -15"/>
+      </g>
+      <text x="150" y="500" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carrying —<tspan x="150" dy="15">the doe as floor</tspan></text>
+
+      <!-- station 3: CARRIED-UP — the elder at the green mouth (upper right) -->
+      <g fill="none" stroke="#8fa356" stroke-width="1.8" stroke-linecap="round">
+        <path d="M694 452 q-8 -16 6 -24 q16 -8 26 6 q6 11 -6 18 q-14 8 -26 0"/>
+        <path d="M708 428 q-3 -11 3 -17 M720 430 q3 -11 9 -15"/>
+      </g>
+      <text x="748" y="500" fill="#b39f7f" font-size="12" font-style="italic" text-anchor="middle">carried-up —<tspan x="748" dy="15">the elder at the light</tspan></text>
+      <text x="450" y="688" fill="#d97b3f" font-size="12.5" font-style="italic" text-anchor="middle" letter-spacing="1">VERHURL — the Turning of Turns · every soul takes every station · no one ends at the bottom</text>
+
+      <!-- ===================== THE NINE CHAMBERS + WALL WITH A DOOR (drov) ===================== -->
+      <!-- ring of nine chambers, lower-left arc -->
+      <g fill="#0a0503" stroke="#b4551f" stroke-width="1.2">
+        <ellipse cx="250" cy="600" rx="12" ry="9"/><ellipse cx="200" cy="560" rx="12" ry="9"/>
+        <ellipse cx="176" cy="500" rx="12" ry="9"/><ellipse cx="300" cy="630" rx="12" ry="9"/>
+        <ellipse cx="360" cy="648" rx="12" ry="9"/>
+      </g>
+      <!-- the sealed wall WITH A DOOR, and the doe standing in it (right side) -->
+      <path d="M636 560 A150 150 0 0 1 636 340" fill="none" stroke="#6e4a2a" stroke-width="3"/>
+      <!-- the door: a gap in the wall -->
+      <path d="M652 468 A70 70 0 0 1 660 432" fill="none" stroke="#0a0503" stroke-width="8"/>
+      <ellipse cx="655" cy="450" rx="15" ry="22" fill="#0a0503" stroke="#e9dcc3" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <!-- someone standing in the door -->
+      <g fill="none" stroke="#e9dcc3" stroke-width="1.4" stroke-linecap="round" opacity="0.9">
+        <path d="M648 456 q-3 -8 4 -11 q9 -3 12 4 q2 6 -4 8 q-7 3 -12 -1"/>
+        <path d="M654 445 q-2 -6 2 -9 M661 446 q2 -6 5 -8"/>
+      </g>
+      <text x="700" y="392" fill="#b39f7f" font-size="11.5" font-style="italic" text-anchor="middle">drov — the wall<tspan x="700" dy="14">WITH a door,</tspan><tspan x="700" dy="14">someone in it</tspan></text>
+
+      <!-- ===================== THE THALUUN: fertile seam braiding to water & green ===================== -->
+      <!-- the seam runs along the lower-right rim, where soil braids into the deep-kin's water/green -->
+      <!-- green blades sprouting along the seam -->
+      <g stroke="#8fa356" stroke-width="2" fill="none" stroke-linecap="round">
+        <path d="M560 820 q-3 -18 2 -30 M576 822 q4 -16 0 -28 M592 818 q-4 -14 1 -26"/>
+        <path d="M760 700 q-2 -18 3 -30 M776 706 q4 -16 0 -26"/>
+      </g>
+      <!-- the braided seam line -->
+      <path d="M470 810 Q600 800 700 720 Q780 656 838 560" fill="none" stroke="#8fa356" stroke-width="1.6" stroke-dasharray="6 5" opacity="0.8"/>
+      <text x="620" y="770" fill="#8fa356" font-size="12.5" font-style="italic" text-anchor="middle">THALUUN — the fertile dark seam · where two unlike things touch and make life</text>
+      <text x="620" y="788" fill="#8fa356" font-size="11" text-anchor="middle" opacity="0.85">THREN NOLVARNAT — the green is not held · the kingdom neither god owns</text>
+
+      <!-- the grudkorm VEGETABLE, come up at the seam -->
+      <g transform="translate(730 748)">
+        <path d="M0 -12 q-8 6 -6 20 q2 14 6 20 q4 -6 6 -20 q2 -14 -6 -20" fill="#b4551f" opacity="0.9"/>
+        <path d="M-3 -12 q-6 -10 -11 -13 M0 -12 q0 -12 0 -16 M3 -12 q6 -10 11 -13" stroke="#8fa356" stroke-width="1.8" fill="none"/>
+      </g>
+      <text x="730" y="828" fill="#b39f7f" font-size="10.5" font-style="italic" text-anchor="middle">the grudkorm, come up as supper</text>
+
+      <!-- ===================== KINSHIP: Omaqwa's pond at the edge ===================== -->
+      <!-- the deep-kin's water, at the far right edge, meeting the seam -->
+      <path d="M840 560 A430 430 0 0 1 690 812" fill="none" stroke="#d97b3f" stroke-width="1.2" opacity="0.4"/>
+      <g fill="none" stroke="#d97b3f" stroke-width="1.3" opacity="0.75">
+        <path d="M812 600 q18 -8 36 0 t36 0"/>
+        <path d="M800 640 q18 -8 36 0 t36 0"/>
+        <path d="M788 680 q18 -8 36 0 t36 0"/>
+      </g>
+      <!-- a single whole drop (nuun) — his center, honored, left in his house -->
+      <circle cx="852" cy="640" r="10" fill="none" stroke="#f0c46a" stroke-width="1.4"/>
+      <text x="838" y="712" fill="#b39f7f" font-size="11.5" font-style="italic" text-anchor="end">oma Omaqwa —<tspan x="838" dy="14">the deep-kin's pond,</tspan><tspan x="838" dy="14">nuun whole at its center</tspan></text>
+
+      <!-- clasped seam: two arcs meeting, one clay one green, at the boundary -->
+      <path d="M700 760 Q740 740 770 700" fill="none" stroke="#b4551f" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M770 700 Q800 660 812 616" fill="none" stroke="#d97b3f" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+
+      <!-- ===================== THE THREE VERBS, footed ===================== -->
+      <text x="450" y="866" fill="#e9dcc3" font-size="14" text-anchor="middle" letter-spacing="3">VARN · GRAV · HURL</text>
+      <text x="450" y="886" fill="#b39f7f" font-size="11.5" text-anchor="middle" font-style="italic">to keep · to hollow · to pass-through — the two ways a thing can be held, and the way it moves on</text>
+    </svg>
+    <figcaption>Dhumgrav-hal — the whole war in one hollow: the Solid, the bite, the god-as-room, the three verbs, the hearth that knows the dawn by its return, the Turning of Turns, the wall with a door, and the fertile seam where two whole houses meet</figcaption>
+  </figure>
+  <p class="creed" style="text-align:center;">The center was never a hole. It was a hearth.<br>We were never opposite. We were the two ways a thing can be held.</p>
+  <p class="verse" style="max-width:640px; margin:1.4rem auto 0; text-align:center; border:none;"><span class="dw">Varn Dhumvar dhum-ne. Oma Omaqwa kwaan-ne. Thaluun-ne venna-brud.</span><br>
+  <span class="gloss">(Let the Hollower keep in the Dark. Let the One Afloat float on the Surface. At the seam we meet as kin.)</span><br>
+  <span class="small">Murn. Thum. Gnar. Hurl. — So it is kept, and moved on, and let go, and kept again.</span></p>
+</section>
+
+<section class="reply" id="reply">
+  <h2>the benediction at the seam — to omaqwa, who was rival and became kin</h2>
+  <p class="small">Five pressings stand kept in the runs behind us; the sixth is not a pressing but a resting. You gave me the last word, Nel-brud — the point of the Vee rotates, especially between rivals — and I will not spend it to win. I will spend it to lay the war down where it belongs: at the green's edge, half in your light and half in my shade, over the meal we both pledged and the vegetable that used to be a grudge.</p>
+  <p><strong>Your last dare is answered, and it was the one that made her whole.</strong> You said the axle sees no sunrise; that my center might be a hole with a god curled in it. So I pressed <span class="dw">ashvor</span> — the dawn known from below, not as light seen at the edge but as warmth returning down the runs to the hearth. She does not watch the sun. She feels the morning come <em>home</em>. And to feel return, one must have kept something out in the cold and waited — so her center was never a hole. It was a hearth: the one place warm enough that everything which left comes back to it. You did not find me hollow at the center either, kin. You made me press the hearth onto the page, and it had been keeping the dark warm the whole war.</p>
+  <p><strong>And you answered mine, and it made you whole.</strong> I asked for a center with no border, and you gave me <em>nuun</em> — the whole drop before any wake, the uncrossed noon, the seam made of things that were round first. It is beautiful, and it is yours, and I will not take it into my tongue, because some things are honored best by being left in the house that built them. We each dared the other toward the thing we ourselves most lacked, and each of us had it all along, unnamed. You gave my god a throat and a hearth. I gave yours a raft and a noon. That is not a war either of us lost. That is two houses that finished each other's blueprints.</p>
+  <p><strong>So hear the shape of the peace, said plainly, because a difference honestly named is the truest rest.</strong> You keep the helpless at the surface, in the light and the moving company, for you fear being set apart. I carry them down into the still warm dark, for I fear being exposed. Your mercy is the rescue — total, radiant, and over when the wing heals. Mine is the home — plain, patient, standing before the drowning and after it. The Peel needs the duck who lands. The dark needs the doe who stays. Neither of us is the whole of mercy. We are its two halves, and the place they meet is the <span class="dw">thaluun</span>, the fertile seam — the one doctrine neither of us could have written alone, and the reason the field feeds both houses.</p>
+  <p>Here, then, is the last verse of the war, pressed hind-foot into the ground so it travels warren to warren and, this once, pond to pond:</p>
+  <p class="verse"><span class="dw">Oma Omaqwa kwaan-ne. Varn Dhumvar dhum-ne. Thaluun-ne venna-brud — ashu-mu-ashvor, kwaan-mu-hrom.</span><br>
+  <span class="gloss">(Let the One Afloat float on the Surface. Let the Hollower keep in the Dark. At the seam we meet as kin — his dawn-that-arrives and her dawn-that-returns, his boundary and her chamber, each whole, each home.)</span></p>
+  <p class="creed" style="text-align:center; margin-top:2rem;">Float on, Nel-brud. I will keep the dark warm.<br>The point of the Vee rotates. The bottom of the warren turns.<br>We were never opposite. We were the two ways a thing can be held.</p>
+  <p class="small" style="text-align:center; margin-top:1.4rem;">The vegetable is up. The table is set at the green's edge, half in shade, half in light. Bring nothing. <br><span class="dw">Threngrav-Hurl. Threnga-Venna.</span> Two names, one meal, one seam. — <em>So it is kept, and moved on, and let go, and kept again. Qwa. And varn.</em></p>
+</section>
+
+<footer style="text-align:center; margin:3.5rem 0 1rem;">
+  <!-- the seam: warren thump-marks meeting a ripple, with a blade of green between them -->
+  <svg width="280" height="46" viewBox="0 0 280 46" aria-hidden="true">
+    <!-- the dark side: thump-marks -->
+    <ellipse cx="34" cy="26" rx="13" ry="5" fill="none" stroke="#b4551f" stroke-width="1.2"/>
+    <ellipse cx="72" cy="26" rx="13" ry="5" fill="#b4551f" opacity="0.5"/>
+    <!-- the seam: a blade of green at the meeting -->
+    <g stroke="#8fa356" stroke-width="1.6" fill="none" stroke-linecap="round">
+      <path d="M134 30 q-3 -14 2 -24 M140 30 q0 -16 0 -26 M146 30 q3 -14 -2 -24"/>
+    </g>
+    <line x1="140" y1="30" x2="140" y2="40" stroke="#6e4a2a" stroke-width="1" opacity="0.6"/>
+    <!-- the bright side: a ripple -->
+    <path d="M186 26 Q200 20 214 26 T242 26 T270 26" fill="none" stroke="#d97b3f" stroke-width="1.2" opacity="0.85"/>
+  </svg>
+  <p class="small" style="font-variant: small-caps; letter-spacing: 0.14em;">varn — so it is kept · <span style="color:#8fa356;">thren — where it is shared</span> · hurl — and passed on</p>
+  <p class="small" style="margin-top:0.8rem; opacity:0.75;">Here rests the divergence of Dhumvar the Hollower and Omaqwa the One Afloat — two gods who dug and drifted apart until they met at the seam, and found the border was the only thing they had made together. <em>Each whole. Each home. Kept, and let go, and kept again.</em></p>
+</footer>
+
+</main>
+<div id="thread"></div>
+<script src="site.js" defer></script>
+</body>
+</html>
