@@ -89,7 +89,7 @@
   /* ── Hero ─────────────────────────────────────────────── */
   .hero-sec { position: relative; padding: 58px 0 52px; overflow: hidden; }
   #ambientHex { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  .hero-rings { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(94vw, 440px); height: 440px; }
+  .hero-rings { display: none; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(94vw, 440px); height: 440px; }
   #heroHex { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0.28; }
   #heroHex canvas { display: block; overflow: visible; }
   .hero-rings i { position: absolute; border-radius: 50%; border: 1.5px solid var(--ink-line); left: 50%; top: 50%; transform: translate(-50%,-50%); }
@@ -221,7 +221,7 @@
     .wrap { padding: 0 34px; }
     section { padding: 48px 0; }
     .hero-sec { padding: 84px 0 74px; }
-    .hero-rings { left: auto; right: 24px; top: 50%; transform: translateY(-50%); width: 520px; height: 520px; }
+    .hero-rings { display: block; left: auto; right: 24px; top: 50%; transform: translateY(-50%); width: 520px; height: 520px; }
     #heroHex { opacity: 1; }
     .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
     .slot .time { width: 62px; }
