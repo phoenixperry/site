@@ -343,7 +343,7 @@
         </div>
         <div class="col">
           <div class="h">Contact</div>
-          <a href="/cdn-cgi/l/email-protection#e2818d8c96838196a2928a8d878c8b9a928790909bcc818d8fdd91978088878196dfb6aab0b7afc7d0d2a18d8c96838196">Email the team</a>
+          <a href="#contact" id="contactLink" role="button">Email the team</a>
         </div>
       </div>
       <!--
@@ -354,6 +354,40 @@
       <p class="dedication">In memory of David Shannon Perry</p>
     </div>
   </footer>
+
+  <!-- ── Contact modal ── -->
+  <div class="overlay" id="contactOverlay" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+    <div class="modal">
+      <div class="modal-top">
+        <div>
+          <div class="eyebrow">Get in touch</div>
+          <h3 id="cTitle" style="margin-top:8px;font-size:26px;">Contact</h3>
+        </div>
+        <button class="x" id="cClose" aria-label="Close">✕</button>
+      </div>
+      <div id="cForm">
+        <div class="field">
+          <label for="cName">Your name</label>
+          <input type="text" id="cName" autocomplete="name" placeholder="e.g. Alex Rivera">
+        </div>
+        <div class="field">
+          <label for="cAddr">Address <span class="opt">optional</span></label>
+          <input type="text" id="cAddr" autocomplete="street-address" placeholder="Where we can reach you">
+        </div>
+        <div class="field">
+          <label for="cMsg">Message</label>
+          <textarea id="cMsg" rows="4" placeholder="Your message" style="width:100%;padding:12px 14px;border:1px solid var(--ink);background:var(--canvas);color:var(--ink);font:var(--wt-regular) 16px/1.5 var(--font-sans);border-radius:0;-webkit-appearance:none;resize:vertical;"></textarea>
+        </div>
+        <div class="err" id="cErr"></div>
+        <button class="btn" id="cSend">Send message</button>
+      </div>
+      <div id="cDone" style="display:none;text-align:center;padding:8px 0 2px;">
+        <h3 style="font-size:22px;">Thanks, message sent</h3>
+        <p class="body" style="margin-top:8px;">We'll be in touch soon.</p>
+        <button class="btn outline" id="cDoneBtn" style="width:100%;margin-top:18px;">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Booking modal ── -->
   <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle">
@@ -414,7 +448,7 @@
     </svg>
   </template>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
   (function () {
     var CAP = 6;
     var STORE = 'rt_bookings_v1';
@@ -593,5 +627,44 @@
   </script>
 
   <script src="hero-hex.js"></script>
+  <script>
+    // Contact form modal → opens the visitor's mail client, addressed to us
+    (function () {
+      var link = document.getElementById('contactLink');
+      var ov = document.getElementById('contactOverlay');
+      var close = document.getElementById('cClose');
+      var send = document.getElementById('cSend');
+      var err = document.getElementById('cErr');
+      var last = null;
+      var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxrRtbf-OrMxkavuXKKFvGPtuKBlCVg-mCSlYiJMhlgqf-acRc0jBqsvJK5m063Sqlfhw/exec';
+      var form = document.getElementById('cForm');
+      var done = document.getElementById('cDone');
+      function open(e) { if (e) e.preventDefault(); form.style.display = ''; done.style.display = 'none'; err.classList.remove('show'); last = document.activeElement; ov.classList.add('open'); document.body.style.overflow = 'hidden'; setTimeout(function () { document.getElementById('cName').focus(); }, 40); }
+      function shut() { ov.classList.remove('open'); document.body.style.overflow = ''; if (last && last.focus) last.focus(); }
+      if (link) link.addEventListener('click', open);
+      close.addEventListener('click', shut);
+      ov.addEventListener('click', function (e) { if (e.target === ov) shut(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ov.classList.contains('open')) shut(); });
+      send.addEventListener('click', function () {
+        var name = document.getElementById('cName').value.trim();
+        var addr = document.getElementById('cAddr').value.trim();
+        var msg = document.getElementById('cMsg').value.trim();
+        if (!name) { err.textContent = 'Please add your name.'; err.classList.add('show'); return; }
+        if (!msg) { err.textContent = 'Please add a message.'; err.classList.add('show'); return; }
+        err.classList.remove('show');
+        // send to the Google Sheet's Contact tab (fire-and-forget; opaque response)
+        try {
+          fetch(ENDPOINT, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ type: 'contact', name: name, address: addr, message: msg })
+          }).catch(function () {});
+        } catch (e) {}
+        document.getElementById('cName').value = ''; document.getElementById('cAddr').value = ''; document.getElementById('cMsg').value = '';
+        form.style.display = 'none'; done.style.display = 'block';
+      });
+      document.getElementById('cDoneBtn').addEventListener('click', shut);
+    })();
+  </script>
 </body>
 </html>
