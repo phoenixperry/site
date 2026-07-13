@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <style>
   /* ── Resonant Thrum tokens (mirrored from the design system) ── */
   :root {
@@ -53,8 +54,8 @@
 
   .hairline { height: 1px; background: var(--ink-line); width: 100%; }
   .rule-ink { height: 2px; background: var(--ink); width: 100%; }
-  section { padding: 46px 0; }
-  section + section { border-top: 1px solid var(--ink-line); }
+  section { padding: 36px 0; position: relative; z-index: 1; }
+  .hero-sec, footer { position: relative; z-index: 1; }
 
   /* ── Top bar ──────────────────────────────────────────── */
   .topbar {
@@ -87,14 +88,17 @@
 
   /* ── Hero ─────────────────────────────────────────────── */
   .hero-sec { position: relative; padding: 58px 0 52px; overflow: hidden; }
-  .hero-rings { position: absolute; right: -120px; top: -40px; width: 460px; height: 460px; pointer-events: none; }
+  #ambientHex { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .hero-rings { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 420px; height: 420px; }
+  #heroHex { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0.28; }
+  #heroHex canvas { display: block; overflow: visible; }
   .hero-rings i { position: absolute; border-radius: 50%; border: 1.5px solid var(--ink-line); left: 50%; top: 50%; transform: translate(-50%,-50%); }
   .hero-rings i.solid { border-color: var(--ink); }
   .hero-rings .core { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border-radius: 50%; background: var(--ink); }
   .hero-sec .wrap { position: relative; }
-  .hero-meta { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--ink); margin-top: 30px; }
-  .hero-meta .cell { flex: 1 1 33%; min-width: 110px; padding: 13px 15px; border-right: 1px solid var(--ink-line); }
-  .hero-meta .cell:last-child { border-right: none; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 10px 36px; margin-top: 30px; }
+  .hero-meta .cell { flex: 0 0 auto; min-width: 90px; }
+  .hero-meta .cell:last-child { }
   .hero-meta .l { font: var(--wt-medium) 9.5px/1 var(--font-sans); letter-spacing: 2px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 7px; }
   .hero-meta .v { font: var(--wt-medium) 19px/1 var(--font-display); letter-spacing: -0.3px; }
 
@@ -215,10 +219,10 @@
   /* More air + two-up slot grid on tablets and laptops. */
   @media (min-width: 760px) {
     .wrap { padding: 0 34px; }
-    section { padding: 62px 0; }
+    section { padding: 48px 0; }
     .hero-sec { padding: 84px 0 74px; }
-    .hero-rings { width: 540px; height: 540px; right: -70px; top: -46px; }
-
+    .hero-rings { width: 520px; height: 520px; right: 24px; top: 50%; }
+    #heroHex { opacity: 1; }
     .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
     .slot .time { width: 62px; }
   }
@@ -235,6 +239,7 @@
 </style>
 </head>
 <body>
+  <div id="ambientHex" aria-hidden="true"></div>
 
   <!-- ── Top bar ── -->
   <div class="topbar">
@@ -247,11 +252,7 @@
   <!-- ── Hero ── -->
   <section class="hero-sec" data-screen-label="Hero">
     <div class="hero-rings" aria-hidden="true">
-      <i style="width:460px;height:460px;"></i>
-      <i class="solid" style="width:320px;height:320px;opacity:0.6;"></i>
-      <i style="width:200px;height:200px;"></i>
-      <i class="solid" style="width:96px;height:96px;"></i>
-      <span class="core"></span>
+      <div id="heroHex"></div>
     </div>
     <div class="wrap">
       <div class="eyebrow ink">A group biofeedback experience</div>
@@ -291,20 +292,20 @@
     <div class="wrap">
       <div class="eyebrow">What to expect</div>
       <h2 style="margin-top:14px;">Before you sign up</h2>
-      <div style="margin-top:22px;display:flex;flex-direction:column;gap:0;border:1px solid var(--ink);">
-        <div style="padding:16px 16px;border-bottom:1px solid var(--ink-line);">
+      <div style="margin-top:22px;display:flex;flex-direction:column;gap:24px;">
+        <div>
           <div class="sec-head">The format</div>
           <p class="body" style="margin-top:7px;">You'll sit on a meditation cushion on the floor for <strong style="font-weight:500;">3–5 minutes</strong> during the piece, then take part in a short <strong style="font-weight:500;">3–4 minute discussion</strong> about your experience afterwards.</p>
         </div>
-        <div style="padding:16px 16px;border-bottom:1px solid var(--ink-line);">
+        <div>
           <div class="sec-head">Heart-rate data</div>
           <p class="body" style="margin-top:7px;">A sensor you will wear on your arm reads your pulse during the session. Readings are recorded and <strong style="font-weight:500;">anonymised</strong> for research.</p>
         </div>
-        <div style="padding:16px 16px;border-bottom:1px solid var(--ink-line);">
+        <div>
           <div class="sec-head">Photography &amp; recording</div>
           <p class="body" style="margin-top:7px;">The group may be photographed, audio- or video-recorded for documentation and academic presentation.</p>
         </div>
-        <div style="padding:16px 16px;">
+        <div>
           <div class="sec-head">It's voluntary</div>
           <p class="body" style="margin-top:7px;">Taking part is entirely voluntary. You can withdraw at any time, before or during the session, no reason needed.</p>
         </div>
@@ -339,6 +340,10 @@
           <div class="h">Where</div>
           <p>Dark Room 1</p>
           <p class="muted">Ground Floor · Art Exhibition</p>
+        </div>
+        <div class="col">
+          <div class="h">Contact</div>
+          <a href="/cdn-cgi/l/email-protection#e2818d8c96838196a2928a8d878c8b9a928790909bcc818d8fdd91978088878196dfb6aab0b7afc7d0d2a18d8c96838196">Email the team</a>
         </div>
       </div>
       <!--
@@ -409,7 +414,7 @@
     </svg>
   </template>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   (function () {
     var CAP = 6;
     var STORE = 'rt_bookings_v1';
@@ -417,12 +422,12 @@
     //    Empty = prototype mode (saves to this device only).
     var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxrRtbf-OrMxkavuXKKFvGPtuKBlCVg-mCSlYiJMhlgqf-acRc0jBqsvJK5m063Sqlfhw/exec';
     var lunch = ['12:00','12:10','12:20','12:30','12:40','12:50'];
-    var eve = (function () { var a = []; for (var h = 18; h < 21; h++) { for (var m = 0; m < 60; m += 10) { a.push(h + ':' + (m < 10 ? '0' + m : m)); } } return a; })();
+    var eve = ['19:00','19:10','19:20','19:30','19:40','19:50'];
     var DAYS = [
       { key: 'tue',    label: 'Tuesday',              window: '12:00–13:00', times: lunch },
       { key: 'wed',    label: 'Wednesday',            window: '12:00–13:00', times: lunch },
       { key: 'thu',    label: 'Thursday',             window: '12:00–13:00', times: lunch },
-      { key: 'wedeve', label: 'Wednesday · opening',  window: '18:00–21:00', times: eve   }
+      { key: 'wedeve', label: 'Wednesday · opening',  window: '19:00–20:00', times: eve   }
     ];
 
     function load() {
@@ -587,5 +592,6 @@
   })();
   </script>
 
+  <script src="hero-hex.js"></script>
 </body>
 </html>
