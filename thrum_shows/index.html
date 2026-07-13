@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <title>Resonant Thrum — Book a session</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,7 +121,9 @@
     font-family: var(--font-sans);
   }
   .slot:hover:not(:disabled) { background: var(--ink-faint); }
-  .slot .time { font: var(--wt-medium) 17px/1 var(--font-display); letter-spacing: -0.2px; width: 58px; flex: none; }
+  .slot .time { font: var(--wt-medium) 17px/1 var(--font-display); letter-spacing: -0.2px; width: 58px; flex: none; color: var(--ink); }
+  /* Neutralise iOS data-detector styling on times */
+  .slot .time a, a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
   .dots { display: flex; gap: 5px; }
   .dots i { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--ink); display: block; }
   .dots i.filled { background: var(--ink); }
@@ -337,10 +340,6 @@
           <p>Dark Room 1</p>
           <p class="muted">Ground Floor · Art Exhibition</p>
         </div>
-        <div class="col">
-          <div class="h">Contact</div>
-          <a href="/cdn-cgi/l/email-protection#65150d0a000b0c1d4b150017171c25041711164b04064b100e" style="text-decoration:underline;"><span class="__cf_email__" data-cfemail="9eeef6f1fbf0f7e6b0eefbecece7deffeceaedb0fffdb0ebf5">[email&#160;protected]</span></a>
-        </div>
       </div>
       <!--
         Booking + mailing-list data is collected in the connected Google Sheet.
@@ -410,7 +409,7 @@
     </svg>
   </template>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
   (function () {
     var CAP = 6;
     var STORE = 'rt_bookings_v1';
