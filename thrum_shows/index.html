@@ -626,7 +626,142 @@
   })();
   </script>
 
-  <script src="hero-hex.js"></script>
+  <script>
+// Resonant Thrum — page hexagons (p5 instance mode), two layers:
+//  1) #ambientHex — a fixed, full-page background of faint hexes roaming the
+//     whole viewport.
+//  2) #heroHex — the honeycomb + isometric cube in the header; on tap / hover
+//     the circle emerges from the cube and expands into a pulsing sun ring.
+(function () {
+  const INK = [17, 17, 17];
+
+  function hexPath(s, cx, cy, r, rot) {
+    s.beginShape();
+    for (let i = 0; i < 6; i++) {
+      const a = rot - s.HALF_PI + i * s.PI / 3;
+      s.vertex(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+    }
+    s.endShape(s.CLOSE);
+  }
+  const easeInOut = (x) => x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3) / 2;
+  function heartbeat(tsec) {
+    const ph = (tsec % 1);
+    const g = (c, w) => Math.exp(-Math.pow((ph - c) / w, 2));
+    return g(0.10, 0.045) + g(0.26, 0.06) * 0.55;
+  }
+
+  // ── 1. Ambient full-page field ────────────────────────────────────────────
+  const ambientMount = document.getElementById('ambientHex');
+  if (ambientMount && typeof p5 !== 'undefined') {
+    new p5(function (s) {
+      let field = [];
+      function seed() {
+        field = [];
+        const area = window.innerWidth * window.innerHeight;
+        const n = Math.round(Math.min(46, Math.max(16, area / 46000)));
+        const base = Math.min(window.innerWidth, window.innerHeight);
+        for (let i = 0; i < n; i++) {
+          const ang = s.random(s.TWO_PI), spd = s.random(0.05, 0.22);
+          field.push({
+            x: s.random(window.innerWidth), y: s.random(window.innerHeight),
+            r: s.random(0.03, 0.11) * base,
+            rot: s.random(s.TWO_PI), spin: s.random(-1, 1) * 0.0005,
+            vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+            w: s.random(0.5, 1.2), a: s.random(9, 19)
+          });
+        }
+      }
+      s.setup = function () {
+        const c = s.createCanvas(window.innerWidth, window.innerHeight);
+        c.parent(ambientMount);
+        seed();
+      };
+      s.windowResized = function () { s.resizeCanvas(window.innerWidth, window.innerHeight); seed(); };
+      s.draw = function () {
+        s.clear();
+        s.noFill();
+        for (const h of field) {
+          h.x += h.vx; h.y += h.vy; h.rot += h.spin;
+          const m = h.r + 20;
+          if (h.x < -m) h.x = s.width + m; else if (h.x > s.width + m) h.x = -m;
+          if (h.y < -m) h.y = s.height + m; else if (h.y > s.height + m) h.y = -m;
+          s.stroke(INK[0], INK[1], INK[2], h.a);
+          s.strokeWeight(h.w);
+          hexPath(s, h.x, h.y, h.r, h.rot);
+        }
+      };
+    });
+  }
+
+  // ── 2. Hero honeycomb ──────────────────────────────────────────────────────
+  const heroMount = document.getElementById('heroHex');
+  if (heroMount && typeof p5 !== 'undefined') {
+    new p5(function (s) {
+      let seeds = [], R, t0, emerging = false, emergeStart = 0;
+      const size = () => Math.min(heroMount.clientWidth, heroMount.clientHeight);
+      const computeR = () => size() * 0.12;
+      function makeSeeds() { seeds = []; for (let i = 0; i < 7; i++) seeds.push({ homeAng: (i - 1) * 60 }); }
+      const trigger = () => { if (!emerging) { emerging = true; emergeStart = (s.millis() - t0) / 1000; } };
+
+      s.setup = function () {
+        const c = s.createCanvas(heroMount.clientWidth, heroMount.clientHeight);
+        c.parent(heroMount);
+        R = computeR(); t0 = s.millis(); makeSeeds();
+        heroMount.addEventListener('pointerdown', trigger);
+        heroMount.addEventListener('pointermove', trigger);
+      };
+      s.windowResized = function () { s.resizeCanvas(heroMount.clientWidth, heroMount.clientHeight); R = computeR(); };
+
+      s.draw = function () {
+        s.clear();
+        const tsec = (s.millis() - t0) / 1000;
+        const hb = heartbeat(tsec);
+        const rr = R, cx = s.width / 2, cy = s.height / 2;
+        let emergeE = 0;
+        if (emerging) emergeE = easeInOut(s.constrain((tsec - emergeStart) / 2.6, 0, 1));
+
+        for (let i = 0; i < 7; i++) {
+          let x = cx, y = cy;
+          if (i > 0) {
+            const a = s.radians(seeds[i].homeAng);
+            x = cx + Math.cos(a) * Math.sqrt(3) * rr;
+            y = cy + Math.sin(a) * Math.sqrt(3) * rr;
+          }
+          if (i === 0 && emerging) {
+            const blush = Math.sin(emergeE * s.PI);
+            s.noStroke();
+            s.fill(255, s.lerp(255, 188, blush), s.lerp(255, 204, blush), 120 * blush);
+            hexPath(s, x, y, rr, 0);
+          }
+          s.stroke(INK[0], INK[1], INK[2], 150);
+          s.strokeWeight(1.4);
+          s.noFill();
+          hexPath(s, x, y, rr, 0);
+          if (i === 0) {
+            s.stroke(INK[0], INK[1], INK[2], 190);
+            s.strokeWeight(1.2);
+            for (const vi of [1, 3, 5]) {
+              const va = -s.HALF_PI + vi * s.PI / 3;
+              s.line(x, y, x + Math.cos(va) * rr, y + Math.sin(va) * rr);
+            }
+          }
+        }
+
+        if (emerging) {
+          const breathe = 1 - hb * 0.09;
+          const d = s.lerp(rr * 0.66, 7.4 * rr, emergeE) * breathe;
+          const lift = -Math.sin(emergeE * s.PI) * rr * 0.18;
+          s.noFill();
+          s.stroke(INK[0], INK[1], INK[2], 210);
+          s.strokeWeight(s.lerp(1.4, 1.8, emergeE));
+          s.circle(cx, cy + lift, d);
+        }
+      };
+    });
+  }
+})();
+
+</script>
   <script>
     // Contact form modal → opens the visitor's mail client, addressed to us
     (function () {
