@@ -79,7 +79,7 @@
     background: var(--ink); color: var(--on-ink); border: 1px solid var(--ink);
     transition: opacity .15s ease;
   }
-  .btn:hover { opacity: 0.82; }
+  .btn:hover { opacity: 0.82; color: #cfcfcf; }
   .btn.small { height: 38px; padding: 0 15px; font-size: 11px; letter-spacing: 2px; }
   .btn.outline { background: var(--canvas); color: var(--ink); }
   .btn.outline:hover { background: var(--ink); color: var(--on-ink); opacity: 1; }
@@ -667,7 +667,7 @@
             r: s.random(0.03, 0.11) * base,
             rot: s.random(s.TWO_PI), spin: s.random(-1, 1) * 0.0005,
             vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-            w: s.random(0.5, 1.2), a: s.random(9, 19)
+            w: s.random(0.5, 1.2), a: s.random(14, 26)
           });
         }
       }
