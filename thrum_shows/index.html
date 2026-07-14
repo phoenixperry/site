@@ -456,12 +456,16 @@
     //    Empty = prototype mode (saves to this device only).
     var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxc75rbKYODWNX-d_v86QsY5GojuWa0FsB-nnSUfk1Ia7-8GZWydnEx49sI4LmJpbLpKA/exec';
     var lunch = ['12:00','12:10','12:20','12:30','12:40','12:50'];
+    var aft = ['16:00','16:10','16:20'];
     var eve = ['19:00','19:10','19:20','19:30','19:40','19:50'];
     var DAYS = [
-      { key: 'tue',    label: 'Tuesday',              window: '12:00–13:00', times: lunch },
-      { key: 'wed',    label: 'Wednesday',            window: '12:00–13:00', times: lunch },
-      { key: 'thu',    label: 'Thursday',             window: '12:00–13:00', times: lunch },
-      { key: 'wedeve', label: 'Wednesday · opening',  window: '19:00–20:00', times: eve   }
+      { key: 'tue',    label: 'Tuesday',               window: '12:00–13:00', times: lunch },
+      { key: 'tueaft', label: 'Tuesday · afternoon',   window: '16:00–16:30', times: aft   },
+      { key: 'wed',    label: 'Wednesday',             window: '12:00–13:00', times: lunch },
+      { key: 'wedaft', label: 'Wednesday · afternoon', window: '16:00–16:30', times: aft   },
+      { key: 'thu',    label: 'Thursday',              window: '12:00–13:00', times: lunch },
+      { key: 'thuaft', label: 'Thursday · afternoon',  window: '16:00–16:30', times: aft   },
+      { key: 'wedeve', label: 'Wednesday · opening',   window: '19:00–20:00', times: eve   }
     ];
 
     function load() {
