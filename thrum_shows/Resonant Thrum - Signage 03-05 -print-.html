@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resonant Thrum · Exhibition Signage</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e7e7e6;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 56px;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  a { color: var(--ink); }
+  a:hover { color: var(--ink-muted); }
+
+  /* ── Board header ───────────────────────────────────────── */
+  .board-head { margin-bottom: 44px; max-width: 760px; }
+  .board-eyebrow {
+    font: var(--weight-medium) 11px/1 var(--font-sans);
+    letter-spacing: 2.6px; text-transform: uppercase;
+    color: var(--ink-muted); margin-bottom: 14px;
+  }
+  .board-title {
+    font: var(--weight-medium) 44px/1.05 var(--font-display);
+    letter-spacing: -0.6px; color: var(--ink); margin-bottom: 14px;
+  }
+  .board-sub { font: var(--weight-regular) 14px/1.55 var(--font-sans); color: var(--ink-muted); }
+
+  /* ── Board grid: 3 rows (pieces) × 2 cols (options) ─────── */
+  .board {
+    display: grid;
+    grid-template-columns: repeat(2, 210mm);
+    gap: 26px 40px;
+    align-items: start;
+  }
+  .cell { display: flex; flex-direction: column; }
+  .cell-label {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px;
+  }
+  .cell-num { font: var(--weight-medium) 13px/1 var(--font-display); color: var(--ink); }
+  .cell-name {
+    font: var(--weight-medium) 10px/1 var(--font-sans);
+    letter-spacing: 2.2px; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .cell-opt {
+    margin-left: auto;
+    font: var(--weight-medium) 10px/1 var(--font-sans);
+    letter-spacing: 2px; text-transform: uppercase; color: var(--ink);
+    border: 1px solid var(--ink); padding: 4px 8px;
+  }
+
+  /* ── A4 sheet ───────────────────────────────────────────── */
+  .sheet {
+    width: 210mm;
+    height: 297mm;
+    background: #fff;
+    color: var(--ink);
+    padding: 16mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 48px -18px rgba(0,0,0,0.30);
+    overflow: hidden;
+  }
+
+  .sheet-hex { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .sheet > *:not(.sheet-hex) { position: relative; z-index: 1; }
+
+  /* ── Signage type scale (poster) ────────────────────────── */
+  .eyebrow {
+    font: var(--weight-medium) 12px/1 var(--font-sans);
+    letter-spacing: 3px; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .eyebrow.ink { color: var(--ink); }
+  .kicker {
+    font: var(--weight-medium) 13px/1 var(--font-sans);
+    letter-spacing: 3.4px; text-transform: uppercase; color: var(--ink);
+  }
+  .hero { font: var(--weight-medium) 60px/0.98 var(--font-display); letter-spacing: -1.4px; }
+  .h1 { font: var(--weight-medium) 40px/1.02 var(--font-display); letter-spacing: -0.8px; }
+  .h2 { font: var(--weight-medium) 27px/1.08 var(--font-display); letter-spacing: -0.4px; }
+  .h3 { font: var(--weight-medium) 19px/1.15 var(--font-display); letter-spacing: -0.2px; }
+  .num { font: var(--weight-medium) 34px/1 var(--font-display); letter-spacing: -0.6px; }
+  .body { font: var(--weight-regular) 14px/1.55 var(--font-sans); color: var(--ink); }
+  .body.muted { color: var(--ink-muted); }
+  .small { font: var(--weight-regular) 12px/1.5 var(--font-sans); color: var(--ink-muted); }
+  .fine { font: var(--weight-regular) 10.5px/1.45 var(--font-sans); color: var(--ink-muted); }
+  .sec-head {
+    font: var(--weight-bold) 11px/1 var(--font-sans);
+    letter-spacing: 2.6px; text-transform: uppercase; color: var(--ink);
+  }
+
+  .hairline { height: 1px; background: var(--ink-line); width: 100%; }
+  .rule-ink { height: 2px; background: var(--ink); }
+
+  /* Sheet header block */
+  .sheet-top { display: flex; align-items: flex-start; }
+  .brandmark { display: flex; align-items: center; gap: 10px; }
+  .brandmark .hexmark { width: 24px; height: 24px; display: block; flex: none; }
+  /* Honeycomb-in-circle centrepiece (dominant motif) */
+  .comb-hero { display: block; }
+  .comb-hero polygon, .comb-hero circle { vector-effect: non-scaling-stroke; }
+  .brandmark .name {
+    font: var(--weight-medium) 12px/1 var(--font-sans);
+    letter-spacing: 2.6px; text-transform: uppercase; color: var(--ink);
+  }
+
+  /* ── Concentric rings hero ──────────────────────────────── */
+  .rings-hero { position: relative; }
+  .rings-hero .ring {
+    position: absolute; border-radius: 50%; border: 1.5px solid var(--ink);
+    left: 50%; top: 50%; transform: translate(-50%,-50%);
+  }
+  .rings-hero .ring.faint { border-color: var(--ink-line); }
+  .rings-hero .core {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    border-radius: 50%; background: var(--ink);
+  }
+  .rings-hero .center-label {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+
+  /* ── Arrow ──────────────────────────────────────────────── */
+  .arrow-svg { display: block; }
+
+  /* ── Chips / meta ───────────────────────────────────────── */
+  .metarow { display: flex; gap: 0; border: 1px solid var(--ink); }
+  .metacell { flex: 1; padding: 12px 14px; border-right: 1px solid var(--ink-line); }
+  .metacell:last-child { border-right: none; }
+  .metacell .mlab {
+    font: var(--weight-medium) 9.5px/1 var(--font-sans);
+    letter-spacing: 2px; text-transform: uppercase; color: var(--ink-muted);
+    margin-bottom: 7px;
+  }
+  .metacell .mval { font: var(--weight-medium) 20px/1 var(--font-display); letter-spacing: -0.4px; color: var(--ink); }
+
+  /* ── QR placeholder ─────────────────────────────────────── */
+  .qr {
+    width: 108px; height: 108px; border: 1.5px solid var(--ink);
+    position: relative; flex: none; background: #fff;
+    display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr);
+    padding: 8px; gap: 2px;
+  }
+  .qr i { background: var(--ink); }
+  .qr .blank { background: transparent; }
+  .qr-block { display: flex; align-items: center; gap: 14px; }
+  .qr-block .qr-txt { display: flex; flex-direction: column; gap: 4px; }
+
+  /* ── Consent checkboxes / fields ────────────────────────── */
+  .check-row { display: flex; gap: 12px; align-items: flex-start; }
+  .chk { width: 18px; height: 18px; border: 1.5px solid var(--ink); flex: none; margin-top: 1px; }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field .flab {
+    font: var(--weight-medium) 9.5px/1 var(--font-sans);
+    letter-spacing: 2px; text-transform: uppercase; color: var(--ink-muted);
+  }
+  .field .fline { height: 1px; background: var(--ink); margin-top: 22px; }
+
+  /* ── Sign-up grid ───────────────────────────────────────── */
+  .signup-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+  .day-block { display: flex; flex-direction: column; }
+  .day-head { display: flex; align-items: baseline; gap: 8px; padding-bottom: 6px; }
+  .day-head .dname { font: var(--weight-medium) 15px/1 var(--font-display); letter-spacing: -0.2px; }
+  .day-head .dwin {
+    font: var(--weight-medium) 9.5px/1 var(--font-sans);
+    letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink-muted);
+    margin-left: auto;
+  }
+  .slotrow { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .slotrow + .slotrow { border-top: 1px solid var(--ink-line); }
+  .slotrow .stime {
+    font: var(--weight-medium) 12px/1 var(--font-display); letter-spacing: -0.2px;
+    width: 42px; flex: none; color: var(--ink);
+  }
+  .slotrow .blanks { display: flex; gap: 5px; flex: 1; }
+  .slotrow .blanks span { flex: 1; height: 1px; background: var(--ink-line); align-self: flex-end; margin-bottom: 3px; }
+
+  /* Footer strip */
+  .sheet-foot {
+    margin-top: auto; padding-top: 12px;
+    display: flex; align-items: flex-end; gap: 14px;
+  }
+  .sheet-foot .credit { font: var(--weight-regular) 10px/1.4 var(--font-sans); color: var(--ink-muted); }
+
+  /* ── Consent notice + name lines ────────────────────────── */
+  .notice { border: 1px solid var(--ink); padding: 13px 16px; display: flex; gap: 14px; align-items: flex-start; }
+  .notice-mark { width: 26px; height: 26px; position: relative; flex: none; margin-top: 2px; }
+  .notice-mark i { position: absolute; border-radius: 50%; border: 1.5px solid var(--ink); }
+  .notice-mark .m1 { inset: 0; }
+  .notice-mark .m2 { inset: 8px; }
+  .namelines { display: flex; flex-direction: column; }
+  .namelines.two { display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
+  .nl { display: flex; align-items: flex-end; gap: 9px; padding-top: 17px; }
+  .nl .nnum { font: var(--weight-medium) 12px/1 var(--font-display); color: var(--ink-muted); width: 16px; text-align: right; padding-bottom: 3px; flex: none; }
+  .nl .nline { flex: 1; height: 1px; background: var(--ink-line); }
+
+  /* ── Print: one A4 per page ─────────────────────────────── */
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    body { background: #fff; padding: 0; width: auto; }
+    .board-head, .cell-label { display: none !important; }
+    .board { display: block; gap: 0; }
+    .cell { display: block; }
+    .sheet { box-shadow: none; break-after: page; page-break-after: always; }
+  }
+  .qr-img { width: 104px; height: 104px; padding: 6px; border: 1.5px solid var(--ink); background: #fff; object-fit: contain; display: block; flex: none; }
+</style>
+<style media="all">
+  /* Print export: sheets 03 Wayfinding, 04 Notice, 05 Guided — one A4 per page */
+  body { padding: 0 !important; background: #fff !important; width: auto !important; min-width: 0 !important; }
+  .board-head { display: none !important; }
+  .board { display: block !important; }
+  .cell-label { display: none !important; }
+  .cell { display: none !important; margin: 0 !important; }
+  .cell:nth-of-type(3), .cell:nth-of-type(4), .cell:nth-of-type(5) { display: block !important; }
+  .sheet { box-shadow: none !important; margin: 0 !important; page-break-after: always; }
+  .cell:nth-of-type(5) .sheet { page-break-after: auto; }
+  .sheet-hex { display: none !important; }
+  @page { size: A4; margin: 0; }
+</style>
+</head>
+<body>
+
+  <header class="board-head">
+    <div class="board-eyebrow">Resonant Thrum · Exhibition Signage</div>
+    <h1 class="board-title">Signage Set</h1>
+    <p class="board-sub">Wayfinding placards (two layout options) plus a recording &amp; consent notice for the research showcase. A4 portrait, built on the Resonant Thrum tokens: Space Grotesk &amp; DM Sans, pure black-and-white, square corners. Booking, consent, and mailing-list sign-up all happen online · participants scan the QR. Print gives one A4 per option.</p>
+  </header>
+
+  <div class="board">
+
+    <!-- ══════════════════════════ 1 · WAYFINDING · OPTION B ══ -->
+    <div class="cell">
+      <div class="cell-label"><span class="cell-num">01</span><span class="cell-name">Wayfinding</span><span class="cell-opt">A4</span></div>
+      <div class="sheet" data-screen-label="Wayfinding B"><canvas class="sheet-hex"></canvas>
+        <!-- ring watermark bleeding off the right edge -->
+        <div class="rings-hero" style="position:absolute;inset:0;pointer-events:none;">
+          <div class="ring faint" style="width:230mm;height:230mm;left:78%;top:26%;"></div>
+          <div class="ring faint" style="width:160mm;height:160mm;left:78%;top:26%;"></div>
+          <div class="ring" style="width:96mm;height:96mm;left:78%;top:26%;"></div>
+          <div class="ring faint" style="width:52mm;height:52mm;left:78%;top:26%;"></div>
+          <div class="core" style="width:12mm;height:12mm;left:78%;top:26%;"></div>
+        </div>
+
+        <div class="sheet-top" style="position:relative;">
+          <div class="brandmark"><svg class="hexmark" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="#000" stroke-width="1.2"></circle><g fill="none" stroke="#000" stroke-width="1.2" stroke-linejoin="round" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="29.5,21.33 27,25.66 22,25.66 19.5,21.33 22,17 27,17"></polygon><polygon points="22,25.66 19.5,29.99 14.5,29.99 12,25.66 14.5,21.33 19.5,21.33"></polygon><polygon points="14.5,21.33 12,25.66 7,25.66 4.5,21.33 7,17 12,17"></polygon><polygon points="14.5,12.67 12,17 7,17 4.5,12.67 7,8.34 12,8.34"></polygon><polygon points="22,8.34 19.5,12.67 14.5,12.67 12,8.34 14.5,4.01 19.5,4.01"></polygon><polygon points="29.5,12.67 27,17 22,17 19.5,12.67 22,8.34 27,8.34"></polygon></g><g fill="none" stroke="#000" stroke-width="1.2" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="22,17 19.5,21.33 14.5,21.33 12,17 14.5,12.67 19.5,12.67"></polygon></g></svg><span class="name">Resonant Thrum</span></div>
+          <span class="eyebrow" style="margin-left:auto;">Research Showcase</span>
+        </div>
+
+        <div style="position:relative;margin-top:40px;">
+          <div class="kicker">Group biofeedback experience</div>
+          <div class="hero" style="font-size:60px;margin-top:14px;">Resonant<br>Thrum</div>
+        </div>
+
+        <!-- Prominent booking QR · required to take part -->
+        <div style="position:relative;margin-top:auto;border:1.5px solid var(--ink);background:var(--canvas);">
+          <div style="background:var(--ink);color:var(--on-ink);padding:12px 16px;display:flex;align-items:center;">
+            <span class="section-heading" style="color:var(--on-ink);white-space:nowrap;">Scan to book your slot</span>
+            <span style="margin-left:auto;font:var(--weight-medium) var(--label-sm)/1 var(--font-sans);letter-spacing:2px;text-transform:uppercase;border:1px solid var(--on-ink);padding:4px 8px;">Required</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:22px;padding:20px;">
+            <img src="assets/qr-thrum.png" alt="Scan to book a session" style="width:58mm;height:58mm;flex:none;display:block;">
+            <div>
+              <div class="h2">Booking is required to see the work.</div>
+              <p class="body" style="margin-top:10px;">Point your phone camera at the code and pick a free 10-minute session. Groups of 2–6.</p>
+              <div class="section-detail" style="margin-top:14px;color:var(--ink);">phoenixperry.com/thrum_shows</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:relative;margin-top:26px;">
+          <div class="hairline"></div>
+          <div style="display:flex;align-items:center;gap:18px;padding:20px 0 0;">
+            <svg class="arrow-svg" width="120" height="56" viewBox="0 0 150 64" fill="none">
+              <path d="M2 32 H136" stroke="#000" stroke-width="3"/>
+              <path d="M110 8 L142 32 L110 56" stroke="#000" stroke-width="3" fill="none"/>
+            </svg>
+            <div>
+              <div class="eyebrow">The work is here</div>
+              <div class="h1" style="margin-top:6px;white-space:nowrap;">Dark Room 1</div>
+              <div class="body muted" style="margin-top:2px;">Ground Floor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════ 2 · RECORDING & CONSENT NOTICE ══ -->
+    <div class="cell">
+      <div class="cell-label"><span class="cell-num">02</span><span class="cell-name">Recording &amp; consent notice</span><span class="cell-opt">Notice</span></div>
+      <div class="sheet" data-screen-label="Notice"><canvas class="sheet-hex"></canvas>
+        <div class="sheet-top">
+          <div class="brandmark"><svg class="hexmark" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="#000" stroke-width="1.2"></circle><g fill="none" stroke="#000" stroke-width="1.2" stroke-linejoin="round" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="29.5,21.33 27,25.66 22,25.66 19.5,21.33 22,17 27,17"></polygon><polygon points="22,25.66 19.5,29.99 14.5,29.99 12,25.66 14.5,21.33 19.5,21.33"></polygon><polygon points="14.5,21.33 12,25.66 7,25.66 4.5,21.33 7,17 12,17"></polygon><polygon points="14.5,12.67 12,17 7,17 4.5,12.67 7,8.34 12,8.34"></polygon><polygon points="22,8.34 19.5,12.67 14.5,12.67 12,8.34 14.5,4.01 19.5,4.01"></polygon><polygon points="29.5,12.67 27,17 22,17 19.5,12.67 22,8.34 27,8.34"></polygon></g><g fill="none" stroke="#000" stroke-width="1.2" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="22,17 19.5,21.33 14.5,21.33 12,17 14.5,12.67 19.5,12.67"></polygon></g></svg><span class="name">Resonant Thrum</span></div>
+          <span class="eyebrow" style="margin-left:auto;">Notice</span>
+        </div>
+
+        <div style="margin-top:24mm;">
+          <span style="display:inline-flex;align-items:center;gap:9px;border:1px solid var(--ink);padding:7px 12px;">
+            <span style="width:11px;height:11px;border-radius:50%;background:var(--ink);display:block;flex:none;"></span>
+            <span class="section-heading" style="white-space:nowrap;">Recording in progress</span>
+          </span>
+          <div class="display-lg" style="margin-top:22px;">This space is being recorded</div>
+          <p class="body-md" style="margin-top:18px;max-width:150mm;">Resonant Thrum is a research study. While it runs, the group is <strong style="font-weight:500;">photographed, audio- and video-recorded</strong>, and each participant's <strong style="font-weight:500;">heart-rate (biofeedback) data</strong> is collected and anonymised for research and academic presentation.</p>
+          <p class="body-md" style="margin-top:14px;max-width:150mm;">Taking part is voluntary · you may withdraw at any time. If you'd prefer not to be recorded, please let a facilitator know before your session.</p>
+        </div>
+
+        <div class="rule-ink" style="margin-top:auto;"></div>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:16px;">
+          <img class="qr-img" style="width:96px;height:96px;" src="assets/qr-thrum.png" alt="Full details online">
+          <div>
+            <div class="section-heading">You consented when you booked</div>
+            <div class="small" style="margin-top:6px;">Full privacy notice &amp; details · phoenixperry.com/thrum_shows</div>
+            <div class="small">Questions? <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b9c9d1d6dcd7d0c197c9dccbcbc0f9d8cbcdca97d8da97ccd2">[email&#160;protected]</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════ 3 · WAYFINDING · honeycomb-dominant ══ -->
+    <div class="cell">
+      <div class="cell-label"><span class="cell-num">03</span><span class="cell-name">Wayfinding · motif</span><span class="cell-opt">A4</span></div>
+      <div class="sheet" data-screen-label="Wayfinding Motif"><canvas class="sheet-hex"></canvas>
+        <div class="sheet-top" style="position:relative;">
+          
+          <span class="eyebrow" style="margin-left:auto;">Research Showcase</span>
+        </div>
+
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:14mm;">
+          <svg class="comb-hero" width="118mm" height="118mm" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16.4" fill="none" stroke="#000" stroke-width="0.55"></circle><g fill="none" stroke="#000" stroke-width="0.55" stroke-linejoin="round" transform="translate(17 17) scale(0.66) translate(-17 -17)"><polygon points="29.5,21.33 27,25.66 22,25.66 19.5,21.33 22,17 27,17"></polygon><polygon points="22,25.66 19.5,29.99 14.5,29.99 12,25.66 14.5,21.33 19.5,21.33"></polygon><polygon points="14.5,21.33 12,25.66 7,25.66 4.5,21.33 7,17 12,17"></polygon><polygon points="14.5,12.67 12,17 7,17 4.5,12.67 7,8.34 12,8.34"></polygon><polygon points="22,8.34 19.5,12.67 14.5,12.67 12,8.34 14.5,4.01 19.5,4.01"></polygon><polygon points="29.5,12.67 27,17 22,17 19.5,12.67 22,8.34 27,8.34"></polygon></g><g fill="none" stroke="#000" stroke-width="0.55" transform="translate(17 17) scale(0.66) translate(-17 -17)"><polygon points="22,17 19.5,21.33 14.5,21.33 12,17 14.5,12.67 19.5,12.67"></polygon></g></svg>
+          <div class="kicker" style="margin-top:16mm;text-align:left;">Group biofeedback experience</div>
+          <div class="hero" style="font-size:58px;margin-top:12px;text-align:left;">Resonant Thrum</div>
+        </div>
+
+        <div style="position:relative;margin-top:auto;">
+          <div class="rule-ink"></div>
+          <div style="display:flex;align-items:center;gap:22px;padding:22px 0 0;">
+            <img src="assets/qr-thrum.png" alt="Scan to book a session" style="width:44mm;height:44mm;flex:none;display:block;">
+            <div style="flex:1;">
+              <div class="section-heading">Scan to book · required to take part</div>
+              <div class="h2" style="margin-top:8px;">The work is here · Dark Room 1, Ground Floor</div>
+              <div class="section-detail" style="margin-top:10px;color:var(--ink);">phoenixperry.com/thrum_shows</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════ 4 · NOTICE · honeycomb-dominant ══ -->
+    <div class="cell">
+      <div class="cell-label"><span class="cell-num">04</span><span class="cell-name">Notice · motif</span><span class="cell-opt">Notice</span></div>
+      <div class="sheet" data-screen-label="Notice Motif"><canvas class="sheet-hex"></canvas>
+        <div class="sheet-top" style="position:relative;">
+          
+          <span class="eyebrow" style="margin-left:auto;">Notice</span>
+        </div>
+
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:12mm;">
+          <svg class="comb-hero" width="104mm" height="104mm" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16.4" fill="none" stroke="#000" stroke-width="0.55"></circle><g fill="none" stroke="#000" stroke-width="0.55" stroke-linejoin="round" transform="translate(17 17) scale(0.66) translate(-17 -17)"><polygon points="29.5,21.33 27,25.66 22,25.66 19.5,21.33 22,17 27,17"></polygon><polygon points="22,25.66 19.5,29.99 14.5,29.99 12,25.66 14.5,21.33 19.5,21.33"></polygon><polygon points="14.5,21.33 12,25.66 7,25.66 4.5,21.33 7,17 12,17"></polygon><polygon points="14.5,12.67 12,17 7,17 4.5,12.67 7,8.34 12,8.34"></polygon><polygon points="22,8.34 19.5,12.67 14.5,12.67 12,8.34 14.5,4.01 19.5,4.01"></polygon><polygon points="29.5,12.67 27,17 22,17 19.5,12.67 22,8.34 27,8.34"></polygon></g><g fill="none" stroke="#000" stroke-width="0.55" transform="translate(17 17) scale(0.66) translate(-17 -17)"><polygon points="22,17 19.5,21.33 14.5,21.33 12,17 14.5,12.67 19.5,12.67"></polygon></g></svg>
+          <span style="display:inline-flex;align-items:center;gap:9px;border:1px solid var(--ink);padding:7px 12px;margin-top:14mm;">
+            <span style="width:11px;height:11px;border-radius:50%;background:var(--ink);display:block;flex:none;"></span>
+            <span class="section-heading" style="white-space:nowrap;">Recording in progress</span>
+          </span>
+          <div class="display-lg" style="margin-top:18px;">This space is being recorded</div>
+          <p class="body-md" style="margin-top:16px;max-width:150mm;">While Resonant Thrum runs, the group is <strong style="font-weight:500;">photographed, audio- and video-recorded</strong>, and each participant's <strong style="font-weight:500;">anonymised heart-rate data</strong> is collected for research. Taking part is voluntary · let a facilitator know before your session if you'd prefer not to be recorded.</p>
+        </div>
+
+        <div style="position:relative;margin-top:auto;">
+          <div class="rule-ink"></div>
+          <div style="display:flex;align-items:center;gap:20px;padding:18px 0 0;">
+            <img class="qr-img" style="width:96px;height:96px;" src="assets/qr-thrum.png" alt="Full details online">
+            <div>
+              <div class="section-heading">You consented when you booked</div>
+              <div class="small" style="margin-top:6px;">Full privacy notice &amp; details · phoenixperry.com/thrum_shows</div>
+              <div class="small">Questions? <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a0d0c8cfc5cec9d88ed0c5d2d2d9e0c1d2d4d38ec1c38ed5cb">[email&#160;protected]</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════ 5 · GUIDED / CLOSED NOTICE ══ -->
+    <div class="cell">
+      <div class="cell-label"><span class="cell-num">05</span><span class="cell-name">Guided · closed notice</span><span class="cell-opt">A4</span></div>
+      <div class="sheet" data-screen-label="Guided"><canvas class="sheet-hex"></canvas>
+        <div class="sheet-top" style="position:relative;">
+          <div class="brandmark"><svg class="hexmark" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="#000" stroke-width="1.2"></circle><g fill="none" stroke="#000" stroke-width="1.2" stroke-linejoin="round" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="29.5,21.33 27,25.66 22,25.66 19.5,21.33 22,17 27,17"></polygon><polygon points="22,25.66 19.5,29.99 14.5,29.99 12,25.66 14.5,21.33 19.5,21.33"></polygon><polygon points="14.5,21.33 12,25.66 7,25.66 4.5,21.33 7,17 12,17"></polygon><polygon points="14.5,12.67 12,17 7,17 4.5,12.67 7,8.34 12,8.34"></polygon><polygon points="22,8.34 19.5,12.67 14.5,12.67 12,8.34 14.5,4.01 19.5,4.01"></polygon><polygon points="29.5,12.67 27,17 22,17 19.5,12.67 22,8.34 27,8.34"></polygon></g><g fill="none" stroke="#000" stroke-width="1.2" transform="translate(17 17) scale(0.72) translate(-17 -17)"><polygon points="22,17 19.5,21.33 14.5,21.33 12,17 14.5,12.67 19.5,12.67"></polygon></g></svg><span class="name">Resonant Thrum</span></div>
+          <span class="eyebrow" style="margin-left:auto;">Please note</span>
+        </div>
+
+        <div style="margin-top:24mm;">
+          <span class="eyebrow ink">Between sessions</span>
+          <div class="display-lg" style="margin-top:14px;">Thrum is off right now</div>
+          <p class="body-md" style="margin-top:18px;max-width:150mm;">Resonant Thrum is a <strong style="font-weight:500;">guided experience</strong>. It runs as facilitated 10-minute sessions for small groups of 2 to 6, not as a walk-in installation, so it sits quiet between sittings.</p>
+          <p class="body-md" style="margin-top:14px;max-width:150mm;">To take part, book a slot and come back at your session time. A facilitator will bring your group in at the allotted time.</p>
+        </div>
+
+        <div class="rule-ink" style="margin-top:auto;"></div>
+        <div style="display:flex;align-items:center;gap:24px;margin-top:16px;">
+          <img src="assets/qr-thrum.png" alt="Scan to book a session" style="width:58mm;height:58mm;flex:none;display:block;">
+          <div>
+            <div class="section-heading">Scan to book your slot</div>
+            <div class="small" style="margin-top:6px;">phoenixperry.com/thrum_shows</div>
+            <div class="small">Sessions Tuesday, Wednesday, Thursday, plus the Wednesday opening</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#fff"/>
+      <circle cx="50" cy="50" r="32" fill="none" stroke="#000" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="21" fill="none" stroke="#000" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="10" fill="none" stroke="#000" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="3" fill="#000"/>
+    </svg>
+  </template>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Build writable name lines for the sign-up sheets
+    (function () {
+      document.querySelectorAll('.namelines').forEach(function (box) {
+        var n = parseInt(box.getAttribute('data-count'), 10) || 6;
+        for (var i = 1; i <= n; i++) {
+          var row = document.createElement('div');
+          row.className = 'nl';
+          var num = document.createElement('span');
+          num.className = 'nnum'; num.textContent = i;
+          var line = document.createElement('span');
+          line.className = 'nline';
+          row.appendChild(num); row.appendChild(line);
+          box.appendChild(row);
+        }
+      });
+    })();
+  </script>
+
+
+  <script>
+    // Static random hex field behind each signage sheet
+    (function () {
+      function hex(ctx, x, y, r, rot) {
+        ctx.beginPath();
+        for (var i = 0; i < 6; i++) {
+          var a = rot - Math.PI / 2 + i * Math.PI / 3;
+          var px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      function paint(cv) {
+        var w = cv.clientWidth, hh = cv.clientHeight;
+        if (!w || !hh) return;
+        var dpr = window.devicePixelRatio || 1;
+        cv.width = w * dpr; cv.height = hh * dpr;
+        var ctx = cv.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, w, hh);
+        var base = Math.min(w, hh);
+        var n = 16;
+        for (var i = 0; i < n; i++) {
+          var r = (0.05 + Math.random() * 0.11) * base;
+          var x = Math.random() * w, y = Math.random() * hh;
+          ctx.lineWidth = 0.6 + Math.random() * 0.8;
+          ctx.strokeStyle = 'rgba(17,17,17,' + (0.05 + Math.random() * 0.07).toFixed(3) + ')';
+          hex(ctx, x, y, r, Math.random() * Math.PI);
+        }
+      }
+      function run() { document.querySelectorAll('.sheet-hex').forEach(paint); }
+      window.addEventListener('load', run);
+      window.addEventListener('resize', run);
+      run();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thrum — Generative Hexagons</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #ffffff; }
+  #sketch { position: fixed; inset: 0; }
+  canvas { display: block; }
+
+  /* ── Control panel ── */
+  #panel {
+    position: fixed; top: 18px; right: 18px; z-index: 20;
+    width: 244px; background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid #000; padding: 16px 16px 18px;
+    font-family: 'DM Sans', sans-serif; color: #000;
+    transition: transform .28s ease, opacity .28s ease;
+  }
+  #panel.hidden { transform: translateX(calc(100% + 22px)); opacity: 0; }
+  #panel h1 { font: 500 11px/1 'DM Sans', sans-serif; letter-spacing: 2.6px; text-transform: uppercase; margin-bottom: 4px; }
+  #panel .sub { font: 400 11px/1.4 'DM Sans'; color: rgba(0,0,0,0.5); margin-bottom: 14px; }
+  .ctl { margin-bottom: 13px; }
+  .ctl label { display: flex; justify-content: space-between; font: 500 9.5px/1 'DM Sans'; letter-spacing: 1.6px; text-transform: uppercase; color: rgba(0,0,0,0.6); margin-bottom: 7px; }
+  .ctl label .val { color: #000; }
+  input[type=range] { -webkit-appearance: none; appearance: none; accent-color: #000; width: 100%; height: 1px; background: rgba(0,0,0,0.25); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; background: #000; cursor: pointer; border-radius: 50%; }
+  input[type=range]::-moz-range-thumb { width: 13px; height: 13px; background: #000; cursor: pointer; border: none; border-radius: 50%; }
+  .seg { display: flex; gap: 6px; }
+  .seg button { flex: 1; font: 500 9.5px/1 'DM Sans'; letter-spacing: 1.4px; text-transform: uppercase; padding: 8px 0; border: 1px solid #000; background: #fff; color: #000; cursor: pointer; }
+  .seg button.on { background: #000; color: #fff; }
+  .row { display: flex; gap: 6px; margin-top: 4px; }
+  .row button { flex: 1; font: 500 9.5px/1 'DM Sans'; letter-spacing: 1.4px; text-transform: uppercase; padding: 9px 0; border: 1px solid #000; background: #fff; color: #000; cursor: pointer; }
+  .row button:hover { background: #000; color: #fff; }
+
+  #toggle {
+    position: fixed; top: 18px; right: 18px; z-index: 21;
+    width: 40px; height: 40px; border: 1px solid #000; background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px); cursor: pointer; display: none; align-items: center; justify-content: center;
+  }
+  #toggle svg { width: 18px; height: 18px; }
+  #hint { position: fixed; bottom: 16px; left: 18px; z-index: 20; font: 400 10.5px/1 'DM Sans'; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(0,0,0,0.4); }
+
+  <template id="__bundler_thumbnail"></template>
+</style>
+</head>
+<body>
+  <div id="sketch"></div>
+
+  <button id="toggle" aria-label="Show controls">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6"><circle cx="12" cy="6" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="18" r="1.6"/></svg>
+  </button>
+
+  <div id="panel">
+    <h1>Thrum</h1>
+    <div class="sub">Fractured, then unity — a living honeycomb.</div>
+
+    <div class="ctl">
+      <label>Cycle <span class="val" id="v_cycle"></span></label>
+      <input type="range" id="s_cycle" min="4" max="24" step="0.5" value="24">
+    </div>
+    <div class="ctl">
+      <label>Fracture spread <span class="val" id="v_spread"></span></label>
+      <input type="range" id="s_spread" min="0" max="2.4" step="0.05" value="0.40">
+    </div>
+    <div class="ctl">
+      <label>Chaos <span class="val" id="v_chaos"></span></label>
+      <input type="range" id="s_chaos" min="0" max="1" step="0.02" value="0.96">
+    </div>
+    <div class="ctl">
+      <label>Heartbeat <span class="val" id="v_bpm"></span></label>
+      <input type="range" id="s_bpm" min="0" max="110" step="1" value="60">
+    </div>
+    <div class="ctl">
+      <label>Depth field <span class="val" id="v_ghost"></span></label>
+      <input type="range" id="s_ghost" min="0" max="40" step="1" value="20">
+    </div>
+    <div class="ctl">
+      <label>Trails <span class="val" id="v_trail"></span></label>
+      <input type="range" id="s_trail" min="0" max="0.5" step="0.01" value="0.41">
+    </div>
+    <div class="ctl">
+      <label>Palette</label>
+      <div class="seg" id="seg_pal">
+        <button data-pal="white" class="on">White</button>
+        <button data-pal="mint">Mint</button>
+        <button data-pal="ink">Ink</button>
+      </div>
+    </div>
+    <div class="row">
+      <button id="btn_reset">Reset</button>
+      <button id="btn_shuffle">Shuffle</button>
+      <button id="btn_save">Save PNG</button>
+    </div>
+  </div>
+
+  <div id="hint">C — controls · Space — reseed</div>
+
+<script>
+// ── Thrum: generative honeycomb ─────────────────────────────────────────────
+// Seven hexagons (a centre + a ring of six) breathe between a scattered,
+// fractured state and a resolved honeycomb, drifting on Perlin noise with a
+// heartbeat pulse. Pure line work, monochrome.
+
+let P = {
+  cycle: 24, spread: 0.40, chaos: 0.96, bpm: 60, ghost: 20, trail: 0.41, pal: 'white'
+};
+let emerging = false;   // interaction: circle emerges from the cube into a sun
+let emergeStart = 0;
+const PALS = {
+  white: { bg: [255,255,255], ink: [17,17,17], ghost: [17,17,17] },
+  mint:  { bg: [214,244,231], ink: [20,28,24], ghost: [20,28,24] },
+  ink:   { bg: [16,16,16],    ink: [244,244,244], ghost: [244,244,244] }
+};
+
+let seeds = [];      // per-hex fracture params
+let ghosts = [];     // background depth field
+let R;               // hex radius (center → vertex)
+let t0;
+
+function makeSeeds() {
+  seeds = [];
+  // centre hex (index 0) + six ring hexes
+  for (let i = 0; i < 7; i++) {
+    const ringAng = (i - 1) * 60;                 // ignored for centre
+    seeds.push({
+      homeAng: ringAng,
+      dir: random(TWO_PI),                          // fracture escape direction
+      dist: (i === 0 ? 0.35 : 1) * random(0.6, 1.4),// how far it flies
+      rot: random(-1, 1) * PI,                      // spin during fracture
+      ph: random(TWO_PI),                           // personal noise phase
+      nseed: random(1000)
+    });
+  }
+}
+function makeGhosts() {
+  ghosts = [];
+  const n = floor(P.ghost);
+  for (let i = 0; i < n; i++) {
+    // keep the depth field to the PAGE EDGES — never behind the main grid
+    let gx, gy, tries = 0;
+    do { gx = random(1); gy = random(1); tries++; } while (dist(gx, gy, 0.5, 0.5) < 0.36 && tries < 30);
+    ghosts.push({
+      x: gx, y: gy,
+      r: random(0.35, 1.2),
+      rot: random(TWO_PI),
+      spin: random(-1, 1) * 0.0006,
+      nseed: random(1000),
+      w: random(0.5, 1.4)
+    });
+  }
+}
+
+function setup() {
+  const c = createCanvas(windowWidth, windowHeight);
+  c.parent('sketch');
+  R = computeR();
+  t0 = millis();
+  makeSeeds(); makeGhosts();
+  bindUI();
+}
+function computeR() { return min(width, height) * 0.105; }
+function windowResized() { resizeCanvas(windowWidth, windowHeight); R = computeR(); }
+
+// pointy-top hexagon path
+function hexPath(cx, cy, r, rot) {
+  beginShape();
+  for (let i = 0; i < 6; i++) {
+    const a = rot - HALF_PI + i * PI / 3;
+    vertex(cx + cos(a) * r, cy + sin(a) * r);
+  }
+  endShape(CLOSE);
+}
+
+function easeInOut(x) { return x < 0.5 ? 4*x*x*x : 1 - pow(-2*x+2, 3) / 2; }
+
+// heartbeat envelope: a lub-dub over one beat period
+function heartbeat(tsec) {
+  if (P.bpm <= 0) return 0;
+  const beat = 60 / P.bpm;
+  const ph = (tsec % beat) / beat;             // 0..1 within a beat
+  const g = (c, w) => exp(-pow((ph - c) / w, 2));
+  return g(0.10, 0.045) * 1.0 + g(0.26, 0.06) * 0.55;  // lub + dub
+}
+
+function draw() {
+  const pal = PALS[P.pal];
+  // trails: translucent wash instead of hard clear
+  noStroke();
+  fill(pal.bg[0], pal.bg[1], pal.bg[2], map(P.trail, 0, 0.5, 255, 12, true));
+  rect(0, 0, width, height);
+
+  const tsec = (millis() - t0) / 1000;
+
+  // fracture amount: triangle over cycle, eased, with a plateau at UNITY
+  // grid stays assembled; interaction drives the circle emerging into a sun
+  let frac = 0;
+  let emergeE = 0;
+  if (emerging) {
+    const e = (millis() - t0) / 1000 - emergeStart;
+    emergeE = easeInOut(constrain(e / 2.6, 0, 1));
+  }
+
+  const cx = width / 2, cy = height / 2;
+  const hb = heartbeat(tsec);
+  const rr = R;                                // grid holds steady; only the circle pulses
+
+  // ── background depth field: always-present light tiles drifting the page ──
+  noFill();
+  for (const g of ghosts) {
+    g.rot += g.spin;
+    const nx = noise(g.nseed, tsec * 0.03) - 0.5;
+    const ny = noise(g.nseed + 50, tsec * 0.03) - 0.5;
+    const gx = g.x * width + nx * 150;
+    const gy = g.y * height + ny * 150;
+    stroke(pal.ghost[0], pal.ghost[1], pal.ghost[2], (7 + g.w * 6));
+    strokeWeight(g.w);
+    hexPath(gx, gy, g.r * R * 0.9, g.rot);
+  }
+
+  // ── the seven ──
+  for (let i = 0; i < 7; i++) {
+    const s = seeds[i];
+    // home position (unity)
+    let hx = cx, hy = cy;
+    if (i > 0) {
+      const a = radians(s.homeAng);
+      hx = cx + cos(a) * sqrt(3) * rr;
+      hy = cy + sin(a) * sqrt(3) * rr;
+    }
+    // drift target: once released, wanders the page like the background tiles
+    const fly = (0.5 + P.spread) * rr * 1.3;
+    const wx = (noise(s.nseed, tsec * 0.04) - 0.5) * 2;
+    const wy = (noise(s.nseed + 30, tsec * 0.04) - 0.5) * 2;
+    const fx = cx + cos(s.dir) * fly + wx * width * 0.42 * (0.4 + P.chaos);
+    const fy = cy + sin(s.dir) * fly + wy * height * 0.42 * (0.4 + P.chaos);
+
+    const x = lerp(hx, fx, frac);
+    const y = lerp(hy, fy, frac);
+    const rot = frac * s.rot + (noise(s.ph + 5, tsec * 0.05) - 0.5) * frac * 0.8;
+
+    // centre cube fades soft pink in, then out, a single time as the circle emerges
+    if (i === 0 && emerging) {
+      const blush = sin(emergeE * PI);          // 0 → 1 → 0 across the emergence
+      noStroke();
+      fill(255, lerp(255, 188, blush), lerp(255, 204, blush), 120 * blush);
+      hexPath(x, y, rr, rot);
+    }
+    const w = lerp(1.5, 1.0, frac);            // slightly lighter, thins as it scatters
+    const a = lerp(150, 110, frac);            // soft grey outline at unity
+    stroke(pal.ink[0], pal.ink[1], pal.ink[2], a);
+    strokeWeight(w);
+    noFill();
+    hexPath(x, y, rr, rot);
+
+    // centre hex reads as an isometric cube (3 lines to alternate vertices) —
+    // the cube stays after the circle has emerged
+    if (i === 0) {
+      stroke(pal.ink[0], pal.ink[1], pal.ink[2], 200);
+      strokeWeight(1.3);
+      for (const vi of [1, 3, 5]) {
+        const va = rot - HALF_PI + vi * PI / 3;
+        line(x, y, x + cos(va) * rr, y + sin(va) * rr);
+      }
+    }
+  }
+
+  // centre: hidden until interaction — the circle emerges from the cube, rising
+  // and expanding into a sun ring that sits clear of the grid, and it pulses.
+  if (emerging) {
+    const breathe = 1 - hb * 0.09;              // the circle carries the heartbeat
+    const sunD = 7.4 * rr;                      // roomy gap between ring and grid
+    const d = lerp(rr * 0.66, sunD, emergeE) * breathe;
+    const lift = -sin(emergeE * PI) * rr * 0.18; // rises, then settles centred
+    noFill();
+    stroke(pal.ink[0], pal.ink[1], pal.ink[2], 220);
+    strokeWeight(lerp(1.5, 2, emergeE));
+    circle(cx, cy + lift, d);
+  }
+}
+
+// ── UI ──
+function bindUI() {
+  const panel = document.getElementById('panel');
+  const toggle = document.getElementById('toggle');
+  const bind = (id, key, fmt) => {
+    const el = document.getElementById('s_' + id);
+    const out = document.getElementById('v_' + id);
+    const upd = () => { P[key] = parseFloat(el.value); if (out) out.textContent = fmt ? fmt(P[key]) : P[key]; };
+    el.addEventListener('input', () => { upd(); if (key === 'ghost') makeGhosts(); });
+    upd();
+  };
+  bind('cycle', 'cycle', v => v.toFixed(1) + 's');
+  bind('spread', 'spread', v => v.toFixed(2));
+  bind('chaos', 'chaos', v => v.toFixed(2));
+  bind('bpm', 'bpm', v => v <= 0 ? 'off' : v + ' bpm');
+  bind('ghost', 'ghost', v => v);
+  bind('trail', 'trail', v => v.toFixed(2));
+
+  document.querySelectorAll('#seg_pal button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#seg_pal button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      P.pal = b.dataset.pal;
+      const bg = PALS[P.pal].bg;
+      document.documentElement.style.background = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
+      background(bg[0], bg[1], bg[2]);
+    });
+  });
+  document.getElementById('btn_reset').addEventListener('click', () => { emerging = false; });
+  document.getElementById('btn_shuffle').addEventListener('click', () => { emerging = false; makeSeeds(); makeGhosts(); });
+  document.getElementById('btn_save').addEventListener('click', () => saveCanvas('thrum-hex', 'png'));
+
+  const setPanel = (show) => {
+    panel.classList.toggle('hidden', !show);
+    toggle.style.display = show ? 'none' : 'flex';
+  };
+  toggle.addEventListener('click', () => setPanel(true));
+
+  // interaction: tap (or move over the centre) makes the circle emerge — one way
+  const trigger = () => { if (!emerging) { emerging = true; emergeStart = (millis() - t0) / 1000; } };
+  const sk = document.getElementById('sketch');
+  sk.addEventListener('pointerdown', trigger);
+  sk.addEventListener('pointermove', (e) => { if (dist(e.clientX, e.clientY, width/2, height/2) < min(width,height)*0.5) trigger(); });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'c' || e.key === 'C') setPanel(panel.classList.contains('hidden'));
+    if (e.code === 'Space') { e.preventDefault(); emerging = false; makeSeeds(); makeGhosts(); }
+  });
+}
+</script>
+</body>
+</html>
