@@ -56,6 +56,78 @@
 
     <p class="p-body">The piece evolves into a set of nested biorhythms, from the light controlled by heartbeats to the slow ecology of a culture fed across the whole run of the show. The work lives through participation. Heartbeats are elsewhere harvested for surveillance, prediction of engagement, and the wellness industry. Resonant Thrum reclaims the same signals as an opportunity for mutual attunement between species. This assemblage makes visible that humans have never been isolated individuals but are members of a more-than-human social biological world, kept alive by light and breath.</p>
 
+    <!-- SYSTEM SKETCH: NEXT PHASE -->
+    <h2 class="p-h3">How the next phase works</h2>
+    <p class="p-body">A sketch of the proposed system for this iteration &mdash; the living floor replaces the central tile, and the group's heartbeat and breath drive a two-way exchange with the culture.</p>
+
+    <figure style="margin:1.5em 0 2em;">
+      <svg viewBox="0 0 900 580" role="img" aria-labelledby="sysTitle sysDesc" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:16px;background:#0a1a2f;">
+        <title id="sysTitle">Resonant Thrum next-phase system diagram</title>
+        <desc id="sysDesc">Two to six people wearing heart-rate monitors sit around a living floor of bioluminescent dinoflagellates that replaces the central tile. By day a grow light and the group's exhaled carbon dioxide feed the culture's photosynthesis. By night the collective heartbeat reaches the culture as haptic vibration and the cells answer with light through mechanotransduction; the energy stored by day powers the flash by night.</desc>
+        <style>
+          .lab{font-family:"Space Grotesk","DM Sans",system-ui,sans-serif;}
+          .node{fill:#12263f;stroke:rgba(255,255,255,.18);stroke-width:1.5;}
+          .t-title{font-weight:700;fill:#f4fbfa;}
+          .t-sub{fill:#9fb3c8;}
+          .t-arrow{fill:#cfe3e0;}
+          .flow{fill:none;stroke-width:2.2;}
+        </style>
+        <defs>
+          <marker id="ahCyan" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#39d3c9"/></marker>
+          <marker id="ahAmber" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#e6a94a"/></marker>
+          <marker id="ahBlue" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#6bb7f0"/></marker>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <text class="lab" x="28" y="34" style="font-size:12px;font-weight:700;letter-spacing:.12em;fill:#6bb7f0;">DAY &#183; LIT &#183; FEED</text>
+        <text class="lab" x="872" y="34" text-anchor="end" style="font-size:12px;font-weight:700;letter-spacing:.12em;fill:#39d3c9;">NIGHT &#183; DARK &#183; FLASH</text>
+
+        <!-- PEOPLE -->
+        <rect class="node" x="315" y="52" width="270" height="78" rx="12"/>
+        <text class="lab t-title" x="450" y="83" text-anchor="middle" style="font-size:17px;">2&#8211;6 people</text>
+        <text class="lab t-sub" x="450" y="105" text-anchor="middle" style="font-size:12.5px;">wearing heart-rate monitors, on the grid</text>
+
+        <!-- LIVING FLOOR -->
+        <circle cx="450" cy="415" r="60" fill="#39d3c9" opacity="0.14" filter="url(#glow)"/>
+        <polygon class="node" points="450,300 560,360 560,470 450,530 340,470 340,360" fill="#0e2136" stroke="#39d3c9" stroke-width="2"/>
+        <text class="lab t-title" x="450" y="400" text-anchor="middle" style="font-size:17px;fill:#eafffb;">Living floor</text>
+        <text class="lab t-sub" x="450" y="422" text-anchor="middle" style="font-size:12.5px;">bioluminescent</text>
+        <text class="lab t-sub" x="450" y="439" text-anchor="middle" style="font-size:12.5px;">dinoflagellates</text>
+        <text class="lab t-sub" x="450" y="461" text-anchor="middle" style="font-size:11.5px;fill:#7f93a8;">replaces the central tile</text>
+
+        <!-- DRIVE: people -> floor -->
+        <path class="flow" d="M360,130 C296,210 300,320 342,388" stroke="#e6a94a" marker-end="url(#ahAmber)"/>
+        <text class="lab t-arrow" x="238" y="198" text-anchor="middle" style="font-size:12.5px;">collective heartbeat &#8594;</text>
+        <text class="lab t-arrow" x="238" y="216" text-anchor="middle" style="font-size:12.5px;">haptic vibration &#8594;</text>
+        <text class="lab t-arrow" x="238" y="234" text-anchor="middle" style="font-size:12.5px;">mechanotransduction</text>
+
+        <!-- RESPOND: floor -> people -->
+        <path class="flow" d="M558,388 C604,320 604,210 540,130" stroke="#39d3c9" marker-end="url(#ahCyan)"/>
+        <text class="lab t-arrow" x="662" y="200" text-anchor="middle" style="font-size:12.5px;">bioluminescent</text>
+        <text class="lab t-arrow" x="662" y="218" text-anchor="middle" style="font-size:12.5px;">flash + warm</text>
+        <text class="lab t-arrow" x="662" y="236" text-anchor="middle" style="font-size:12.5px;">light + sound &#8594;</text>
+
+        <!-- FEED: day input -->
+        <rect class="node" x="28" y="360" width="212" height="90" rx="12" stroke="#6bb7f0"/>
+        <text class="lab t-title" x="134" y="392" text-anchor="middle" style="font-size:15px;">Grow light + CO&#8322;</text>
+        <text class="lab t-sub" x="134" y="414" text-anchor="middle" style="font-size:12px;">the group's exhaled</text>
+        <text class="lab t-sub" x="134" y="431" text-anchor="middle" style="font-size:12px;">breath, by day</text>
+        <path class="flow" d="M240,414 C288,418 300,428 336,432" stroke="#6bb7f0" marker-end="url(#ahBlue)"/>
+        <text class="lab t-arrow" x="300" y="402" text-anchor="middle" style="font-size:12px;fill:#9fc7ec;">photosynthesis &#183; feeds</text>
+
+        <text class="lab t-sub" x="450" y="558" text-anchor="middle" style="font-size:12.5px;fill:#cfe3e0;">Energy stored by day powers the flash by night.</text>
+      </svg>
+      <figcaption class="p-body" style="opacity:.65;font-size:.9em;margin-top:.7em;">Proposed system for Resonant Thrum's next phase. By day (left), a grow light and the group's exhaled carbon dioxide feed the culture. Around the loop, by night, the collective heartbeat reaches the living floor as vibration and the cells answer with light.</figcaption>
+    </figure>
+
+    <ol class="p-body">
+      <li>Two to six people wear heart-rate monitors and sit on the hexagonal grid of haptic tiles.</li>
+      <li>Each tile pulses with its wearer's heartbeat, and the group's synchrony shapes the sound and warm light.</li>
+      <li>The collective pulse reaches the living floor as vibration, and the dinoflagellates answer with light through mechanotransduction &mdash; in the dark, "night" phase.</li>
+      <li>In the lit "day" phase, a grow light and the group's exhaled carbon dioxide feed the culture's photosynthesis.</li>
+      <li>The culture grows across the run of the show, and the energy it stores by day powers the flash it gives back by night.</li>
+    </ol>
+
     <!-- LINEAGE -->
     <h2 class="p-h3">The work it grows from</h2>
     <p class="p-body">Resonant Thrum evolves from Resident Thrum, which premiered at ACM Creativity &amp; Cognition in 2026. <a href="thrum.html">See the Resident Thrum project page</a> for the installation and the research behind it.</p>
