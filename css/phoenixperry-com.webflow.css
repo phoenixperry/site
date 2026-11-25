@@ -1847,8 +1847,9 @@ img {
 }
 
 
-/* Lists (About page): set items at body-copy size, not the 14px page default */
-.list li {
+/* Lists (About, Reline, Synth): set items at body-copy size, not the 14px page default */
+.list li,
+.p-list li {
   font-size: var(--body-copy);
   line-height: 1.5;
   margin-bottom: .5rem;
