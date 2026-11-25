@@ -1873,4 +1873,31 @@ img {
   .button-primary {
     text-align: center;
   }
+
+  /* Page titles: big, overlapping lines, as on desktop (130px on 60px).
+     20vw keeps the longest single words ("Phoenix", "Archive") on screen
+     down to 320px wide. */
+  .p-h1 {
+    margin-top: 0;
+    padding-top: .6em;
+    margin-bottom: .45em;
+    font-size: 20vw;
+    line-height: .5em;
+  }
+
+  /* A title that opens the page sits under the phone nav bar, so it needs
+     more room above for the letters that rise out of the tight line */
+  .p-page-header .p-h1 {
+    padding-top: max(1.1em, 80px);
+  }
+
+  /* Titles with a long word ("Organisations", "Technology", "Connections",
+     "Trimtabbing") would run off screen at 20vw, so they drop in size but
+     keep the overlap */
+  .p-h1.p-h1-long {
+    padding-top: 80px;
+    font-size: 12vw;
+    line-height: .5em;
+    margin-bottom: .7em;
+  }
 }
