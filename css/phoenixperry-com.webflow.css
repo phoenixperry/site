@@ -1854,3 +1854,23 @@ img {
   line-height: 1.5;
   margin-bottom: .5rem;
 }
+
+/* Phones: keep the About page's heading hierarchy and spacing, and centre
+   button text (Webflow's phone rule makes buttons full width) */
+@media screen and (max-width: 479px) {
+  .cell-18 .p-h2.p-h2-calm {
+    margin-top: 2.5rem;
+    margin-bottom: .5rem;
+    font-size: 2.5rem;
+    line-height: 2.8rem;
+  }
+
+  .cell-18 .p-h3 {
+    margin-top: 1.75rem;
+    margin-bottom: .25rem;
+  }
+
+  .button-primary {
+    text-align: center;
+  }
+}
