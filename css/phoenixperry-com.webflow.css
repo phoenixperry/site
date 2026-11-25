@@ -1727,3 +1727,129 @@ img {
 }
 
 
+
+/* Nav hover: hold the nav font. The global a:hover rule swaps in DM Sans,
+   which changes the width of links whose colour class sets no font
+   (Organisations, for one) and shifts the whole nav sideways. */
+.nav-link:hover {
+  font-family: var(--space_mono_nav);
+}
+
+/* Current-page indicator: a dot centred above the active nav link */
+.nav-link.w--current {
+  position: relative;
+}
+
+.nav-link.w--current::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  transform: translateX(-50%);
+}
+
+/* Collapsed (stacked) menu: put the dot to the left of the link instead */
+@media screen and (max-width: 991px) {
+  .nav-link.w--current::before {
+    top: 50%;
+    left: 6px;
+    transform: translateY(-50%);
+  }
+}
+
+/* Research page cards */
+.rs-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.rs-card-img--logo {
+  object-fit: contain;
+  background-color: #30348c;
+  padding: 2rem;
+}
+
+.rl_layout250_content-2.rs-grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+
+
+@media screen and (max-width: 767px) {
+  .rl_layout250_content-2.rs-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tools page: additional tool sections */
+.tool-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, .2);
+  margin: 5rem 0 3rem;
+}
+
+.tool-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.tool-button-secondary {
+  margin-left: 1rem;
+}
+
+@media screen and (max-width: 479px) {
+  .tool-button-secondary {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+}
+
+/* Buttons: rounded teal with white text; secondary is white with teal text */
+.button-primary,
+.button-primary.w-button {
+  background-color: var(--blue);
+  color: #fff;
+  border: 2px solid var(--blue);
+  border-radius: 999px;
+  text-transform: lowercase;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.button-primary:hover {
+  background-color: #fff;
+  color: var(--blue);
+  border-color: #fff;
+}
+
+.button-primary.tool-button-secondary {
+  background-color: #fff;
+  color: var(--blue);
+  border-color: #fff;
+}
+
+.button-primary.tool-button-secondary:hover {
+  background-color: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+
+/* Lists (About page): set items at body-copy size, not the 14px page default */
+.list li {
+  font-size: var(--body-copy);
+  line-height: 1.5;
+  margin-bottom: .5rem;
+}
